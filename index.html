@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Horario y Hábitos</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f2f5; }
-    .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; color: #1a73e8; }
-    p { font-size: 1.1em; color: #333; }
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f2f5; margin: 0; }
+    h1 { color: #1a73e8; text-align: center; margin-bottom: 25px; }
+    .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; color: #1a73e8; font-size: 1.2rem; }
+    p { font-size: 1.05rem; color: #333; line-height: 1.5; margin: 0; }
+    .destacado { font-weight: bold; color: #2b7de9; }
   </style>
 </head>
 <body>
+
   <h1>Panel de Control de Estudio</h1>
 
   <div class="card">
@@ -24,105 +27,82 @@
     <p id="info-sueno">Cargando...</p>
   </div>
 
-  <script src="horario.js"></script>
   <script>
-    // Mostrar la información en pantalla al cargar
-    document.getElementById("info-clase").innerText = obtenerProximaClase();
-    document.getElementById("info-sueno").innerText = verificarHoraDeDormir();
+    const horarioEscolar = {
+      1: [
+        { inicio: "08:00", fin: "08:50", asignatura: "BG", sala: "E10" },
+        { inicio: "08:55", fin: "09:45", asignatura: "BG", sala: "E10" },
+        { inicio: "09:55", fin: "10:45", asignatura: "FQ-A", sala: "E10" },
+        { inicio: "10:55", fin: "11:45", asignatura: "FQ-A", sala: "E10" },
+        { inicio: "11:50", fin: "12:40", asignatura: "MAT-A", sala: "E10" },
+        { inicio: "12:45", fin: "13:35", asignatura: "MAT-A", sala: "E10" }
+      ],
+      2: [
+        { inicio: "08:00", fin: "08:50", asignatura: "FQ-A", sala: "E8" },
+        { inicio: "08:55", fin: "09:45", asignatura: "FQ-A", sala: "E8" },
+        { inicio: "09:55", fin: "10:45", asignatura: "FIL", sala: "E8" },
+        { inicio: "10:55", fin: "11:45", asignatura: "BG", sala: "E8" },
+        { inicio: "11:50", fin: "12:40", asignatura: "ING", sala: "D7" },
+        { inicio: "12:45", fin: "13:35", asignatura: "ING", sala: "D7" }
+      ],
+      3: [
+        { inicio: "08:00", fin: "08:50", asignatura: "MAT-A", sala: "A9" },
+        { inicio: "08:55", fin: "09:45", asignatura: "MAT-A", sala: "A9" },
+        { inicio: "09:55", fin: "10:45", asignatura: "EF", sala: "CP2" },
+        { inicio: "10:55", fin: "11:45", asignatura: "FIL", sala: "A7" },
+        { inicio: "11:50", fin: "12:40", asignatura: "FIL", sala: "A7" },
+        { inicio: "12:45", fin: "13:35", asignatura: "PORT", sala: "A7" }
+      ],
+      4: [
+        { inicio: "08:00", fin: "08:50", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
+        { inicio: "08:55", fin: "09:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
+        { inicio: "09:55", fin: "10:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
+        { inicio: "10:55", fin: "11:45", asignatura: "ING", sala: "A11" },
+        { inicio: "11:50", fin: "12:40", asignatura: "PORT", sala: "A11" },
+        { inicio: "13:55", fin: "14:45", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
+        { inicio: "14:50", fin: "15:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
+        { inicio: "15:50", fin: "16:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" }
+      ],
+      5: [
+        { inicio: "08:00", fin: "08:50", asignatura: "PORT", sala: "E8" },
+        { inicio: "08:55", fin: "09:45", asignatura: "PORT", sala: "E8" },
+        { inicio: "09:55", fin: "10:45", asignatura: "MAT-A", sala: "E8" },
+        { inicio: "10:55", fin: "11:45", asignatura: "MAT-A", sala: "E8" },
+        { inicio: "11:50", fin: "12:40", asignatura: "EF", sala: "CP1" },
+        { inicio: "12:45", fin: "13:35", asignatura: "EF", sala: "CP1" }
+      ]
+    };
+
+    function actualizarPanel() {
+      const ahora = new Date();
+      const diaSemana = ahora.getDay();
+      const horaStr = ahora.getHours().toString().padStart(2, '0') + ":" + 
+                      ahora.getMinutes().toString().padStart(2, '0');
+
+      const clasesHoy = horarioEscolar[diaSemana];
+      const elClase = document.getElementById("info-clase");
+
+      if (!clasesHoy) {
+        elClase.innerText = "¡Es fin de semana! Aprovecha para descansar o repasar.";
+      } else {
+        const proxima = clasesHoy.find(c => c.inicio > horaStr);
+        if (proxima) {
+          elClase.innerHTML = `Tu próxima clase es <span class="destacado">${proxima.asignatura}</span> a las <span class="destacado">${proxima.inicio}</span> en la sala <span class="destacado">${proxima.sala}</span>.`;
+        } else {
+          elClase.innerText = "Ya terminaste todas tus clases por hoy. ¡Buen trabajo!";
+        }
+      }
+
+      const horaActual = ahora.getHours();
+      const elSueno = document.getElementById("info-sueno");
+      if (horaActual >= 23 || horaActual < 6) {
+        elSueno.innerText = "🌙 Ya son más de las 23:00. Es hora de desconectar pantallas para asegurar tus 7 horas de descanso.";
+      } else {
+        elSueno.innerText = "Recuerda planificar tu estudio. Tu recordatorio de descanso se activará a las 23:00.";
+      }
+    }
+
+    actualizarPanel();
   </script>
 </body>
 </html>
-// Estructura de datos del horario de clases y salas (S)
-const horarioEscolar = {
-  // 2ª FEIRA (Lunes)
-  1: [
-    { inicio: "08:00", fin: "08:50", asignatura: "BG", sala: "E10" },
-    { inicio: "08:55", fin: "09:45", asignatura: "BG", sala: "E10" },
-    { inicio: "09:55", fin: "10:45", asignatura: "FQ-A", sala: "E10" },
-    { inicio: "10:55", fin: "11:45", asignatura: "FQ-A", sala: "E10" },
-    { inicio: "11:50", fin: "12:40", asignatura: "MAT-A", sala: "E10" },
-    { inicio: "12:45", fin: "13:35", asignatura: "MAT-A", sala: "E10" }
-  ],
-  // 3ª FEIRA (Martes)
-  2: [
-    { inicio: "08:00", fin: "08:50", asignatura: "FQ-A", sala: "E8" },
-    { inicio: "08:55", fin: "09:45", asignatura: "FQ-A", sala: "E8" },
-    { inicio: "09:55", fin: "10:45", asignatura: "FIL", sala: "E8" },
-    { inicio: "10:55", fin: "11:45", asignatura: "BG", sala: "E8" },
-    { inicio: "11:50", fin: "12:40", asignatura: "ING", sala: "D7" },
-    { inicio: "12:45", fin: "13:35", asignatura: "ING", sala: "D7" }
-  ],
-  // 4ª FEIRA (Miércoles)
-  3: [
-    { inicio: "08:00", fin: "08:50", asignatura: "MAT-A", sala: "A9" },
-    { inicio: "08:55", fin: "09:45", asignatura: "MAT-A", sala: "A9" },
-    { inicio: "09:55", fin: "10:45", asignatura: "EF", sala: "CP2" },
-    { inicio: "10:55", fin: "11:45", asignatura: "FIL", sala: "A7" },
-    { inicio: "11:50", fin: "12:40", asignatura: "FIL", sala: "A7" },
-    { inicio: "12:45", fin: "13:35", asignatura: "PORT", sala: "A7" }
-  ],
-  // 5ª FEIRA (Jueves)
-  4: [
-    { inicio: "08:00", fin: "08:50", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
-    { inicio: "08:55", fin: "09:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
-    { inicio: "09:55", fin: "10:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
-    { inicio: "10:55", fin: "11:45", asignatura: "ING", sala: "A11" },
-    { inicio: "11:50", fin: "12:40", asignatura: "PORT", sala: "A11" },
-    { inicio: "13:55", fin: "14:45", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
-    { inicio: "14:50", fin: "15:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
-    { inicio: "15:50", fin: "16:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" }
-  ],
-  // 6ª FEIRA (Viernes)
-  5: [
-    { inicio: "08:00", fin: "08:50", asignatura: "PORT", sala: "E8" },
-    { inicio: "08:55", fin: "09:45", asignatura: "PORT", sala: "E8" },
-    { inicio: "09:55", fin: "10:45", asignatura: "MAT-A", sala: "E8" },
-    { inicio: "10:55", fin: "11:45", asignatura: "MAT-A", sala: "E8" },
-    { inicio: "11:50", fin: "12:40", asignatura: "EF", sala: "CP1" },
-    { inicio: "12:45", fin: "13:35", asignatura: "EF", sala: "CP1" }
-  ]
-};
-
-// --- LÓGICA DE LA APLICACIÓN Y RECORDATORIOS ---
-
-// 1. Obtener la próxima clase del día actual
-function obtenerProximaClase() {
-  const ahora = new Date();
-  const diaSemana = ahora.getDay(); // 1 = Lunes, 5 = Viernes
-  const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + 
-                     ahora.getMinutes().toString().padStart(2, '0');
-
-  const clasesHoy = horarioEscolar[diaSemana];
-
-  if (!clasesHoy) {
-    return "¡Es fin de semana! Aprovecha para descansar o repasar con calma.";
-  }
-
-  const proxima = clasesHoy.find(clase => clase.inicio > horaActual);
-
-  if (proxima) {
-    return `Tu próxima clase es ${proxima.asignatura} a las ${proxima.inicio} en la sala ${proxima.sala}.`;
-  } else {
-    return "Ya has terminado todas tus clases por hoy. ¡Buen trabajo!";
-  }
-}
-
-// 2. Contador de días faltantes para un examen (Teste)
-function diasParaExamen(fechaExamenString) {
-  const hoy = new Date();
-  const fechaExamen = new Date(fechaExamenString);
-  const diferenciaTiempo = fechaExamen - hoy;
-  const diasFaltantes = Math.ceil(diferenciaTiempo / (1000 * 60 * 60 * 24));
-
-  if (diasFaltantes === 0) return "¡El examen es HOY!";
-  return `Faltan ${diasFaltantes} días para el examen.`;
-}
-
-// 3. Sistema de higiene del sueño (Aviso a las 23:00)
-function verificarHoraDeDormir() {
-  const horaActual = new Date().getHours();
-  if (horaActual >= 23 || horaActual < 6) {
-    return "🌙 Son las 23:00 o más. Es hora de apagar pantallas para cumplir tus 7-8 horas de sueño fundamentales.";
-  }
-  return "Sigue con tu rutina diaria.";
-}
