@@ -10,22 +10,33 @@
     .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     h2 { margin-top: 0; color: #1a73e8; font-size: 1.2rem; }
     p, li { font-size: 1.05rem; color: #333; line-height: 1.5; }
+    ul { padding-left: 0; list-style: none; }
     .destacado { font-weight: bold; color: #2b7de9; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 0.85rem; }
     th { background: #1a73e8; color: white; }
     .hora { font-weight: bold; background: #eef4fc; }
-    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; }
+    
+    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
     #welcome-screen input { padding: 10px; font-size: 1rem; border-radius: 6px; border: none; margin: 10px; text-align: center; }
-    #welcome-screen button { padding: 10px 20px; font-size: 1rem; border-radius: 6px; border: none; background: white; color: #1a73e8; font-weight: bold; cursor: pointer; }
+    #welcome-screen button, .btn-action { padding: 8px 16px; font-size: 0.9rem; border-radius: 6px; border: none; background: #1a73e8; color: white; font-weight: bold; cursor: pointer; }
+    #welcome-screen button { background: white; color: #1a73e8; }
+    
+    .input-form { padding: 8px; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 6px; margin-right: 5px; margin-bottom: 5px; }
+    .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: #f9f9f9; padding: 8px 12px; border-radius: 6px; }
+    .btn-del { background: #e53935; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+    .form-group { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
   </style>
 </head>
 <body>
 
+  <!-- PANTALLA DE BIENVENIDA -->
   <div id="welcome-screen">
-    <h2 id="welcome-title" style="color:white;">¡Hola! ¿Cómo te llamas?</h2>
-    <input type="text" id="username-input" placeholder="Tu nombre..." />
-    <button onclick="guardarNombre()">Entrar</button>
+    <h2 id="welcome-title" style="color:white; font-size: 2rem;">¡Hola! ¿Cómo te llamas?</h2>
+    <div id="form-registro">
+      <input type="text" id="username-input" placeholder="Tu nombre..." />
+      <button onclick="guardarNombre()">Entrar</button>
+    </div>
   </div>
 
   <h1 id="greeting-header">Panel de Estudio</h1>
@@ -35,18 +46,25 @@
     <p id="info-clase">Cargando...</p>
   </div>
 
+  <!-- SECCIÓN DE EXÁMENES EDITABLES (VACÍA POR DEFECTO) -->
   <div class="card">
     <h2>📅 Próximos Exámenes Pendientes</h2>
-    <ul id="lista-examenes"></ul>
+    <div class="form-group">
+      <input type="text" id="examen-materia" class="input-form" placeholder="Materia (ej: Matemática)" />
+      <input type="date" id="examen-fecha" class="input-form" />
+      <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
+    </div>
+    <div id="lista-examenes"></div>
   </div>
 
+  <!-- SECCIÓN DE OBJETIVOS EDITABLES (VACÍA POR DEFECTO) -->
   <div class="card">
     <h2>🎯 Mis Objetivos</h2>
-    <ul>
-      <li>Estudiar 45 min diarios de Matemática A</li>
-      <li>Revisar apuntes de FQ-A antes del examen</li>
-      <li>Mantener hábito de 7h de sueño</li>
-    </ul>
+    <div class="form-group">
+      <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" placeholder="Nuevo objetivo..." />
+      <button onclick="agregarObjetivo()" class="btn-action">Añadir Objetivo</button>
+    </div>
+    <div id="lista-objetivos"></div>
   </div>
 
   <div class="card">
@@ -123,18 +141,23 @@
       0: []
     };
 
-    const examenes = [
-      { fecha: "2026-10-15", asignatura: "Matemática A" },
-      { fecha: "2026-10-22", asignatura: "Física y Química A" },
-      { fecha: "2026-11-05", asignatura: "Biología y Geología" }
-    ];
-
     function inicializarUsuario() {
       const nombre = localStorage.getItem("userName");
+      const formRegistro = document.getElementById("form-registro");
+      const welcomeTitle = document.getElementById("welcome-title");
+      const welcomeScreen = document.getElementById("welcome-screen");
+
       if (nombre) {
-        document.getElementById("welcome-title").innerText = `¡Hola de nuevo, ${nombre}!`;
+        formRegistro.style.display = "none";
+        const frases = [
+          `¡Hola de nuevo, ${nombre}!`,
+          `¡Qué gusto volver a verte, ${nombre}!`
+        ];
+        welcomeTitle.innerText = frases[Math.floor(Math.random() * frases.length)];
         document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
-        setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1200);
+        setTimeout(() => { welcomeScreen.style.display = "none"; }, 1800);
+      } else {
+        formRegistro.style.display = "block";
       }
     }
 
@@ -145,6 +168,95 @@
         document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
         document.getElementById("welcome-screen").style.display = "none";
       }
+    }
+
+    // GESTIÓN DE EXÁMENES EDITABLES (VACÍO INICIALMENTE)
+    function cargarExamenes() {
+      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+      const contenedor = document.getElementById("lista-examenes");
+      contenedor.innerHTML = "";
+      
+      if (guardados.length === 0) {
+        contenedor.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes programados.</p>";
+        return;
+      }
+
+      const ahora = new Date();
+      guardados.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)).forEach((ex, index) => {
+        const diff = Math.ceil((new Date(ex.fecha) - ahora) / (1000 * 60 * 60 * 24));
+        const div = document.createElement("div");
+        div.className = "item-list";
+        
+        let texto = "";
+        if (diff > 0) {
+          texto = `Faltan <span class="destacado">${diff} días</span> para ${ex.asignatura} (${ex.fecha}).`;
+        } else if (diff === 0) {
+          texto = `¡El examen de <span class="destacado">${ex.asignatura}</span> es HOY!`;
+        } else {
+          texto = `Examen de ${ex.asignatura} (${ex.fecha}) - Finalizado.`;
+        }
+
+        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function agregarExamen() {
+      const materia = document.getElementById("examen-materia").value.trim();
+      const fecha = document.getElementById("examen-fecha").value;
+      if (materia !== "" && fecha !== "") {
+        const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+        guardados.push({ asignatura: materia, fecha: fecha });
+        localStorage.setItem("misExamenes", JSON.stringify(guardados));
+        document.getElementById("examen-materia").value = "";
+        document.getElementById("examen-fecha").value = "";
+        cargarExamenes();
+      }
+    }
+
+    function borrarExamen(index) {
+      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+      guardados.splice(index, 1);
+      localStorage.setItem("misExamenes", JSON.stringify(guardados));
+      cargarExamenes();
+    }
+
+    // GESTIÓN DE OBJETIVOS EDITABLES (VACÍO INICIALMENTE)
+    function cargarObjetivos() {
+      const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+      const contenedor = document.getElementById("lista-objetivos");
+      contenedor.innerHTML = "";
+
+      if (guardados.length === 0) {
+        contenedor.innerHTML = "<p style='color:#777;'>No has añadido objetivos aún.</p>";
+        return;
+      }
+
+      guardados.forEach((obj, index) => {
+        const div = document.createElement("div");
+        div.className = "item-list";
+        div.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function agregarObjetivo() {
+      const input = document.getElementById("nuevo-objetivo");
+      const texto = input.value.trim();
+      if (texto !== "") {
+        const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+        guardados.push(texto);
+        localStorage.setItem("misObjetivos", JSON.stringify(guardados));
+        input.value = "";
+        cargarObjetivos();
+      }
+    }
+
+    function borrarObjetivo(index) {
+      const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+      guardados.splice(index, 1);
+      localStorage.setItem("misObjetivos", JSON.stringify(guardados));
+      cargarObjetivos();
     }
 
     function actualizarPanel() {
@@ -166,15 +278,6 @@
         }
       }
 
-      const elExamenes = document.getElementById("lista-examenes");
-      elExamenes.innerHTML = "";
-      examenes.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)).forEach(ex => {
-        const diff = Math.ceil((new Date(ex.fecha) - ahora) / (1000 * 60 * 60 * 24));
-        const li = document.createElement("li");
-        li.innerHTML = diff > 0 ? `Faltan <span class="destacado">${diff} días</span> para ${ex.asignatura} (${ex.fecha}).` : `Teste de ${ex.asignatura} es hoy o ya pasó.`;
-        elExamenes.appendChild(li);
-      });
-
       const horaActual = ahora.getHours();
       document.getElementById("info-sueno").innerText = (horaActual >= 23 || horaActual < 6) 
         ? "🌙 Son más de las 23:00. Apaga pantallas para tus 7h de sueño fundamentales." 
@@ -182,6 +285,8 @@
     }
 
     inicializarUsuario();
+    cargarExamenes();
+    cargarObjetivos();
     actualizarPanel();
   </script>
 </body>
