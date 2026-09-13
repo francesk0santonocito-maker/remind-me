@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Horario y Hábitos</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f2f5; margin: 0; }
+    h1 { color: #1a73e8; text-align: center; margin-bottom: 25px; }
+    .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; color: #1a73e8; font-size: 1.2rem; }
+    p { font-size: 1.05rem; color: #333; line-height: 1.5; margin: 0; }
+    .destacado { font-weight: bold; color: #2b7de9; }
+  </style>
+</head>
+<body>
+
+  <h1>Panel de Control de Estudio</h1>
+
+  <div class="card">
+    <h2>Próxima Clase</h2>
+    <p id="info-clase">Cargando...</p>
+  </div>
+
+  <div class="card">
+    <h2>Higiene del Sueño</h2>
+    <p id="info-sueno">Cargando...</p>
+  </div>
+
+  <script>
+    const horarioEscolar = {
+      1: [
+        { inicio: "08:00", fin: "08:50", asignatura: "BG", sala: "E10" },
+        { inicio: "08:55", fin: "09:45", asignatura: "BG", sala: "E10" },
+        { inicio: "09:55", fin: "10:45", asignatura: "FQ-A", sala: "E10" },
+        { inicio: "10:55", fin: "11:45", asignatura: "FQ-A", sala: "E10" },
+        { inicio: "11:50", fin: "12:40", asignatura: "MAT-A", sala: "E10" },
+        { inicio: "12:45", fin: "13:35", asignatura: "MAT-A", sala: "E10" }
+      ],
+      2: [
+        { inicio: "08:00", fin: "08:50", asignatura: "FQ-A", sala: "E8" },
+        { inicio: "08:55", fin: "09:45", asignatura: "FQ-A", sala: "E8" },
+        { inicio: "09:55", fin: "10:45", asignatura: "FIL", sala: "E8" },
+        { inicio: "10:55", fin: "11:45", asignatura: "BG", sala: "E8" },
+        { inicio: "11:50", fin: "12:40", asignatura: "ING", sala: "D7" },
+        { inicio: "12:45", fin: "13:35", asignatura: "ING", sala: "D7" }
+      ],
+      3: [
+        { inicio: "08:00", fin: "08:50", asignatura: "MAT-A", sala: "A9" },
+        { inicio: "08:55", fin: "09:45", asignatura: "MAT-A", sala: "A9" },
+        { inicio: "09:55", fin: "10:45", asignatura: "EF", sala: "CP2" },
+        { inicio: "10:55", fin: "11:45", asignatura: "FIL", sala: "A7" },
+        { inicio: "11:50", fin: "12:40", asignatura: "FIL", sala: "A7" },
+        { inicio: "12:45", fin: "13:35", asignatura: "PORT", sala: "A7" }
+      ],
+      4: [
+        { inicio: "08:00", fin: "08:50", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
+        { inicio: "08:55", fin: "09:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
+        { inicio: "09:55", fin: "10:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
+        { inicio: "10:55", fin: "11:45", asignatura: "ING", sala: "A11" },
+        { inicio: "11:50", fin: "12:40", asignatura: "PORT", sala: "A11" },
+        { inicio: "13:55", fin: "14:45", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
+        { inicio: "14:50", fin: "15:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
+        { inicio: "15:50", fin: "16:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" }
+      ],
+      5: [
+        { inicio: "08:00", fin: "08:50", asignatura: "PORT", sala: "E8" },
+        { inicio: "08:55", fin: "09:45", asignatura: "PORT", sala: "E8" },
+        { inicio: "09:55", fin: "10:45", asignatura: "MAT-A", sala: "E8" },
+        { inicio: "10:55", fin: "11:45", asignatura: "MAT-A", sala: "E8" },
+        { inicio: "11:50", fin: "12:40", asignatura: "EF", sala: "CP1" },
+        { inicio: "12:45", fin: "13:35", asignatura: "EF", sala: "CP1" }
+      ]
+    };
+
+    function actualizarPanel() {
+      const ahora = new Date();
+      const diaSemana = ahora.getDay();
+      const horaStr = ahora.getHours().toString().padStart(2, '0') + ":" + 
+                      ahora.getMinutes().toString().padStart(2, '0');
+
+      const clasesHoy = horarioEscolar[diaSemana];
+      const elClase = document.getElementById("info-clase");
+
+      if (!clasesHoy) {
+        elClase.innerText = "¡Es fin de semana! Aprovecha para descansar o repasar.";
+      } else {
+        const proxima = clasesHoy.find(c => c.inicio > horaStr);
+        if (proxima) {
+          elClase.innerHTML = `Tu próxima clase es <span class="destacado">${proxima.asignatura}</span> a las <span class="destacado">${proxima.inicio}</span> en la sala <span class="destacado">${proxima.sala}</span>.`;
+        } else {
+          elClase.innerText = "Ya terminaste todas tus clases por hoy. ¡Buen trabajo!";
+        }
+      }
+
+      const horaActual = ahora.getHours();
+      const elSueno = document.getElementById("info-sueno");
+      if (horaActual >= 23 || horaActual < 6) {
+        elSueno.innerText = "🌙 Ya son más de las 23:00. Es hora de desconectar pantallas para asegurar tus 7 horas de descanso.";
+      } else {
+        elSueno.innerText = "Recuerda planificar tu estudio. Tu recordatorio de descanso se activará a las 23:00.";
+      }
+    }
+
+    actualizarPanel();
+  </script>
+</body>
+</html>
