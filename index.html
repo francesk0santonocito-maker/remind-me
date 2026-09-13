@@ -25,12 +25,11 @@
 
     body { font-family: Arial, sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: background 0.3s, color 0.3s; }
     
-    /* ENCABEZADO Y MENÚ HAMBURGUESA */
     .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; }
     .hamburger { font-size: 1.8rem; cursor: pointer; background: none; border: none; color: var(--text-color); padding: 5px; }
     h1 { color: var(--primary); text-align: center; margin: 0; flex-grow: 1; font-size: 1.5rem; }
     
-    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 180px; }
+    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 220px; }
     .nav-menu button { width: 100%; text-align: left; padding: 12px; background: none; border: none; color: var(--text-color); font-size: 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
     .nav-menu button:last-child { border-bottom: none; }
     .nav-menu button:hover { background: var(--item-bg); }
@@ -39,7 +38,6 @@
     h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; }
     p, li { font-size: 1.05rem; line-height: 1.5; }
     
-    /* INDICADORES DE OBJETIVOS (PUNTOS) */
     .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; cursor: pointer; }
     .dot-red { background-color: #e53935; }
     .dot-green { background-color: #4caf50; }
@@ -58,16 +56,21 @@
     .btn-del { background: #e53935; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
     .form-group { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
 
-    /* SECCIONES DE LA PÁGINA */
     .section-page { display: none; }
     .section-active { display: block; }
     .progress-bar-container { background: var(--item-bg); border-radius: 10px; height: 20px; width: 100%; overflow: hidden; margin-top: 8px; border: 1px solid var(--border-color); }
     .progress-bar { background: #4caf50; height: 100%; width: 0%; transition: width 0.4s; }
+    
+    .timer-display { font-size: 3rem; font-weight: bold; text-align: center; margin: 15px 0; color: var(--primary); }
+    .timer-controls { display: flex; justify-content: center; gap: 10px; }
+    textarea.notes-area { width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--item-bg); color: var(--text-color); font-family: inherit; resize: vertical; box-sizing: border-box; }
+    
+    .materia-card { border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 12px; background: var(--item-bg); }
+    .promedio-tag { font-weight: bold; color: var(--primary); float: right; }
   </style>
 </head>
 <body>
 
-  <!-- PANTALLA DE BIENVENIDA -->
   <div id="welcome-screen">
     <h2 id="welcome-title" style="color:white; font-size: 2rem;">¡Hola! ¿Cómo te llamas?</h2>
     <div id="form-registro">
@@ -76,17 +79,20 @@
     </div>
   </div>
 
-  <!-- ENCABEZADO CON HAMBURGUESA -->
   <div class="top-bar">
     <button class="hamburger" onclick="toggleMenu()">☰</button>
-    <h1 id="greeting-header">Panel de Estudio</h1>
+    <h1 id="greeting-header">Panel de Control</h1>
     <div id="nav-menu" class="nav-menu">
       <button onclick="navegarA('panel')">Panel de Control</button>
+      <button onclick="navegarA('estudio')">Modo Estudio (Pomodoro)</button>
+      <button onclick="navegarA('examenes')">Exámenes y Notas</button>
       <button onclick="navegarA('objetivos')">Mis Objetivos</button>
+      <button onclick="navegarA('notas')">Notas Rápidas</button>
+      <button onclick="navegarA('ajustes')">Ajustes / Copia</button>
     </div>
   </div>
 
-  <!-- VISTA 1: PANEL DE CONTROL -->
+  <!-- PANEL DE CONTROL -->
   <div id="page-panel" class="section-page section-active">
     <div class="card">
       <h2>📌 Próxima Clase</h2>
@@ -94,13 +100,8 @@
     </div>
 
     <div class="card">
-      <h2>📅 Próximos Exámenes Pendientes</h2>
-      <div class="form-group">
-        <input type="text" id="examen-materia" class="input-form" placeholder="Materia" />
-        <input type="date" id="examen-fecha" class="input-form" />
-        <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
-      </div>
-      <div id="lista-examenes"></div>
+      <h2>📅 Próximos Exámenes Destacados</h2>
+      <div id="lista-examenes-resumen"></div>
     </div>
 
     <div class="card">
@@ -135,7 +136,40 @@
     </div>
   </div>
 
-  <!-- VISTA 2: MIS OBJETIVOS Y REGISTRO MENSUAL -->
+  <!-- MODO ESTUDIO (POMODORO) -->
+  <div id="page-estudio" class="section-page">
+    <div class="card">
+      <h2>⏱️ Modo Estudio (Pomodoro)</h2>
+      <p style="text-align: center;" id="timer-mode">Sesión de Estudio (25 min)</p>
+      <div class="timer-display" id="timer-display">25:00</div>
+      <div class="timer-controls">
+        <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
+        <button onclick="pausarTimer()" class="btn-action" style="background: #f57c00;">Pausar</button>
+        <button onclick="reiniciarTimer()" class="btn-action" style="background: #e53935;">Reiniciar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXÁMENES Y NOTAS -->
+  <div id="page-examenes" class="section-page">
+    <div class="card">
+      <h2>📅 Añadir Próximo Examen</h2>
+      <div class="form-group">
+        <select id="examen-materia-select" class="input-form"></select>
+        <input type="date" id="examen-fecha" class="input-form" />
+        <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
+      </div>
+      <h3>Exámenes Programados</h3>
+      <div id="lista-examenes-completa"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Calificaciones y Promedios por Asignatura</h2>
+      <div id="contenedor-asignaturas"></div>
+    </div>
+  </div>
+
+  <!-- MIS OBJETIVOS -->
   <div id="page-objetivos" class="section-page">
     <div class="card">
       <h2>🎯 Administrar Objetivos</h2>
@@ -165,7 +199,29 @@
     </div>
   </div>
 
+  <!-- NOTAS RÁPIDAS -->
+  <div id="page-notas" class="section-page">
+    <div class="card">
+      <h2>📝 Apuntes y Notas Rápidas</h2>
+      <textarea id="notas-texto" class="notes-area" placeholder="Escribe tus pendientes o notas aquí..." oninput="guardarNotas()"></textarea>
+    </div>
+  </div>
+
+  <!-- AJUSTES -->
+  <div id="page-ajustes" class="section-page">
+    <div class="card">
+      <h2>⚙️ Copia de Seguridad</h2>
+      <p>Guarda tus datos o transfiérelos a otro dispositivo fácilmente.</p>
+      <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
+      <br><br>
+      <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
+      <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: #4caf50;">Restaurar Datos desde Archivo</button>
+    </div>
+  </div>
+
   <script>
+    const asignaturasBase = ["Biología y Geología (BG)", "Física y Química (FQ)", "Matemáticas (MAT)", "Filosofía (FIL)", "Portugués (PORT)", "Inglés (ING)", "Educación Física (EF)"];
+
     const horarioEscolar = {
       1: [{ inicio: "08:00", asignatura: "BG", sala: "E10" }, { inicio: "09:55", asignatura: "FQ-A", sala: "E10" }, { inicio: "11:50", asignatura: "MAT-A", sala: "E10" }],
       2: [{ inicio: "08:00", asignatura: "FQ-A", sala: "E8" }, { inicio: "09:55", asignatura: "FIL", sala: "E8" }, { inicio: "11:50", asignatura: "ING", sala: "D7" }],
@@ -177,11 +233,8 @@
 
     function aplicarModoOscuroAuto() {
       const hora = new Date().getHours();
-      if (hora >= 20 || hora < 6) {
-        document.body.classList.add("dark-mode");
-      } else {
-        document.body.classList.remove("dark-mode");
-      }
+      if (hora >= 20 || hora < 6) document.body.classList.add("dark-mode");
+      else document.body.classList.remove("dark-mode");
     }
 
     function toggleMenu() {
@@ -191,24 +244,25 @@
 
     function navegarA(pagina) {
       document.querySelectorAll(".section-page").forEach(p => p.classList.remove("section-active"));
-      document.getElementById(pagina === "panel" ? "page-panel" : "page-objetivos").classList.add("section-active");
+      const mapaPaginas = {
+        'panel': 'page-panel',
+        'estudio': 'page-estudio',
+        'examenes': 'page-examenes',
+        'objetivos': 'page-objetivos',
+        'notas': 'page-notas',
+        'ajustes': 'page-ajustes'
+      };
+      document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
       toggleMenu();
     }
 
     function inicializarUsuario() {
       const nombre = localStorage.getItem("userName");
-      const formRegistro = document.getElementById("form-registro");
-      const welcomeTitle = document.getElementById("welcome-title");
-      const welcomeScreen = document.getElementById("welcome-screen");
-
       if (nombre) {
-        formRegistro.style.display = "none";
-        const frases = [`¡Hola de nuevo, ${nombre}!`, `¡Qué gusto volver a verte, ${nombre}!`];
-        welcomeTitle.innerText = frases[Math.floor(Math.random() * frases.length)];
+        document.getElementById("form-registro").style.display = "none";
+        document.getElementById("welcome-title").innerText = `¡Hola de nuevo, ${nombre}!`;
         document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
-        setTimeout(() => { welcomeScreen.style.display = "none"; }, 1800);
-      } else {
-        formRegistro.style.display = "block";
+        setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1500);
       }
     }
 
@@ -221,7 +275,108 @@
       }
     }
 
-    // GESTIÓN DE OBJETIVOS Y PUNTOS VERDES/ROJOS
+    // EXÁMENES Y PROMEDIOS
+    function inicializarExamenesYNotas() {
+      const select = document.getElementById("examen-materia-select");
+      select.innerHTML = "";
+      asignaturasBase.forEach(asig => {
+        const option = document.createElement("option");
+        option.value = asig;
+        option.innerText = asig;
+        select.appendChild(option);
+      });
+
+      cargarExamenes();
+      cargarAsignaturasYNotas();
+    }
+
+    function cargarExamenes() {
+      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+      const contResumen = document.getElementById("lista-examenes-resumen");
+      const contCompleto = document.getElementById("lista-examenes-completa");
+      contResumen.innerHTML = "";
+      contCompleto.innerHTML = "";
+
+      if (guardados.length === 0) {
+        contResumen.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes.</p>";
+        contCompleto.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes.</p>";
+        return;
+      }
+
+      const ahora = new Date();
+      guardados.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)).forEach((ex, index) => {
+        const diff = Math.ceil((new Date(ex.fecha) - ahora) / (1000 * 60 * 60 * 24));
+        const div = document.createElement("div");
+        div.className = "item-list";
+        let texto = diff > 0 ? `Faltan <span style='font-weight:bold; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha}).` : `Examen de ${ex.asignatura} (${ex.fecha}).`;
+        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
+        
+        contCompleto.appendChild(div.cloneNode(true));
+        contResumen.appendChild(div);
+      });
+    }
+
+    function agregarExamen() {
+      const materia = document.getElementById("examen-materia-select").value;
+      const fecha = document.getElementById("examen-fecha").value;
+      if (materia !== "" && fecha !== "") {
+        const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+        guardados.push({ asignatura: materia, fecha: fecha });
+        localStorage.setItem("misExamenes", JSON.stringify(guardados));
+        document.getElementById("examen-fecha").value = "";
+        cargarExamenes();
+      }
+    }
+
+    function borrarExamen(index) {
+      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+      guardados.splice(index, 1);
+      localStorage.setItem("misExamenes", JSON.stringify(guardados));
+      cargarExamenes();
+    }
+
+    function cargarAsignaturasYNotas() {
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const contenedor = document.getElementById("contenedor-asignaturas");
+      contenedor.innerHTML = "";
+
+      asignaturasBase.forEach((asig) => {
+        const listaNotas = notasGuardadas[asig] || [];
+        const suma = listaNotas.reduce((a, b) => a + b, 0);
+        const promedio = listaNotas.length > 0 ? (suma / listaNotas.length).toFixed(1) : "-";
+
+        const div = document.createElement("div");
+        div.className = "materia-card";
+        div.innerHTML = `
+          <div>
+            <strong>${asig}</strong>
+            <span class="promedio-tag">Promedio: ${promedio}</span>
+          </div>
+          <div style="margin-top: 8px;" class="form-group">
+            <input type="number" step="0.1" min="0" max="20" placeholder="Nota" id="input-nota-${asig}" class="input-form" style="width: 80px;" />
+            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
+          </div>
+          <div style="font-size: 0.9rem; color: #666;">
+            Notas: ${listaNotas.length > 0 ? listaNotas.join(", ") : "Sin notas registradas"}
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function agregarNota(asignatura) {
+      const input = document.getElementById(`input-nota-${asignatura}`);
+      const valor = parseFloat(input.value);
+      if (!isNaN(valor)) {
+        const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+        if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = [];
+        notasGuardadas[asignatura].push(valor);
+        localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
+        cargarAsignaturasYNotas();
+      }
+    }
+
+    // OBJETIVOS
     function cargarObjetivos() {
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       const fechaHoy = new Date().toISOString().split('T')[0];
@@ -235,14 +390,13 @@
       contAdmin.innerHTML = "";
 
       if (guardados.length === 0) {
-        contDiario.innerHTML = "<p style='color:#777;'>Añade objetivos en el menú 'Mis Objetivos'.</p>";
+        contDiario.innerHTML = "<p style='color:#777;'>Añade objetivos en 'Mis Objetivos'.</p>";
         contAdmin.innerHTML = "<p style='color:#777;'>No has añadido objetivos aún.</p>";
       }
 
       guardados.forEach((obj, index) => {
         const cumplido = estados[fechaHoy][index] || false;
         
-        // Vista Panel Diario
         const divDiario = document.createElement("div");
         divDiario.className = "item-list";
         divDiario.innerHTML = `
@@ -253,7 +407,6 @@
         `;
         contDiario.appendChild(divDiario);
 
-        // Vista Administración
         const divAdmin = document.createElement("div");
         divAdmin.className = "item-list";
         divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
@@ -292,7 +445,6 @@
       cargarObjetivos();
     }
 
-    // CÁLCULO DE ÉXITO Y TABLA MENSUAL
     function calcularPorcentajeExito() {
       const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
@@ -333,46 +485,92 @@
       document.getElementById("progress-bar").style.width = `${porcentaje}%`;
     }
 
-    // EXÁMENES
-    function cargarExamenes() {
-      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-      const contenedor = document.getElementById("lista-examenes");
-      contenedor.innerHTML = "";
+    // POMODORO
+    let timerInterval = null;
+    let tiempoRestante = 25 * 60;
+    let modoEstudio = true;
 
-      if (guardados.length === 0) {
-        contenedor.innerHTML = "<p style='color:#777;'>No hay exámenes pendientes.</p>";
-        return;
-      }
-
-      const ahora = new Date();
-      guardados.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)).forEach((ex, index) => {
-        const diff = Math.ceil((new Date(ex.fecha) - ahora) / (1000 * 60 * 60 * 24));
-        const div = document.createElement("div");
-        div.className = "item-list";
-        let texto = diff > 0 ? `Faltan <span style='font-weight:bold; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha}).` : `Examen de ${ex.asignatura} es hoy o finalizado.`;
-        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
-        contenedor.appendChild(div);
-      });
+    function actualizarDisplayTimer() {
+      const min = Math.floor(tiempoRestante / 60).toString().padStart(2, '0');
+      const sec = (tiempoRestante % 60).toString().padStart(2, '0');
+      document.getElementById("timer-display").innerText = `${min}:${sec}`;
     }
 
-    function agregarExamen() {
-      const materia = document.getElementById("examen-materia").value.trim();
-      const fecha = document.getElementById("examen-fecha").value;
-      if (materia !== "" && fecha !== "") {
-        const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-        guardados.push({ asignatura: materia, fecha: fecha });
-        localStorage.setItem("misExamenes", JSON.stringify(guardados));
-        document.getElementById("examen-materia").value = "";
-        document.getElementById("examen-fecha").value = "";
-        cargarExamenes();
-      }
+    function iniciarTimer() {
+      if (timerInterval) return;
+      timerInterval = setInterval(() => {
+        if (tiempoRestante > 0) {
+          tiempoRestante--;
+          actualizarDisplayTimer();
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          modoEstudio = !modoEstudio;
+          tiempoRestante = modoEstudio ? 25 * 60 : 5 * 60;
+          document.getElementById("timer-mode").innerText = modoEstudio ? "Sesión de Estudio (25 min)" : "Tiempo de Descanso (5 min)";
+          alert(modoEstudio ? "¡Tiempo de descansar finalizado! Vuelve al estudio." : "¡Pomodoro completado! Tómate un descanso de 5 min.");
+          actualizarDisplayTimer();
+        }
+      }, 1000);
     }
 
-    function borrarExamen(index) {
-      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-      guardados.splice(index, 1);
-      localStorage.setItem("misExamenes", JSON.stringify(guardados));
-      cargarExamenes();
+    function pausarTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function reiniciarTimer() {
+      pausarTimer();
+      modoEstudio = true;
+      tiempoRestante = 25 * 60;
+      document.getElementById("timer-mode").innerText = "Sesión de Estudio (25 min)";
+      actualizarDisplayTimer();
+    }
+
+    // NOTAS
+    function cargarNotas() {
+      document.getElementById("notas-texto").value = localStorage.getItem("misNotas") || "";
+    }
+
+    function guardarNotas() {
+      localStorage.setItem("misNotas", document.getElementById("notas-texto").value);
+    }
+
+    // EXPORTACIÓN / IMPORTACIÓN
+    function exportarDatos() {
+      const datos = {
+        userName: localStorage.getItem("userName"),
+        misObjetivos: localStorage.getItem("misObjetivos"),
+        estadosObjetivos: localStorage.getItem("estadosObjetivos"),
+        misExamenes: localStorage.getItem("misExamenes"),
+        notasAsignaturas: localStorage.getItem("notasAsignaturas"),
+        misNotas: localStorage.getItem("misNotas")
+      };
+      const blob = new Blob([JSON.stringify(datos)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "copia_seguridad_estudios.json";
+      a.click();
+    }
+
+    function importarDatos(event) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const datos = JSON.parse(e.target.result);
+          if (datos.userName) localStorage.setItem("userName", datos.userName);
+          if (datos.misObjetivos) localStorage.setItem("misObjetivos", datos.misObjetivos);
+          if (datos.estadosObjetivos) localStorage.setItem("estadosObjetivos", datos.estadosObjetivos);
+          if (datos.misExamenes) localStorage.setItem("misExamenes", datos.misExamenes);
+          if (datos.notasAsignaturas) localStorage.setItem("notasAsignaturas", datos.notasAsignaturas);
+          if (datos.misNotas) localStorage.setItem("misNotas", datos.misNotas);
+          alert("¡Datos restaurados con éxito!");
+          location.reload();
+        } catch (err) {
+          alert("Error al cargar el archivo de copia de seguridad.");
+        }
+      };
+      reader.readAsText(event.target.files[0]);
     }
 
     function actualizarPanel() {
@@ -383,7 +581,7 @@
       const elClase = document.getElementById("info-clase");
 
       if (!clasesHoy || clasesHoy.length === 0) {
-        elClase.innerHTML = "¡No tienes clases hoy! 📖 <strong>Recordatorio:</strong> ¿estudiaste un poco hoy?";
+        elClase.innerHTML = "¡No tienes clases hoy! 📖 <strong>Recordatorio:</strong> ¿Ya estudiaste un poco hoy?";
       } else {
         const proxima = clasesHoy.find(c => c.inicio > horaStr);
         elClase.innerHTML = proxima ? `Próxima actividad: <strong>${proxima.asignatura}</strong> a las ${proxima.inicio} (${proxima.sala}).` : "Terminaste por hoy. 📚 Repasa para tus próximos exámenes.";
@@ -397,8 +595,9 @@
 
     aplicarModoOscuroAuto();
     inicializarUsuario();
-    cargarExamenes();
+    inicializarExamenesYNotas();
     cargarObjetivos();
+    cargarNotas();
     actualizarPanel();
   </script>
 </body>
