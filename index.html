@@ -5,37 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Horario y Hábitos</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f2f5; margin: 0; }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; margin: 0; }
     h1 { color: #1a73e8; text-align: center; margin-bottom: 25px; }
     .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; color: #1a73e8; font-size: 1.2rem; margin-bottom: 12px; }
-    p, li { font-size: 1.05rem; color: #333; line-height: 1.5; margin: 0; }
-    ul { padding-left: 20px; margin: 0; }
-    li { margin-bottom: 8px; }
+    h2 { margin-top: 0; color: #1a73e8; font-size: 1.2rem; }
+    p, li { font-size: 1.05rem; color: #333; line-height: 1.5; }
     .destacado { font-weight: bold; color: #2b7de9; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 0.9rem; }
-    th { background-color: #1a73e8; color: white; }
-    tr:nth-child(even) { background-color: #f9f9f9; }
-    .hora-col { font-weight: bold; background-color: #eef4fc; }
+    th, td { border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 0.85rem; }
+    th { background: #1a73e8; color: white; }
+    .hora { font-weight: bold; background: #eef4fc; }
+    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; }
+    #welcome-screen input { padding: 10px; font-size: 1rem; border-radius: 6px; border: none; margin: 10px; text-align: center; }
+    #welcome-screen button { padding: 10px 20px; font-size: 1rem; border-radius: 6px; border: none; background: white; color: #1a73e8; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <h1>Panel de Control de Estudio</h1>
+  <div id="welcome-screen">
+    <h2 id="welcome-title" style="color:white;">¡Hola! ¿Cómo te llamas?</h2>
+    <input type="text" id="username-input" placeholder="Tu nombre..." />
+    <button onclick="guardarNombre()">Entrar</button>
+  </div>
+
+  <h1 id="greeting-header">Panel de Estudio</h1>
 
   <div class="card">
-    <h2>Próxima Clase</h2>
+    <h2>📌 Próxima Clase</h2>
     <p id="info-clase">Cargando...</p>
   </div>
 
   <div class="card">
-    <h2>Próximo Examen / Teste</h2>
-    <p id="info-examen">Cargando...</p>
+    <h2>📅 Próximos Exámenes Pendientes</h2>
+    <ul id="lista-examenes"></ul>
   </div>
 
   <div class="card">
-    <h2>Mis Objetivos</h2>
+    <h2>🎯 Mis Objetivos</h2>
     <ul>
       <li>Estudiar 45 min diarios de Matemática A</li>
       <li>Revisar apuntes de FQ-A antes del examen</li>
@@ -44,97 +50,26 @@
   </div>
 
   <div class="card">
-    <h2>Higiene del Sueño</h2>
+    <h2>🌙 Higiene del Sueño</h2>
     <p id="info-sueno">Cargando...</p>
   </div>
 
   <div class="card">
-    <h2>Horario Semanal Completo</h2>
+    <h2>🗓️ Horario Semanal Completo</h2>
     <div style="overflow-x:auto;">
       <table>
         <thead>
-          <tr>
-            <th>Hora</th>
-            <th>Lunes</th>
-            <th>Martes</th>
-            <th>Miércoles</th>
-            <th>Jueves</th>
-            <th>Viernes</th>
-          </tr>
+          <tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sáb/Dom</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="hora-col">08:00 - 08:50</td>
-            <td>BG (E10)</td>
-            <td>FQ-A (E8)</td>
-            <td>MAT-A (A9)</td>
-            <td>FQ-A a) / BG b) (E2/E9)</td>
-            <td>PORT (E8)</td>
-          </tr>
-          <tr>
-            <td class="hora-col">08:55 - 09:45</td>
-            <td>BG (E10)</td>
-            <td>FQ-A (E8)</td>
-            <td>MAT-A (A9)</td>
-            <td>FQ-A a) / BG b) (E2/E9)</td>
-            <td>PORT (E8)</td>
-          </tr>
-          <tr>
-            <td class="hora-col">09:55 - 10:45</td>
-            <td>FQ-A (E10)</td>
-            <td>FIL (E8)</td>
-            <td>EF (CP2)</td>
-            <td>FQ-A a) / BG b) (E2/E9)</td>
-            <td>MAT-A (E8)</td>
-          </tr>
-          <tr>
-            <td class="hora-col">10:55 - 11:45</td>
-            <td>FQ-A (E10)</td>
-            <td>BG (E8)</td>
-            <td>FIL (A7)</td>
-            <td>ING (A11)</td>
-            <td>MAT-A (E8)</td>
-          </tr>
-          <tr>
-            <td class="hora-col">11:50 - 12:40</td>
-            <td>MAT-A (E10)</td>
-            <td>ING (D7)</td>
-            <td>FIL (A7)</td>
-            <td>PORT (A11)</td>
-            <td>EF (CP1)</td>
-          </tr>
-          <tr>
-            <td class="hora-col">12:45 - 13:35</td>
-            <td>MAT-A (E10)</td>
-            <td>ING (D7)</td>
-            <td>PORT (A7)</td>
-            <td>-</td>
-            <td>EF (CP1)</td>
-          </tr>
-          <tr>
-            <td class="hora-col">13:55 - 14:45</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>FQ-A a) / BG a) (E2/E9)</td>
-            <td>-</td>
-          </tr>
-          <tr>
-            <td class="hora-col">14:50 - 15:40</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>FQ-A a) / BG a) (E2/E9)</td>
-            <td>-</td>
-          </tr>
-          <tr>
-            <td class="hora-col">15:50 - 16:40</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>FQ-A a) / BG a) (E2/E9)</td>
-            <td>-</td>
-          </tr>
+          <tr><td class="hora">08:00-08:50</td><td>BG (E10)</td><td>FQ-A (E8)</td><td>MAT-A (A9)</td><td>FQ/BG (E2/E9)</td><td>PORT (E8)</td><td>-</td></tr>
+          <tr><td class="hora">08:55-09:45</td><td>BG (E10)</td><td>FQ-A (E8)</td><td>MAT-A (A9)</td><td>FQ/BG (E2/E9)</td><td>PORT (E8)</td><td>-</td></tr>
+          <tr><td class="hora">09:55-10:45</td><td>FQ-A (E10)</td><td>FIL (E8)</td><td>EF (CP2)</td><td>FQ/BG (E2/E9)</td><td>MAT-A (E8)</td><td>Hobby</td></tr>
+          <tr><td class="hora">10:55-11:45</td><td>FQ-A (E10)</td><td>BG (E8)</td><td>FIL (A7)</td><td>ING (A11)</td><td>MAT-A (E8)</td><td>Hobby</td></tr>
+          <tr><td class="hora">11:50-12:40</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>FIL (A7)</td><td>PORT (A11)</td><td>EF (CP1)</td><td>-</td></tr>
+          <tr><td class="hora">12:45-13:35</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>PORT (A7)</td><td>-</td><td>EF (CP1)</td><td>-</td></tr>
+          <tr><td class="hora">13:55-16:40</td><td>-</td><td>-</td><td>-</td><td>FQ/BG (E2/E9)</td><td>-</td><td>-</td></tr>
+          <tr><td class="hora">17:00-18:30</td><td>Deporte</td><td>-</td><td>Deporte</td><td>-</td><td>-</td><td>-</td></tr>
         </tbody>
       </table>
     </div>
@@ -143,95 +78,110 @@
   <script>
     const horarioEscolar = {
       1: [
-        { inicio: "08:00", fin: "08:50", asignatura: "BG", sala: "E10" },
-        { inicio: "08:55", fin: "09:45", asignatura: "BG", sala: "E10" },
-        { inicio: "09:55", fin: "10:45", asignatura: "FQ-A", sala: "E10" },
-        { inicio: "10:55", fin: "11:45", asignatura: "FQ-A", sala: "E10" },
-        { inicio: "11:50", fin: "12:40", asignatura: "MAT-A", sala: "E10" },
-        { inicio: "12:45", fin: "13:35", asignatura: "MAT-A", sala: "E10" }
+        { inicio: "08:00", asignatura: "BG", sala: "E10" },
+        { inicio: "08:55", asignatura: "BG", sala: "E10" },
+        { inicio: "09:55", asignatura: "FQ-A", sala: "E10" },
+        { inicio: "10:55", asignatura: "FQ-A", sala: "E10" },
+        { inicio: "11:50", asignatura: "MAT-A", sala: "E10" },
+        { inicio: "12:45", asignatura: "MAT-A", sala: "E10" },
+        { inicio: "17:00", asignatura: "Deporte", sala: "Cancha" }
       ],
       2: [
-        { inicio: "08:00", fin: "08:50", asignatura: "FQ-A", sala: "E8" },
-        { inicio: "08:55", fin: "09:45", asignatura: "FQ-A", sala: "E8" },
-        { inicio: "09:55", fin: "10:45", asignatura: "FIL", sala: "E8" },
-        { inicio: "10:55", fin: "11:45", asignatura: "BG", sala: "E8" },
-        { inicio: "11:50", fin: "12:40", asignatura: "ING", sala: "D7" },
-        { inicio: "12:45", fin: "13:35", asignatura: "ING", sala: "D7" }
+        { inicio: "08:00", asignatura: "FQ-A", sala: "E8" },
+        { inicio: "08:55", asignatura: "FQ-A", sala: "E8" },
+        { inicio: "09:55", asignatura: "FIL", sala: "E8" },
+        { inicio: "10:55", asignatura: "BG", sala: "E8" },
+        { inicio: "11:50", asignatura: "ING", sala: "D7" },
+        { inicio: "12:45", asignatura: "ING", sala: "D7" }
       ],
       3: [
-        { inicio: "08:00", fin: "08:50", asignatura: "MAT-A", sala: "A9" },
-        { inicio: "08:55", fin: "09:45", asignatura: "MAT-A", sala: "A9" },
-        { inicio: "09:55", fin: "10:45", asignatura: "EF", sala: "CP2" },
-        { inicio: "10:55", fin: "11:45", asignatura: "FIL", sala: "A7" },
-        { inicio: "11:50", fin: "12:40", asignatura: "FIL", sala: "A7" },
-        { inicio: "12:45", fin: "13:35", asignatura: "PORT", sala: "A7" }
+        { inicio: "08:00", asignatura: "MAT-A", sala: "A9" },
+        { inicio: "08:55", asignatura: "MAT-A", sala: "A9" },
+        { inicio: "09:55", asignatura: "EF", sala: "CP2" },
+        { inicio: "10:55", asignatura: "FIL", sala: "A7" },
+        { inicio: "11:50", asignatura: "FIL", sala: "A7" },
+        { inicio: "12:45", asignatura: "PORT", sala: "A7" },
+        { inicio: "17:00", asignatura: "Deporte", sala: "Cancha" }
       ],
       4: [
-        { inicio: "08:00", fin: "08:50", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
-        { inicio: "08:55", fin: "09:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
-        { inicio: "09:55", fin: "10:45", asignatura: "FQ-A a) / BG b)", sala: "E2/E9" },
-        { inicio: "10:55", fin: "11:45", asignatura: "ING", sala: "A11" },
-        { inicio: "11:50", fin: "12:40", asignatura: "PORT", sala: "A11" },
-        { inicio: "13:55", fin: "14:45", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
-        { inicio: "14:50", fin: "15:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" },
-        { inicio: "15:50", fin: "16:40", asignatura: "FQ-A a) / BG a)", sala: "E2/E9" }
+        { inicio: "08:00", asignatura: "FQ-A / BG", sala: "E2/E9" },
+        { inicio: "08:55", asignatura: "FQ-A / BG", sala: "E2/E9" },
+        { inicio: "09:55", asignatura: "FQ-A / BG", sala: "E2/E9" },
+        { inicio: "10:55", asignatura: "ING", sala: "A11" },
+        { inicio: "11:50", asignatura: "PORT", sala: "A11" },
+        { inicio: "13:55", asignatura: "FQ-A / BG", sala: "E2/E9" }
       ],
       5: [
-        { inicio: "08:00", fin: "08:50", asignatura: "PORT", sala: "E8" },
-        { inicio: "08:55", fin: "09:45", asignatura: "PORT", sala: "E8" },
-        { inicio: "09:55", fin: "10:45", asignatura: "MAT-A", sala: "E8" },
-        { inicio: "10:55", fin: "11:45", asignatura: "MAT-A", sala: "E8" },
-        { inicio: "11:50", fin: "12:40", asignatura: "EF", sala: "CP1" },
-        { inicio: "12:45", fin: "13:35", asignatura: "EF", sala: "CP1" }
-      ]
+        { inicio: "08:00", asignatura: "PORT", sala: "E8" },
+        { inicio: "08:55", asignatura: "PORT", sala: "E8" },
+        { inicio: "09:55", asignatura: "MAT-A", sala: "E8" },
+        { inicio: "10:55", asignatura: "MAT-A", sala: "E8" },
+        { inicio: "11:50", asignatura: "EF", sala: "CP1" },
+        { inicio: "12:45", asignatura: "EF", sala: "CP1" }
+      ],
+      6: [{ inicio: "09:55", asignatura: "Deporte / Hobby", sala: "Club" }],
+      0: []
     };
+
+    const examenes = [
+      { fecha: "2026-10-15", asignatura: "Matemática A" },
+      { fecha: "2026-10-22", asignatura: "Física y Química A" },
+      { fecha: "2026-11-05", asignatura: "Biología y Geología" }
+    ];
+
+    function inicializarUsuario() {
+      const nombre = localStorage.getItem("userName");
+      if (nombre) {
+        document.getElementById("welcome-title").innerText = `¡Hola de nuevo, ${nombre}!`;
+        document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
+        setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1200);
+      }
+    }
+
+    function guardarNombre() {
+      const nombre = document.getElementById("username-input").value.trim();
+      if (nombre !== "") {
+        localStorage.setItem("userName", nombre);
+        document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
+        document.getElementById("welcome-screen").style.display = "none";
+      }
+    }
 
     function actualizarPanel() {
       const ahora = new Date();
       const diaSemana = ahora.getDay();
-      const horaStr = ahora.getHours().toString().padStart(2, '0') + ":" + 
-                      ahora.getMinutes().toString().padStart(2, '0');
+      const horaStr = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
 
-      // 1. Próxima Clase
       const clasesHoy = horarioEscolar[diaSemana];
       const elClase = document.getElementById("info-clase");
 
-      if (!clasesHoy) {
-        elClase.innerText = "¡Es fin de semana! Aprovecha para descansar o repasar.";
+      if (!clasesHoy || clasesHoy.length === 0) {
+        elClase.innerHTML = "¡No tienes clases hoy! 📖 <strong>Recordatorio:</strong> ¿Ya estudiaste un poco hoy?";
       } else {
         const proxima = clasesHoy.find(c => c.inicio > horaStr);
         if (proxima) {
-          elClase.innerHTML = `Tu próxima clase es <span class="destacado">${proxima.asignatura}</span> a las <span class="destacado">${proxima.inicio}</span> en la sala <span class="destacado">${proxima.sala}</span>.`;
+          elClase.innerHTML = `Próxima actividad: <span class="destacado">${proxima.asignatura}</span> a las <span class="destacado">${proxima.inicio}</span> (${proxima.sala}).`;
         } else {
-          elClase.innerText = "Ya terminaste todas tus clases por hoy. ¡Buen trabajo!";
+          elClase.innerHTML = "Terminaste por hoy. 📚 <strong>Recordatorio:</strong> Repasa para tu próximo teste.";
         }
       }
 
-      // 2. Contador para próximo examen
-      const fechaExamen = "2026-10-15";
-      const nombreMateria = "Matemática A";
-      const destino = new Date(fechaExamen);
-      const diffDias = Math.ceil((destino - ahora) / (1000 * 60 * 60 * 24));
-      const elExamen = document.getElementById("info-examen");
+      const elExamenes = document.getElementById("lista-examenes");
+      elExamenes.innerHTML = "";
+      examenes.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)).forEach(ex => {
+        const diff = Math.ceil((new Date(ex.fecha) - ahora) / (1000 * 60 * 60 * 24));
+        const li = document.createElement("li");
+        li.innerHTML = diff > 0 ? `Faltan <span class="destacado">${diff} días</span> para ${ex.asignatura} (${ex.fecha}).` : `Teste de ${ex.asignatura} es hoy o ya pasó.`;
+        elExamenes.appendChild(li);
+      });
 
-      if (diffDias > 0) {
-        elExamen.innerHTML = `Faltan <span class="destacado">${diffDias} días</span> para el teste de <span class="destacado">${nombreMateria}</span>.`;
-      } else if (diffDias === 0) {
-        elExamen.innerHTML = `¡El teste de <span class="destacado">${nombreMateria}</span> es HOY! Mucha suerte.`;
-      } else {
-        elExamen.innerText = "No tienes exámenes programados próximamente.";
-      }
-
-      // 3. Higiene del Sueño (Aviso a las 23:00)
       const horaActual = ahora.getHours();
-      const elSueno = document.getElementById("info-sueno");
-      if (horaActual >= 23 || horaActual < 6) {
-        elSueno.innerText = "🌙 Ya son más de las 23:00. Es hora de desconectar pantallas para asegurar tus 7 horas de descanso.";
-      } else {
-        elSueno.innerText = "Recuerda planificar tu estudio. Tu recordatorio de descanso se activará a las 23:00.";
-      }
+      document.getElementById("info-sueno").innerText = (horaActual >= 23 || horaActual < 6) 
+        ? "🌙 Son más de las 23:00. Apaga pantallas para tus 7h de sueño fundamentales." 
+        : "Tu recordatorio de descanso se activará a las 23:00.";
     }
 
+    inicializarUsuario();
     actualizarPanel();
   </script>
 </body>
