@@ -5,27 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Horario y Hábitos</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; margin: 0; }
-    h1 { color: #1a73e8; text-align: center; margin-bottom: 25px; }
-    .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; color: #1a73e8; font-size: 1.2rem; }
-    p, li { font-size: 1.05rem; color: #333; line-height: 1.5; }
-    ul { padding-left: 0; list-style: none; }
-    .destacado { font-weight: bold; color: #2b7de9; }
+    :root {
+      --bg-color: #f0f2f5;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --primary: #1a73e8;
+      --border-color: #ddd;
+      --item-bg: #f9f9f9;
+    }
+
+    body.dark-mode {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --primary: #64b5f6;
+      --border-color: #333333;
+      --item-bg: #2a2a2a;
+    }
+
+    body { font-family: Arial, sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: background 0.3s, color 0.3s; }
+    
+    /* ENCABEZADO Y MENÚ HAMBURGUESA */
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; }
+    .hamburger { font-size: 1.8rem; cursor: pointer; background: none; border: none; color: var(--text-color); padding: 5px; }
+    h1 { color: var(--primary); text-align: center; margin: 0; flex-grow: 1; font-size: 1.5rem; }
+    
+    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 180px; }
+    .nav-menu button { width: 100%; text-align: left; padding: 12px; background: none; border: none; color: var(--text-color); font-size: 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+    .nav-menu button:last-child { border-bottom: none; }
+    .nav-menu button:hover { background: var(--item-bg); }
+
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; }
+    p, li { font-size: 1.05rem; line-height: 1.5; }
+    
+    /* INDICADORES DE OBJETIVOS (PUNTOS) */
+    .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; cursor: pointer; }
+    .dot-red { background-color: #e53935; }
+    .dot-green { background-color: #4caf50; }
+
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 0.85rem; }
-    th { background: #1a73e8; color: white; }
-    .hora { font-weight: bold; background: #eef4fc; }
+    th, td { border: 1px solid var(--border-color); padding: 6px; text-align: center; font-size: 0.85rem; }
+    th { background: var(--primary); color: white; }
     
     #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
     #welcome-screen input { padding: 10px; font-size: 1rem; border-radius: 6px; border: none; margin: 10px; text-align: center; }
-    #welcome-screen button, .btn-action { padding: 8px 16px; font-size: 0.9rem; border-radius: 6px; border: none; background: #1a73e8; color: white; font-weight: bold; cursor: pointer; }
+    #welcome-screen button, .btn-action { padding: 8px 16px; font-size: 0.9rem; border-radius: 6px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
     #welcome-screen button { background: white; color: #1a73e8; }
     
-    .input-form { padding: 8px; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 6px; margin-right: 5px; margin-bottom: 5px; }
-    .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: #f9f9f9; padding: 8px 12px; border-radius: 6px; }
+    .input-form { padding: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 6px; margin-right: 5px; background: var(--card-bg); color: var(--text-color); }
+    .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: var(--item-bg); padding: 8px 12px; border-radius: 6px; }
     .btn-del { background: #e53935; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
     .form-group { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+
+    /* SECCIONES DE LA PÁGINA */
+    .section-page { display: none; }
+    .section-active { display: block; }
+    .progress-bar-container { background: var(--item-bg); border-radius: 10px; height: 20px; width: 100%; overflow: hidden; margin-top: 8px; border: 1px solid var(--border-color); }
+    .progress-bar { background: #4caf50; height: 100%; width: 0%; transition: width 0.4s; }
   </style>
 </head>
 <body>
@@ -39,107 +76,124 @@
     </div>
   </div>
 
-  <h1 id="greeting-header">Panel de Estudio</h1>
-
-  <div class="card">
-    <h2>📌 Próxima Clase</h2>
-    <p id="info-clase">Cargando...</p>
-  </div>
-
-  <!-- SECCIÓN DE EXÁMENES EDITABLES (VACÍA POR DEFECTO) -->
-  <div class="card">
-    <h2>📅 Próximos Exámenes Pendientes</h2>
-    <div class="form-group">
-      <input type="text" id="examen-materia" class="input-form" placeholder="Materia (ej: Matemática)" />
-      <input type="date" id="examen-fecha" class="input-form" />
-      <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
+  <!-- ENCABEZADO CON HAMBURGUESA -->
+  <div class="top-bar">
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+    <h1 id="greeting-header">Panel de Estudio</h1>
+    <div id="nav-menu" class="nav-menu">
+      <button onclick="navegarA('panel')">Panel de Control</button>
+      <button onclick="navegarA('objetivos')">Mis Objetivos</button>
     </div>
-    <div id="lista-examenes"></div>
   </div>
 
-  <!-- SECCIÓN DE OBJETIVOS EDITABLES (VACÍA POR DEFECTO) -->
-  <div class="card">
-    <h2>🎯 Mis Objetivos</h2>
-    <div class="form-group">
-      <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" placeholder="Nuevo objetivo..." />
-      <button onclick="agregarObjetivo()" class="btn-action">Añadir Objetivo</button>
+  <!-- VISTA 1: PANEL DE CONTROL -->
+  <div id="page-panel" class="section-page section-active">
+    <div class="card">
+      <h2>📌 Próxima Clase</h2>
+      <p id="info-clase">Cargando...</p>
     </div>
-    <div id="lista-objetivos"></div>
+
+    <div class="card">
+      <h2>📅 Próximos Exámenes Pendientes</h2>
+      <div class="form-group">
+        <input type="text" id="examen-materia" class="input-form" placeholder="Materia" />
+        <input type="date" id="examen-fecha" class="input-form" />
+        <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
+      </div>
+      <div id="lista-examenes"></div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 Objetivos Diarios</h2>
+      <div id="lista-objetivos-diarios"></div>
+    </div>
+
+    <div class="card">
+      <h2>🌙 Higiene del Sueño</h2>
+      <p id="info-sueno">Cargando...</p>
+    </div>
+
+    <div class="card">
+      <h2>🗓️ Horario Semanal Completo</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sáb/Dom</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>08:00-08:50</td><td>BG (E10)</td><td>FQ-A (E8)</td><td>MAT-A (A9)</td><td>FQ/BG (E2/E9)</td><td>PORT (E8)</td><td>-</td></tr>
+            <tr><td>08:55-09:45</td><td>BG (E10)</td><td>FQ-A (E8)</td><td>MAT-A (A9)</td><td>FQ/BG (E2/E9)</td><td>PORT (E8)</td><td>-</td></tr>
+            <tr><td>09:55-10:45</td><td>FQ-A (E10)</td><td>FIL (E8)</td><td>EF (CP2)</td><td>FQ/BG (E2/E9)</td><td>MAT-A (E8)</td><td>Hobby</td></tr>
+            <tr><td>10:55-11:45</td><td>FQ-A (E10)</td><td>BG (E8)</td><td>FIL (A7)</td><td>ING (A11)</td><td>MAT-A (E8)</td><td>Hobby</td></tr>
+            <tr><td>11:50-12:40</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>FIL (A7)</td><td>PORT (A11)</td><td>EF (CP1)</td><td>-</td></tr>
+            <tr><td>12:45-13:35</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>PORT (A7)</td><td>-</td><td>EF (CP1)</td><td>-</td></tr>
+            <tr><td>13:55-16:40</td><td>-</td><td>-</td><td>-</td><td>FQ/BG (E2/E9)</td><td>-</td><td>-</td></tr>
+            <tr><td>17:00-18:30</td><td>Deporte</td><td>-</td><td>Deporte</td><td>-</td><td>-</td><td>-</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>🌙 Higiene del Sueño</h2>
-    <p id="info-sueno">Cargando...</p>
-  </div>
+  <!-- VISTA 2: MIS OBJETIVOS Y REGISTRO MENSUAL -->
+  <div id="page-objetivos" class="section-page">
+    <div class="card">
+      <h2>🎯 Administrar Objetivos</h2>
+      <div class="form-group">
+        <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" placeholder="Nuevo objetivo..." />
+        <button onclick="agregarObjetivo()" class="btn-action">Añadir Objetivo</button>
+      </div>
+      <div id="lista-objetivos-admin"></div>
+    </div>
 
-  <div class="card">
-    <h2>🗓️ Horario Semanal Completo</h2>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead>
-          <tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sáb/Dom</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="hora">08:00-08:50</td><td>BG (E10)</td><td>FQ-A (E8)</td><td>MAT-A (A9)</td><td>FQ/BG (E2/E9)</td><td>PORT (E8)</td><td>-</td></tr>
-          <tr><td class="hora">08:55-09:45</td><td>BG (E10)</td><td>FQ-A (E8)</td><td>MAT-A (A9)</td><td>FQ/BG (E2/E9)</td><td>PORT (E8)</td><td>-</td></tr>
-          <tr><td class="hora">09:55-10:45</td><td>FQ-A (E10)</td><td>FIL (E8)</td><td>EF (CP2)</td><td>FQ/BG (E2/E9)</td><td>MAT-A (E8)</td><td>Hobby</td></tr>
-          <tr><td class="hora">10:55-11:45</td><td>FQ-A (E10)</td><td>BG (E8)</td><td>FIL (A7)</td><td>ING (A11)</td><td>MAT-A (E8)</td><td>Hobby</td></tr>
-          <tr><td class="hora">11:50-12:40</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>FIL (A7)</td><td>PORT (A11)</td><td>EF (CP1)</td><td>-</td></tr>
-          <tr><td class="hora">12:45-13:35</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>PORT (A7)</td><td>-</td><td>EF (CP1)</td><td>-</td></tr>
-          <tr><td class="hora">13:55-16:40</td><td>-</td><td>-</td><td>-</td><td>FQ/BG (E2/E9)</td><td>-</td><td>-</td></tr>
-          <tr><td class="hora">17:00-18:30</td><td>Deporte</td><td>-</td><td>Deporte</td><td>-</td><td>-</td><td>-</td></tr>
-        </tbody>
-      </table>
+    <div class="card">
+      <h2>📈 Constancia y Éxito del Mes</h2>
+      <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: bold; color: var(--primary);">0% de Éxito</p>
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <br>
+      <h3>Registro Mensual (Últimos 30 días)</h3>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Día</th><th>Estado</th></tr>
+          </thead>
+          <tbody id="tabla-historico"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
     const horarioEscolar = {
-      1: [
-        { inicio: "08:00", asignatura: "BG", sala: "E10" },
-        { inicio: "08:55", asignatura: "BG", sala: "E10" },
-        { inicio: "09:55", asignatura: "FQ-A", sala: "E10" },
-        { inicio: "10:55", asignatura: "FQ-A", sala: "E10" },
-        { inicio: "11:50", asignatura: "MAT-A", sala: "E10" },
-        { inicio: "12:45", asignatura: "MAT-A", sala: "E10" },
-        { inicio: "17:00", asignatura: "Deporte", sala: "Cancha" }
-      ],
-      2: [
-        { inicio: "08:00", asignatura: "FQ-A", sala: "E8" },
-        { inicio: "08:55", asignatura: "FQ-A", sala: "E8" },
-        { inicio: "09:55", asignatura: "FIL", sala: "E8" },
-        { inicio: "10:55", asignatura: "BG", sala: "E8" },
-        { inicio: "11:50", asignatura: "ING", sala: "D7" },
-        { inicio: "12:45", asignatura: "ING", sala: "D7" }
-      ],
-      3: [
-        { inicio: "08:00", asignatura: "MAT-A", sala: "A9" },
-        { inicio: "08:55", asignatura: "MAT-A", sala: "A9" },
-        { inicio: "09:55", asignatura: "EF", sala: "CP2" },
-        { inicio: "10:55", asignatura: "FIL", sala: "A7" },
-        { inicio: "11:50", asignatura: "FIL", sala: "A7" },
-        { inicio: "12:45", asignatura: "PORT", sala: "A7" },
-        { inicio: "17:00", asignatura: "Deporte", sala: "Cancha" }
-      ],
-      4: [
-        { inicio: "08:00", asignatura: "FQ-A / BG", sala: "E2/E9" },
-        { inicio: "08:55", asignatura: "FQ-A / BG", sala: "E2/E9" },
-        { inicio: "09:55", asignatura: "FQ-A / BG", sala: "E2/E9" },
-        { inicio: "10:55", asignatura: "ING", sala: "A11" },
-        { inicio: "11:50", asignatura: "PORT", sala: "A11" },
-        { inicio: "13:55", asignatura: "FQ-A / BG", sala: "E2/E9" }
-      ],
-      5: [
-        { inicio: "08:00", asignatura: "PORT", sala: "E8" },
-        { inicio: "08:55", asignatura: "PORT", sala: "E8" },
-        { inicio: "09:55", asignatura: "MAT-A", sala: "E8" },
-        { inicio: "10:55", asignatura: "MAT-A", sala: "E8" },
-        { inicio: "11:50", asignatura: "EF", sala: "CP1" },
-        { inicio: "12:45", asignatura: "EF", sala: "CP1" }
-      ],
-      6: [{ inicio: "09:55", asignatura: "Deporte / Hobby", sala: "Club" }],
-      0: []
+      1: [{ inicio: "08:00", asignatura: "BG", sala: "E10" }, { inicio: "09:55", asignatura: "FQ-A", sala: "E10" }, { inicio: "11:50", asignatura: "MAT-A", sala: "E10" }],
+      2: [{ inicio: "08:00", asignatura: "FQ-A", sala: "E8" }, { inicio: "09:55", asignatura: "FIL", sala: "E8" }, { inicio: "11:50", asignatura: "ING", sala: "D7" }],
+      3: [{ inicio: "08:00", asignatura: "MAT-A", sala: "A9" }, { inicio: "09:55", asignatura: "EF", sala: "CP2" }, { inicio: "12:45", asignatura: "PORT", sala: "A7" }],
+      4: [{ inicio: "08:00", asignatura: "FQ-A / BG", sala: "E2/E9" }, { inicio: "10:55", asignatura: "ING", sala: "A11" }],
+      5: [{ inicio: "08:00", asignatura: "PORT", sala: "E8" }, { inicio: "09:55", asignatura: "MAT-A", sala: "E8" }],
+      6: [{ inicio: "09:55", asignatura: "Deporte / Hobby", sala: "Club" }], 0: []
     };
+
+    function aplicarModoOscuroAuto() {
+      const hora = new Date().getHours();
+      if (hora >= 20 || hora < 6) {
+        document.body.classList.add("dark-mode");
+      } else {
+        document.body.classList.remove("dark-mode");
+      }
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById("nav-menu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function navegarA(pagina) {
+      document.querySelectorAll(".section-page").forEach(p => p.classList.remove("section-active"));
+      document.getElementById(pagina === "panel" ? "page-panel" : "page-objetivos").classList.add("section-active");
+      toggleMenu();
+    }
 
     function inicializarUsuario() {
       const nombre = localStorage.getItem("userName");
@@ -149,10 +203,7 @@
 
       if (nombre) {
         formRegistro.style.display = "none";
-        const frases = [
-          `¡Hola de nuevo, ${nombre}!`,
-          `¡Qué gusto volver a verte, ${nombre}!`
-        ];
+        const frases = [`¡Hola de nuevo, ${nombre}!`, `¡Qué gusto volver a verte, ${nombre}!`];
         welcomeTitle.innerText = frases[Math.floor(Math.random() * frases.length)];
         document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
         setTimeout(() => { welcomeScreen.style.display = "none"; }, 1800);
@@ -170,14 +221,126 @@
       }
     }
 
-    // GESTIÓN DE EXÁMENES EDITABLES (VACÍO INICIALMENTE)
+    // GESTIÓN DE OBJETIVOS Y PUNTOS VERDES/ROJOS
+    function cargarObjetivos() {
+      const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+      const fechaHoy = new Date().toISOString().split('T')[0];
+      const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
+      
+      if (!estados[fechaHoy]) estados[fechaHoy] = {};
+
+      const contDiario = document.getElementById("lista-objetivos-diarios");
+      const contAdmin = document.getElementById("lista-objetivos-admin");
+      contDiario.innerHTML = "";
+      contAdmin.innerHTML = "";
+
+      if (guardados.length === 0) {
+        contDiario.innerHTML = "<p style='color:#777;'>Añade objetivos en el menú 'Mis Objetivos'.</p>";
+        contAdmin.innerHTML = "<p style='color:#777;'>No has añadido objetivos aún.</p>";
+      }
+
+      guardados.forEach((obj, index) => {
+        const cumplido = estados[fechaHoy][index] || false;
+        
+        // Vista Panel Diario
+        const divDiario = document.createElement("div");
+        divDiario.className = "item-list";
+        divDiario.innerHTML = `
+          <div>
+            <span class="dot ${cumplido ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${index})"></span>
+            <span>${obj}</span>
+          </div>
+        `;
+        contDiario.appendChild(divDiario);
+
+        // Vista Administración
+        const divAdmin = document.createElement("div");
+        divAdmin.className = "item-list";
+        divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
+        contAdmin.appendChild(divAdmin);
+      });
+
+      calcularPorcentajeExito();
+    }
+
+    function toggleObjetivo(index) {
+      const fechaHoy = new Date().toISOString().split('T')[0];
+      const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
+      if (!estados[fechaHoy]) estados[fechaHoy] = {};
+
+      estados[fechaHoy][index] = !estados[fechaHoy][index];
+      localStorage.setItem("estadosObjetivos", JSON.stringify(estados));
+      cargarObjetivos();
+    }
+
+    function agregarObjetivo() {
+      const input = document.getElementById("nuevo-objetivo");
+      const texto = input.value.trim();
+      if (texto !== "") {
+        const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+        guardados.push(texto);
+        localStorage.setItem("misObjetivos", JSON.stringify(guardados));
+        input.value = "";
+        cargarObjetivos();
+      }
+    }
+
+    function borrarObjetivo(index) {
+      const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+      guardados.splice(index, 1);
+      localStorage.setItem("misObjetivos", JSON.stringify(guardados));
+      cargarObjetivos();
+    }
+
+    // CÁLCULO DE ÉXITO Y TABLA MENSUAL
+    function calcularPorcentajeExito() {
+      const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
+      const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+      const tabla = document.getElementById("tabla-historico");
+      tabla.innerHTML = "";
+
+      if (guardados.length === 0) {
+        document.getElementById("porcentaje-exito").innerText = "0% de Éxito";
+        document.getElementById("progress-bar").style.width = "0%";
+        return;
+      }
+
+      let totalPuntos = 0;
+      let puntosVerdes = 0;
+
+      for (let i = 0; i < 30; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const fechaStr = d.toISOString().split('T')[0];
+        
+        let verdesDia = 0;
+        guardados.forEach((_, idx) => {
+          totalPuntos++;
+          if (estados[fechaStr] && estados[fechaStr][idx]) {
+            puntosVerdes++;
+            verdesDia++;
+          }
+        });
+
+        const tr = document.createElement("tr");
+        const exitoDia = guardados.length > 0 && verdesDia === guardados.length;
+        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? '#4caf50' : '#e53935'}; font-weight:bold;">${exitoDia ? 'Completado (Verde)' : 'Incompleto (Rojo)'}</td>`;
+        tabla.appendChild(tr);
+      }
+
+      const porcentaje = totalPuntos > 0 ? Math.round((puntosVerdes / totalPuntos) * 100) : 0;
+      document.getElementById("porcentaje-exito").innerText = `${porcentaje}% de Éxito y Constancia`;
+      document.getElementById("progress-bar").style.width = `${porcentaje}%`;
+    }
+
+    // EXÁMENES
     function cargarExamenes() {
       const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
       const contenedor = document.getElementById("lista-examenes");
       contenedor.innerHTML = "";
-      
+
       if (guardados.length === 0) {
-        contenedor.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes programados.</p>";
+        contenedor.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes.</p>";
         return;
       }
 
@@ -186,16 +349,7 @@
         const diff = Math.ceil((new Date(ex.fecha) - ahora) / (1000 * 60 * 60 * 24));
         const div = document.createElement("div");
         div.className = "item-list";
-        
-        let texto = "";
-        if (diff > 0) {
-          texto = `Faltan <span class="destacado">${diff} días</span> para ${ex.asignatura} (${ex.fecha}).`;
-        } else if (diff === 0) {
-          texto = `¡El examen de <span class="destacado">${ex.asignatura}</span> es HOY!`;
-        } else {
-          texto = `Examen de ${ex.asignatura} (${ex.fecha}) - Finalizado.`;
-        }
-
+        let texto = diff > 0 ? `Faltan <span style='font-weight:bold; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha}).` : `Examen de ${ex.asignatura} es hoy o finalizado.`;
         div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
         contenedor.appendChild(div);
       });
@@ -221,49 +375,10 @@
       cargarExamenes();
     }
 
-    // GESTIÓN DE OBJETIVOS EDITABLES (VACÍO INICIALMENTE)
-    function cargarObjetivos() {
-      const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
-      const contenedor = document.getElementById("lista-objetivos");
-      contenedor.innerHTML = "";
-
-      if (guardados.length === 0) {
-        contenedor.innerHTML = "<p style='color:#777;'>No has añadido objetivos aún.</p>";
-        return;
-      }
-
-      guardados.forEach((obj, index) => {
-        const div = document.createElement("div");
-        div.className = "item-list";
-        div.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
-        contenedor.appendChild(div);
-      });
-    }
-
-    function agregarObjetivo() {
-      const input = document.getElementById("nuevo-objetivo");
-      const texto = input.value.trim();
-      if (texto !== "") {
-        const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
-        guardados.push(texto);
-        localStorage.setItem("misObjetivos", JSON.stringify(guardados));
-        input.value = "";
-        cargarObjetivos();
-      }
-    }
-
-    function borrarObjetivo(index) {
-      const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
-      guardados.splice(index, 1);
-      localStorage.setItem("misObjetivos", JSON.stringify(guardados));
-      cargarObjetivos();
-    }
-
     function actualizarPanel() {
       const ahora = new Date();
       const diaSemana = ahora.getDay();
       const horaStr = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-
       const clasesHoy = horarioEscolar[diaSemana];
       const elClase = document.getElementById("info-clase");
 
@@ -271,19 +386,16 @@
         elClase.innerHTML = "¡No tienes clases hoy! 📖 <strong>Recordatorio:</strong> ¿Ya estudiaste un poco hoy?";
       } else {
         const proxima = clasesHoy.find(c => c.inicio > horaStr);
-        if (proxima) {
-          elClase.innerHTML = `Próxima actividad: <span class="destacado">${proxima.asignatura}</span> a las <span class="destacado">${proxima.inicio}</span> (${proxima.sala}).`;
-        } else {
-          elClase.innerHTML = "Terminaste por hoy. 📚 <strong>Recordatorio:</strong> Repasa para tu próximo teste.";
-        }
+        elClase.innerHTML = proxima ? `Próxima actividad: <strong>${proxima.asignatura}</strong> a las ${proxima.inicio} (${proxima.sala}).` : "Terminaste por hoy. 📚 Repasa para tus próximos exámenes.";
       }
 
       const horaActual = ahora.getHours();
       document.getElementById("info-sueno").innerText = (horaActual >= 23 || horaActual < 6) 
-        ? "🌙 Son más de las 23:00. Apaga pantallas para tus 7h de sueño fundamentales." 
+        ? "🌙 Son más de las 23:00. Es hora de dormir para completar tus 7 horas." 
         : "Tu recordatorio de descanso se activará a las 23:00.";
     }
 
+    aplicarModoOscuroAuto();
     inicializarUsuario();
     cargarExamenes();
     cargarObjetivos();
