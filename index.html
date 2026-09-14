@@ -29,7 +29,7 @@
     .hamburger { font-size: 1.8rem; cursor: pointer; background: none; border: none; color: var(--text-color); padding: 5px; }
     h1 { color: var(--primary); text-align: center; margin: 0; flex-grow: 1; font-size: 1.5rem; }
     
-    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 230px; }
+    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 250px; }
     .nav-menu button { width: 100%; text-align: left; padding: 12px; background: none; border: none; color: var(--text-color); font-size: 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
     .nav-menu button:last-child { border-bottom: none; }
     .nav-menu button:hover { background: var(--item-bg); }
@@ -92,6 +92,12 @@
     /* NOTAS */
     .note-item { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
     .note-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #777; margin-bottom: 4px; }
+
+    /* ESTILOS DE GRÁFICOS */
+    .chart-bar-wrap { margin-bottom: 12px; background: var(--card-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .chart-bar-info { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; font-weight: bold; }
+    .chart-bar-track { background: var(--item-bg); height: 14px; border-radius: 7px; overflow: hidden; border: 1px solid var(--border-color); }
+    .chart-bar-fill { background: var(--primary); height: 100%; border-radius: 7px; transition: width 0.6s ease; }
   </style>
 </head>
 <body>
@@ -111,6 +117,7 @@
       <button onclick="navegarA('panel')">Panel de Control</button>
       <button onclick="navegarA('estudio')">Modo Estudio (Pomodoro)</button>
       <button onclick="navegarA('examenes')">Exámenes y Notas</button>
+      <button onclick="navegarA('estadisticas')">📈 Estadísticas y Progreso</button>
       <button onclick="navegarA('hobbies')">Mis Hobbies</button>
       <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
       <button onclick="navegarA('objetivos')">Mis Objetivos</button>
@@ -208,9 +215,24 @@
     </div>
 
     <div class="card">
-      <h2>📊 Calificaciones y Promedios por Asignatura</h2>
-      <p style="font-size: 0.9rem; color: #666;">Puedes registrar tus notas o borrarlas fácilmente si te equivocaste.</p>
+      <h2>📊 Calificaciones y Nota Objetivo Final por Asignatura</h2>
+      <p style="font-size: 0.9rem; color: #666;">Registra tus notas parciales, elimina las erróneas y define tu nota objetivo global para la asignatura.</p>
       <div id="contenedor-asignaturas"></div>
+    </div>
+  </div>
+
+  <!-- ESTADÍSTICAS Y GRÁFICOS -->
+  <div id="page-estadisticas" class="section-page">
+    <div class="card">
+      <h2>📈 Gráfica de Progreso de Asignaturas (Promedio vs Meta Final)</h2>
+      <p style="font-size: 0.9rem; color: #666;">Visualiza rápidamente tu rendimiento en comparación con tu nota objetivo establecida (escala sobre 20 o sobre 10).</p>
+      <div id="grafico-promedios-container"></div>
+    </div>
+
+    <div class="card">
+      <h2>⏱️ Gráfica de Estudio Diario (Últimos 7 días)</h2>
+      <p style="font-size: 0.9rem; color: #666;">Minutos dedicados al estudio mediante el temporizador Pomodoro.</p>
+      <div id="grafico-estudio-container"></div>
     </div>
   </div>
 
@@ -366,6 +388,7 @@
         'panel': 'page-panel',
         'estudio': 'page-estudio',
         'examenes': 'page-examenes',
+        'estadisticas': 'page-estadisticas',
         'hobbies': 'page-hobbies',
         'sueno': 'page-sueno',
         'objetivos': 'page-objetivos',
@@ -376,6 +399,7 @@
       document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
       if (pagina === 'trofeos') evaluarTrofeos();
       if (pagina === 'sueno') cargarControlSueno();
+      if (pagina === 'estadisticas') generarGraficosEstadisticas();
       toggleMenu();
     }
 
@@ -559,7 +583,7 @@
       cargarExamenes();
     }
 
-    // CONTROL DE SUEÑO (Con Ñ)
+    // CONTROL DE SUEÑO
     function guardarConfigSueno() {
       const horas = parseFloat(document.getElementById("sueno-horas").value) || 8;
       const acostar = document.getElementById("sueno-acostar").value;
@@ -593,11 +617,16 @@
 
     function cargarAsignaturasYNotas() {
       const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
       const contenedor = document.getElementById("contenedor-asignaturas");
       contenedor.innerHTML = "";
 
       asignaturasBase.forEach((asig) => {
-        const listaNotas = notasGuardadas[asig] || [];
+        const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
+        // Compatibilidad con versiones previas donde era array directo
+        const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
+        const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
+
         const suma = listaNotas.reduce((a, b) => a + b, 0);
         const promedio = listaNotas.length > 0 ? (suma / listaNotas.length).toFixed(1) : "-";
 
@@ -614,8 +643,12 @@
             <span class="promedio-tag">Promedio: ${promedio}</span>
           </div>
           <div style="margin-top: 8px;" class="form-group">
-            <input type="number" step="0.1" min="0" max="20" placeholder="Nota" id="input-nota-${asig}" class="input-form" style="width: 80px;" />
+            <input type="number" step="0.1" min="0" max="20" placeholder="Nueva nota" id="input-nota-${asig}" class="input-form" style="width: 100px;" />
             <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
+            <div style="margin-left:auto; display:flex; align-items:center; gap:5px;">
+              <span style="font-size:0.85rem; font-weight:bold;">🎯 Meta Final:</span>
+              <input type="text" placeholder="Ej. 18 / 9.5" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 100px;" onchange="guardarMetaAsignatura('${asig}')" />
+            </div>
           </div>
           <div style="font-size: 0.9rem; color: #666; margin-top:6px;">
             <strong>Notas guardadas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Ninguna nota registrada"}
@@ -630,8 +663,11 @@
       const valor = parseFloat(input.value);
       if (!isNaN(valor)) {
         const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-        if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = [];
-        notasGuardadas[asignatura].push(valor);
+        if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = { lista: [], metaFinal: "" };
+        if (Array.isArray(notasGuardadas[asignatura])) {
+          notasGuardadas[asignatura] = { lista: notasGuardadas[asignatura], metaFinal: "" };
+        }
+        notasGuardadas[asignatura].lista.push(valor);
         localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
         input.value = "";
         cargarAsignaturasYNotas();
@@ -641,13 +677,97 @@
     function quitarNotaAsignatura(asignatura, indexNota) {
       const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
       if (notasGuardadas[asignatura]) {
-        notasGuardadas[asignatura].splice(indexNota, 1);
+        if (Array.isArray(notasGuardadas[asignatura])) {
+          notasGuardadas[asignatura].splice(indexNota, 1);
+        } else if (notasGuardadas[asignatura].lista) {
+          notasGuardadas[asignatura].lista.splice(indexNota, 1);
+        }
         localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
         cargarAsignaturasYNotas();
       }
     }
 
-    // NOTAS Y APUNTES (BÚSQUEDA Y FILTROS)
+    function guardarMetaAsignatura(asignatura) {
+      const metaInput = document.getElementById(`input-meta-${asignatura}`).value.trim();
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = { lista: [], metaFinal: "" };
+      if (Array.isArray(notasGuardadas[asignatura])) {
+        notasGuardadas[asignatura] = { lista: notasGuardadas[asignatura], metaFinal: metaInput };
+      } else {
+        notasGuardadas[asignatura].metaFinal = metaInput;
+      }
+      localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
+      
+      // Respaldo independiente
+      const metas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+      metas[asignatura] = metaInput;
+      localStorage.setItem("metasAsignaturas", JSON.stringify(metas));
+    }
+
+    // GENERADOR DE GRÁFICOS VISUALES
+    function generarGraficosEstadisticas() {
+      // 1. Gráfica de Promedios y Metas
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const contPromedios = document.getElementById("grafico-promedios-container");
+      contPromedios.innerHTML = "";
+
+      asignaturasBase.forEach(asig => {
+        const datos = notasGuardadas[asig];
+        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista : []);
+        const meta = !Array.isArray(datos) && datos ? datos.metaFinal : "";
+        const suma = lista.reduce((a, b) => a + b, 0);
+        const prom = lista.length > 0 ? (suma / lista.length) : 0;
+        
+        // Asumiendo escala de 20 (máximo) o 10 para la barra visual (si supera 10 se calcula sobre 20, si no sobre 10)
+        let maxEscala = 20;
+        let porcentaje = (prom / maxEscala) * 100;
+        if (porcentaje > 100) porcentaje = 100;
+
+        const div = document.createElement("div");
+        div.className = "chart-bar-wrap";
+        div.innerHTML = `
+          <div class="chart-bar-info">
+            <span>${asig}</span>
+            <span>Promedio: ${lista.length > 0 ? prom.toFixed(1) : 'Sin notas'} ${meta ? '— 🎯 Meta: ' + meta : ''}</span>
+          </div>
+          <div class="chart-bar-track">
+            <div class="chart-bar-fill" style="width: ${porcentaje}%;"></div>
+          </div>
+        `;
+        contPromedios.appendChild(div);
+      });
+
+      // 2. Gráfica de Estudio de los últimos 7 días
+      const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
+      const contEstudio = document.getElementById("grafico-estudio-container");
+      contEstudio.innerHTML = "";
+
+      let maxMinutos = 120; // Escala base para la barra
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const fechaStr = d.toISOString().split('T')[0];
+        const mins = logEstudio[fechaStr] || 0;
+        if (mins > maxMinutos) maxMinutos = mins;
+
+        const porc = Math.min(Math.round((mins / maxMinutos) * 100), 100);
+
+        const div = document.createElement("div");
+        div.className = "chart-bar-wrap";
+        div.innerHTML = `
+          <div class="chart-bar-info">
+            <span>📅 ${fechaStr}</span>
+            <span style="color: #4caf50;">${mins} minutos estudiados</span>
+          </div>
+          <div class="chart-bar-track">
+            <div class="chart-bar-fill" style="background: #4caf50; width: ${porc}%;"></div>
+          </div>
+        `;
+        contEstudio.appendChild(div);
+      }
+    }
+
+    // NOTAS Y APUNTES
     function guardarApunte() {
       const asignatura = document.getElementById("nota-asig-select").value;
       const titulo = document.getElementById("nota-titulo").value.trim();
@@ -827,8 +947,8 @@
       { estudio: 25, descanso: 5 },
       { estudio: 25, descanso: 5 }
     ];
-    let indiceBloqueActual = 0; // 0 a 3 (4 bloques)
-    let modoEstudio = true; // true = estudio, false = descanso
+    let indiceBloqueActual = 0;
+    let modoEstudio = true;
     let tiempoRestante = 25 * 60;
 
     function cargarConfigPomodoro() {
@@ -947,7 +1067,7 @@
       actualizarDisplayTimer();
     }
 
-    // SISTEMA DE TROFEOS Y LOGROS
+    // TROFEOS Y LOGROS
     function evaluarTrofeos() {
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
       let totalMinutosHistorico = Object.values(logEstudio).reduce((a, b) => a + b, 0);
@@ -1036,6 +1156,7 @@
         estadosObjetivos: localStorage.getItem("estadosObjetivos"),
         misExamenes: localStorage.getItem("misExamenes"),
         notasAsignaturas: localStorage.getItem("notasAsignaturas"),
+        metasAsignaturas: localStorage.getItem("metasAsignaturas"),
         misHobbies: localStorage.getItem("misHobbies"),
         bloquesPomodoroIndependientes: localStorage.getItem("bloquesPomodoroIndependientes"),
         logEstudioDiario: localStorage.getItem("logEstudioDiario"),
@@ -1059,6 +1180,7 @@
           if (datos.estadosObjetivos) localStorage.setItem("estadosObjetivos", datos.estadosObjetivos);
           if (datos.misExamenes) localStorage.setItem("misExamenes", datos.misExamenes);
           if (datos.notasAsignaturas) localStorage.setItem("notasAsignaturas", datos.notasAsignaturas);
+          if (datos.metasAsignaturas) localStorage.setItem("metasAsignaturas", datos.metasAsignaturas);
           if (datos.misHobbies) localStorage.setItem("misHobbies", datos.misHobbies);
           if (datos.bloquesPomodoroIndependientes) localStorage.setItem("bloquesPomodoroIndependientes", datos.bloquesPomodoroIndependientes);
           if (datos.logEstudioDiario) localStorage.setItem("logEstudioDiario", datos.logEstudioDiario);
