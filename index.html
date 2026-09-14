@@ -1198,6 +1198,127 @@
     cargarObjetivos();
     cargarConfigPomodoro();
     actualizarPanel();
+    // Configuración de los pasos del tutorial
+const tutorialSteps = [
+  {
+    elementId: 'menu-btn',
+    text: '<strong>Menú Hamburguesa (☰):</strong> Accede a todas las secciones principales: Inicio, Actividades, Horario y Ajustes.',
+    action: () => openMenu(true)
+  },
+  {
+    elementId: 'step-summary',
+    text: '<strong>Resumen Diario:</strong> Visualiza de un vistazo tus tareas pendientes, avisos e indicadores del día.',
+    action: () => openMenu(false)
+  },
+  {
+    elementId: 'step-tasks',
+    text: '<strong>Gestión de Tareas:</strong> Registra, edita o marca como finalizadas tus actividades diarias.',
+    action: () => {}
+  },
+  {
+    elementId: 'step-schedule',
+    text: '<strong>Horario Semanal:</strong> Planifica y organiza tu rutina completa de lunes a domingo.',
+    action: () => {}
+  }
+];
+
+let currentStepIndex = 0;
+
+// Función para abrir o cerrar el menú hamburguesa
+function openMenu(isOpen) {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar) {
+    if (isOpen) {
+      sidebar.classList.add('open');
+    } else {
+      sidebar.classList.remove('open');
+    }
+  }
+}
+
+// Iniciar el tutorial
+function startTutorial() {
+  currentStepIndex = 0;
+  const overlay = document.getElementById('tutorial-overlay');
+  if (overlay) overlay.style.display = 'block';
+  renderStep();
+}
+
+// Renderizar el paso actual
+function renderStep() {
+  // Limpiar resaltados previos
+  document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+
+  const step = tutorialSteps[currentStepIndex];
+  if (step.action) step.action();
+
+  const targetElement = document.getElementById(step.elementId);
+  if (!targetElement) return;
+
+  targetElement.classList.add('highlight');
+
+  // Actualizar contenido del tooltip
+  const stepIndicator = document.getElementById('step-indicator');
+  const stepText = document.getElementById('step-text');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const tooltip = document.getElementById('tooltip');
+
+  if (stepIndicator) stepIndicator.innerText = `Paso ${currentStepIndex + 1} de ${tutorialSteps.length}`;
+  if (stepText) stepText.innerHTML = step.text;
+
+  // Posicionar el tooltip respecto al elemento enfocado
+  if (tooltip) {
+    tooltip.style.display = 'block';
+    const rect = targetElement.getBoundingClientRect();
+    
+    let topPosition = rect.bottom + window.scrollY + 10;
+    let leftPosition = rect.left + window.scrollX;
+
+    // Ajuste si el elemento está en la parte inferior de la pantalla
+    if (topPosition + 160 > window.innerHeight + window.scrollY) {
+      topPosition = rect.top + window.scrollY - 170;
+    }
+
+    tooltip.style.top = topPosition + 'px';
+    tooltip.style.left = Math.min(leftPosition, window.innerWidth - 300) + 'px';
+  }
+
+  // Visibilidad y texto de los botones
+  if (btnPrev) btnPrev.style.display = currentStepIndex === 0 ? 'none' : 'inline-block';
+  if (btnNext) btnNext.innerText = currentStepIndex === tutorialSteps.length - 1 ? '¡Finalizar!' : 'Siguiente';
+}
+
+// Avanzar de paso
+function nextStep() {
+  if (currentStepIndex < tutorialSteps.length - 1) {
+    currentStepIndex++;
+    renderStep();
+  } else {
+    endTutorial();
+  }
+}
+
+// Retroceder de paso
+function prevStep() {
+  if (currentStepIndex > 0) {
+    currentStepIndex--;
+    renderStep();
+  }
+}
+
+// Finalizar o salir del tutorial
+function endTutorial() {
+  document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+  
+  const overlay = document.getElementById('tutorial-overlay');
+  const tooltip = document.getElementById('tooltip');
+  
+  if (overlay) overlay.style.display = 'none';
+  if (tooltip) tooltip.style.display = 'none';
+  
+  openMenu(false);
+}
   </script>
 </body>
 </html>
