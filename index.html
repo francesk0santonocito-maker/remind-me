@@ -68,7 +68,6 @@
     .card { background: var(--card-bg); padding: 24px; border-radius: 20px; margin-bottom: 20px; box-shadow: var(--shadow); border: 2px solid var(--border-color); transition: var(--transition); position: relative; }
     .card:hover { transform: translateY(-3px); }
     
-    /* Clases para los Bordes Luminosos de Tareas y Promedios */
     .glow-border-red { border-color: var(--danger) !important; box-shadow: var(--glow-red) !important; }
     .glow-border-yellow { border-color: var(--warning) !important; box-shadow: var(--glow-yellow) !important; }
     .glow-border-green { border-color: var(--success) !important; box-shadow: var(--glow-green) !important; }
@@ -147,7 +146,7 @@
     .canvas-container { text-align: center; overflow-x: auto; padding: 10px 0; }
     canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; max-width: 100%; box-shadow: var(--shadow); }
 
-    /* ESTILOS Y ANIMACIONES PERSONALIZADAS PARA EL TUTORIAL INTERACTIVO DRIVER.JS */
+    /* ESTILOS Y ANIMACIONES PARA DRIVER.JS */
     .driver-popover {
       font-family: 'Poppins', sans-serif !important;
       border-radius: 16px !important;
@@ -208,42 +207,31 @@
 
   <!-- PANEL DE CONTROL -->
   <div id="page-panel" class="section-page section-active">
-    
-    <!-- PASO 1 DEL TUTORIAL: Examen Más Cercano -->
-    <div class="countdown-box" id="tutorial-paso-1-examen" style="display: block;">
+    <div class="countdown-box" id="tutorial-paso-1-examen" style="display: none;">
       <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
-      <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">mnb (2026-09-16)</div>
-      <div class="countdown-timer" id="timer-cuenta-atras">1d 06h 12m 09s</div>
+      <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
+      <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
     </div>
 
-    <!-- PASO 2 DEL TUTORIAL: Próxima Clase -->
     <div class="card" id="tutorial-paso-2-clase">
       <h2>📌 Próxima Clase</h2>
-      <p id="info-clase">Terminaste tus clases escolares por hoy. 📑</p>
+      <p id="info-clase">Cargando horario...</p>
     </div>
 
-    <!-- PASO 3 DEL TUTORIAL: Objetivos y Tareas Diarias -->
     <div class="card" id="card-objetivos-contenedor">
       <h2>🎯 Objetivos / Tareas Diarias</h2>
       <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde resplandeciente cuando completas tus tareas del día.</p>
       <div id="lista-objetivos-diarios"></div>
     </div>
 
-    <!-- PASO 4 DEL TUTORIAL: Próximos Exámenes Destacados -->
     <div class="card" id="tutorial-paso-4-examenes">
       <h2>📅 Próximos Exámenes Destacados</h2>
-      <div id="lista-examenes-resumen">
-        <div class="item-list">
-          <span>• Faltan 2 días para mnb (2026-09-16)</span>
-          <button class="btn-del">Eliminar</button>
-        </div>
-      </div>
+      <div id="lista-examenes-resumen"></div>
     </div>
 
-    <!-- PASO 5 DEL TUTORIAL: Estado del Sueño y Horario Semanal -->
     <div class="card" id="tutorial-paso-5-sueno">
       <h2>🌙 Estado del Sueño</h2>
-      <p id="info-sueno">Meta: Dormir 7.5h (Ir a la cama a las 23:30).</p>
+      <p id="info-sueno">Calculando meta...</p>
     </div>
 
     <div class="card" id="tutorial-paso-5-horario">
@@ -448,9 +436,32 @@
       <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos</button>
     </div>
   </div>
-
   <script>
     const asignaturasBase = ["Biología y Geología (BG)", "Física y Química (FQ)", "Matemáticas (MAT)", "Filosofía (FIL)", "Portugués (PORT)", "Inglés (ING)", "Educación Física (EF)"];
+
+    const horarioColegio = [
+      { inicio: "08:00", fin: "08:50", materias: [1, 2, 3, 1, 5] },
+      { inicio: "08:55", fin: "09:45", materias: [1, 2, 3, 1, 5] },
+      { inicio: "09:55", fin: "10:45", materias: [2, 4, 7, 1, 3] },
+      { inicio: "10:55", fin: "11:45", materias: [2, 1, 4, 6, 3] },
+      { inicio: "11:50", fin: "12:40", materias: [3, 6, 4, 5, 7] },
+      { inicio: "12:45", fin: "13:35", materias: [3, 6, 5, null, 7] },
+      { inicio: "13:55", fin: "16:40", materias: [null, null, null, 2, null] }
+    ];
+
+    const trofeosDefinicion = [
+      { id: "trofeo_1", titulo: "Primer Paso", desc: "Completa tu primer objetivo diario.", nivel: "Bronce" },
+      { id: "trofeo_2", titulo: "Estudiante Constante", desc: "Acumula 60 minutos de estudio en Pomodoro.", nivel: "Plata" },
+      { id: "trofeo_3", titulo: "Maestro del Tiempo", desc: "Acumula 300 minutos de estudio.", nivel: "Oro" },
+      { id: "trofeo_4", titulo: "Puntuación Perfecta", desc: "Alcanza o supera tu nota objetivo en una materia.", nivel: "Oro" },
+      { id: "trofeo_5", titulo: "Organizador Experto", desc: "Registra 5 o más notas de estudio.", nivel: "Bronce" },
+      { id: "trofeo_6", titulo: "Inmune al Sueño", desc: "Configura una meta de sueño saludable (≥ 8 horas).", nivel: "Diamante" }
+    ];
+
+    function obtenerFechaHoyString() {
+      const hoy = new Date();
+      return hoy.toISOString().split("T")[0];
+    }
 
     function aplicarModoOscuroAuto() {
       const hora = new Date().getHours();
@@ -479,6 +490,7 @@
       };
       document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
       toggleMenu();
+      if(pagina === 'estadisticas') renderizarGraficos();
     }
 
     function inicializarUsuario() {
@@ -496,18 +508,11 @@
       if (nombre !== "") {
         localStorage.setItem("userName", nombre);
         document.getElementById("greeting-header").innerHTML = `Remind<span>Ed</span> — ${nombre}`;
-        
-        // Ocultar pantalla de bienvenida
         document.getElementById("welcome-screen").style.display = "none";
-
-        // INICIAR EL TUTORIAL AUTOMÁTICAMENTE TRAS REGISTRAR EL NOMBRE
         iniciarTutorialInteractive();
       }
     }
 
-    // ==========================================
-    // LÓGICA DEL TUTORIAL INTERACTIVO CON DRIVER.JS
-    // ==========================================
     function iniciarTutorialInteractive() {
       const driverObj = window.driver.js.driver({
         showProgress: true,
@@ -517,64 +522,636 @@
         nextBtnText: 'Siguiente ➔',
         prevBtnText: '⇠ Anterior',
         steps: [
-          { 
-            element: '#tutorial-paso-1-examen', 
-            popover: { 
-              title: '⌛ Próximo Examen Más Cercano', 
-              description: 'Muestra el examen más próximo registrado, la fecha exacta y una cuenta regresiva en tiempo real.',
-              side: "bottom", 
-              align: 'start' 
-            } 
-          },
-          { 
-            element: '#tutorial-paso-2-clase', 
-            popover: { 
-              title: '📌 Próxima Clase', 
-              description: 'Indica la siguiente clase del día según tu horario o un aviso si ya terminaste la jornada.',
-              side: "bottom", 
-              align: 'start' 
-            } 
-          },
-          { 
-            element: '#card-objetivos-contenedor', 
-            popover: { 
-              title: '🎯 Objetivos / Tareas Diarias', 
-              description: 'Lista tus hábitos diarios. Cuando completas tus tareas, el borde resplandece en verde.',
-              side: "top", 
-              align: 'start' 
-            } 
-          },
-          { 
-            element: '#tutorial-paso-4-examenes', 
-            popover: { 
-              title: '📅 Próximos Exámenes Destacados', 
-              description: 'Lista resumen con todos los exámenes pendientes que tienes registrados y los días restantes para realizarlos.',
-              side: "top", 
-              align: 'start' 
-            } 
-          },
-          { 
-            element: '#tutorial-paso-5-sueno', 
-            popover: { 
-              title: '🌙 Estado del Sueño y Horario', 
-              description: 'Muestra tu meta de horas de descanso diarias e integra la tabla de tu horario semanal completo.',
-              side: "top", 
-              align: 'start' 
-            } 
-          }
+          { element: '#tutorial-paso-1-examen', popover: { title: '⌛ Próximo Examen Más Cercano', description: 'Muestra el examen más próximo registrado, la fecha exacta y una cuenta regresiva en tiempo real.', side: "bottom", align: 'start' } },
+          { element: '#tutorial-paso-2-clase', popover: { title: '📌 Próxima Clase', description: 'Indica la siguiente clase del día según tu horario o un aviso si ya terminaste la jornada.', side: "bottom", align: 'start' } },
+          { element: '#card-objetivos-contenedor', popover: { title: '🎯 Objetivos / Tareas Diarias', description: 'Lista tus hábitos diarios. Cuando completas tus tareas, el borde resplandece en verde.', side: "top", align: 'start' } },
+          { element: '#tutorial-paso-4-examenes', popover: { title: '📅 Próximos Exámenes Destacados', description: 'Lista resumen con todos los exámenes pendientes que tienes registrados y los días restantes para realizarlos.', side: "top", align: 'start' } },
+          { element: '#tutorial-paso-5-sueno', popover: { title: '🌙 Estado del Sueño y Horario', description: 'Muestra tu meta de horas de descanso diarias e integra la tabla de tu horario semanal completo.', side: "top", align: 'start' } }
         ]
       });
 
-      // Ejecutar el tour con leve retardo para la animación
-      setTimeout(() => {
-        driverObj.drive();
-      }, 400);
+      setTimeout(() => { driverObj.drive(); }, 400);
     }
 
-    // Cargar configuraciones al abrir la página
+    // OBJETIVOS Y BORDES VERDES
+    function cargarObjetivos() {
+      let objs = JSON.parse(localStorage.getItem("reminded_objetivos")) || ["Revisar apuntes de Matemáticas", "Leer 20 minutos de Filosofía"];
+      const hoyStr = obtenerFechaHoyString();
+      let estadosHoy = JSON.parse(localStorage.getItem("reminded_estados_diarios")) || {};
+      if(!estadosHoy[hoyStr]) estadosHoy[hoyStr] = {};
+
+      const contenedorPanel = document.getElementById("lista-objetivos-diarios");
+      const contenedorAdmin = document.getElementById("lista-objetivos-admin");
+      
+      contenedorPanel.innerHTML = "";
+      contenedorAdmin.innerHTML = "";
+
+      let todosCompletados = objs.length > 0;
+
+      objs.forEach((obj, idx) => {
+        const com = !!estadosHoy[hoyStr][idx];
+        if(!com) todosCompletados = false;
+
+        contenedorPanel.innerHTML += `
+          <div class="item-list">
+            <span><span class="dot ${com ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${idx})"></span> ${obj}</span>
+            <span style="font-size:0.8rem; font-weight:600; color:${com ? 'var(--success)' : 'var(--danger)'}">${com ? 'Completado' : 'Pendiente'}</span>
+          </div>`;
+
+        contenedorAdmin.innerHTML += `
+          <div class="item-list">
+            <span>${obj}</span>
+            <button class="btn-del" onclick="eliminarObjetivo(${idx})">Eliminar</button>
+          </div>`;
+      });
+
+      const cardObj = document.getElementById("card-objetivos-contenedor");
+      if (objs.length > 0 && todosCompletados) {
+        cardObj.classList.add("glow-border-green");
+        desbloquearTrofeo("trofeo_1");
+      } else {
+        cardObj.classList.remove("glow-border-green");
+      }
+
+      actualizarConstanciaMes(estadosHoy, objs.length);
+    }
+
+    function toggleObjetivo(idx) {
+      const hoyStr = obtenerFechaHoyString();
+      let estadosHoy = JSON.parse(localStorage.getItem("reminded_estados_diarios")) || {};
+      if(!estadosHoy[hoyStr]) estadosHoy[hoyStr] = {};
+      estadosHoy[hoyStr][idx] = !estadosHoy[hoyStr][idx];
+      localStorage.setItem("reminded_estados_diarios", JSON.stringify(estadosHoy));
+      cargarObjetivos();
+    }
+
+    function agregarObjetivo() {
+      const inp = document.getElementById("nuevo-objetivo");
+      if (!inp.value.trim()) return;
+      let objs = JSON.parse(localStorage.getItem("reminded_objetivos")) || [];
+      objs.push(inp.value.trim());
+      localStorage.setItem("reminded_objetivos", JSON.stringify(objs));
+      inp.value = "";
+      cargarObjetivos();
+    }
+
+    function eliminarObjetivo(idx) {
+      let objs = JSON.parse(localStorage.getItem("reminded_objetivos")) || [];
+      objs.splice(idx, 1);
+      localStorage.setItem("reminded_objetivos", JSON.stringify(objs));
+      cargarObjetivos();
+    }
+
+    function actualizarConstanciaMes(estados, totalObjs) {
+      const tabla = document.getElementById("tabla-historico");
+      tabla.innerHTML = "";
+      let diasExitosos = 0;
+
+      for (let i = 0; i < 30; i++) {
+        let d = new Date();
+        d.setDate(d.getDate() - i);
+        let key = d.toISOString().split("T")[0];
+        let reg = estados[key] || {};
+        let comp = Object.values(reg).filter(v => v).length;
+        let exito = totalObjs > 0 && comp >= totalObjs;
+        if(exito) diasExitosos++;
+
+        tabla.innerHTML += `
+          <tr>
+            <td>${key}</td>
+            <td style="color:${exito ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">${exito ? '✓ Completado' : '✗ Incompleto'}</td>
+          </tr>`;
+      }
+
+      let porc = Math.round((diasExitosos / 30) * 100);
+      document.getElementById("porcentaje-exito").innerText = `${porc}% de Éxito este Mes`;
+      document.getElementById("progress-bar").style.width = `${porc}%`;
+    }
+
+    // EXÁMENES Y NOTAS CON BORDES
+    function cargarExamenes() {
+      let examenes = JSON.parse(localStorage.getItem("reminded_examenes")) || [];
+      const resPanel = document.getElementById("lista-examenes-resumen");
+      const compEx = document.getElementById("lista-examenes-completa");
+      
+      resPanel.innerHTML = "";
+      compEx.innerHTML = "";
+
+      examenes.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+      const ahora = new Date();
+      let futuro = examenes.filter(e => new Date(e.fecha) > ahora);
+
+      if (futuro.length > 0) {
+        document.getElementById("tutorial-paso-1-examen").style.display = "block";
+        document.getElementById("nombre-examen-cercano").innerText = `${futuro[0].materia} (${futuro[0].fecha.replace('T', ' ')})`;
+        iniciarCuentaAtras(new Date(futuro[0].fecha));
+      } else {
+        document.getElementById("tutorial-paso-1-examen").style.display = "none";
+      }
+
+      examenes.forEach((ex, idx) => {
+        let diff = Math.ceil((new Date(ex.fecha) - ahora) / (1000 * 60 * 60 * 24));
+        let texto = diff >= 0 ? `Faltan ${diff} días para` : `Realizado hace ${Math.abs(diff)} días:`;
+
+        resPanel.innerHTML += `
+          <div class="item-list">
+            <span>• ${texto} <strong>${ex.materia}</strong> (${ex.fecha.replace('T', ' ')})</span>
+            <button class="btn-del" onclick="eliminarExamen(${idx})">Eliminar</button>
+          </div>`;
+
+        compEx.innerHTML += `
+          <div class="item-list">
+            <span><strong>${ex.materia}</strong> - Fecha: ${ex.fecha.replace('T', ' ')} | Meta: <strong>${ex.objetivo || 'N/A'}</strong></span>
+            <button class="btn-del" onclick="eliminarExamen(${idx})">Eliminar</button>
+          </div>`;
+      });
+    }
+
+    function agregarExamen() {
+      const mat = document.getElementById("examen-materia-select").value;
+      const fec = document.getElementById("examen-fecha").value;
+      const obj = document.getElementById("examen-objetivo-nota").value;
+      if (!fec) return;
+
+      let examenes = JSON.parse(localStorage.getItem("reminded_examenes")) || [];
+      examenes.push({ materia: mat, fecha: fec, objetivo: obj });
+      localStorage.setItem("reminded_examenes", JSON.stringify(examenes));
+      cargarExamenes();
+    }
+
+    function eliminarExamen(idx) {
+      let examenes = JSON.parse(localStorage.getItem("reminded_examenes")) || [];
+      examenes.splice(idx, 1);
+      localStorage.setItem("reminded_examenes", JSON.stringify(examenes));
+      cargarExamenes();
+    }
+
+    let intervalCountdown;
+    function iniciarCuentaAtras(destino) {
+      clearInterval(intervalCountdown);
+      intervalCountdown = setInterval(() => {
+        const disp = document.getElementById("timer-cuenta-atras");
+        const diff = destino - new Date();
+        if (diff <= 0) {
+          disp.innerText = "¡El examen es ahora!";
+          clearInterval(intervalCountdown);
+          return;
+        }
+        let d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        let m = Math.floor((diff / 1000 / 60) % 60);
+        let s = Math.floor((diff / 1000) % 60);
+        disp.innerText = `${d}d ${h < 10 ? '0':''}${h}h ${m < 10 ? '0':''}${m}m ${s < 10 ? '0':''}${s}s`;
+      }, 1000);
+    }
+
+    function cargarCalificaciones() {
+      const contenedor = document.getElementById("contenedor-asignaturas");
+      let notas = JSON.parse(localStorage.getItem("reminded_calificaciones")) || {};
+      let metas = JSON.parse(localStorage.getItem("reminded_metas")) || {};
+
+      contenedor.innerHTML = "";
+
+      asignaturasBase.forEach(asig => {
+        let listaNotas = notas[asig] || [];
+        let meta = metas[asig] || 10;
+        let promedio = listaNotas.length > 0 ? (listaNotas.reduce((a,b)=>a+b, 0)/listaNotas.length).toFixed(1) : 0;
+
+        let claseGlow = "";
+        if (listaNotas.length > 0) {
+          if (parseFloat(promedio) >= parseFloat(meta)) {
+            claseGlow = "glow-border-green";
+            desbloquearTrofeo("trofeo_4");
+          } else {
+            claseGlow = "glow-border-red";
+          }
+        }
+
+        contenedor.innerHTML += `
+          <div class="materia-card ${claseGlow}">
+            <span class="promedio-tag">Promedio: ${promedio}</span>
+            <h3 style="margin:0 0 10px 0; color:var(--primary);">${asig}</h3>
+            <div class="form-group">
+              <label style="font-size:0.85rem;">Nota Objetivo: 
+                <input type="number" step="0.5" value="${meta}" class="input-form" style="width:70px; padding:4px 8px;" onchange="actualizarMeta('${asig}', this.value)" />
+              </label>
+            </div>
+            <div class="form-group">
+              <input type="number" step="0.1" id="input-nota-${asig}" class="input-form" placeholder="Nota examen" style="width:120px;" />
+              <button class="btn-action" onclick="agregarNota('${asig}')">Añadir Nota</button>
+            </div>
+            <div style="font-size:0.85rem; color:#64748b;">Notas: ${listaNotas.join(", ") || "Ninguna registrada"}</div>
+          </div>`;
+      });
+    }
+
+    function agregarNota(asig) {
+      const inp = document.getElementById(`input-nota-${asig}`);
+      let val = parseFloat(inp.value);
+      if (isNaN(val)) return;
+
+      let notas = JSON.parse(localStorage.getItem("reminded_calificaciones")) || {};
+      if (!notas[asig]) notas[asig] = [];
+      notas[asig].push(val);
+      localStorage.setItem("reminded_calificaciones", JSON.stringify(notas));
+      inp.value = "";
+      cargarCalificaciones();
+    }
+
+    function actualizarMeta(asig, val) {
+      let metas = JSON.parse(localStorage.getItem("reminded_metas")) || {};
+      metas[asig] = parseFloat(val);
+      localStorage.setItem("reminded_metas", JSON.stringify(metas));
+      cargarCalificaciones();
+    }
+
+    // POMODORO POR BLOQUES
+    let timerInterval;
+    let tiempoRestante = 25 * 60;
+    let corriendo = false;
+    let bloqueActual = 1;
+    let configBloques = JSON.parse(localStorage.getItem("reminded_pomodoro_config")) || [
+      { estudio: 25, descanso: 5 },
+      { estudio: 25, descanso: 5 },
+      { estudio: 25, descanso: 5 },
+      { estudio: 30, descanso: 15 }
+    ];
+    let enDescanso = false;
+
+    function renderizarTimer() {
+      let m = Math.floor(tiempoRestante / 60);
+      let s = tiempoRestante % 60;
+      document.getElementById("timer-display").innerText = `${m < 10 ? '0':''}${m}:${s < 10 ? '0':''}${s}`;
+      document.getElementById("timer-mode").innerText = `Bloque ${bloqueActual} / 4 - ${enDescanso ? 'Descanso' : 'Sesión de Estudio'}`;
+    }
+
+    function iniciarTimer() {
+      if (corriendo) return;
+      corriendo = true;
+      timerInterval = setInterval(() => {
+        tiempoRestante--;
+        if (!enDescanso) registrarTiempoEstudio1Min();
+        if (tiempoRestante <= 0) {
+          clearInterval(timerInterval);
+          corriendo = false;
+          avanzarBloque();
+        }
+        renderizarTimer();
+      }, 1000);
+    }
+
+    function registrarTiempoEstudio1Min() {
+      let hoy = obtenerFechaHoyString();
+      let reg = JSON.parse(localStorage.getItem("reminded_estudio_dias")) || {};
+      reg[hoy] = (reg[hoy] || 0) + (1 / 60);
+      localStorage.setItem("reminded_estudio_dias", JSON.stringify(reg));
+      
+      let tot = Object.values(reg).reduce((a,b)=>a+b, 0);
+      if(tot >= 60) desbloquearTrofeo("trofeo_2");
+      if(tot >= 300) desbloquearTrofeo("trofeo_3");
+
+      document.getElementById("tiempo-estudiado-hoy").innerText = `Estudiado hoy: ${Math.round(reg[hoy] || 0)} min`;
+    }
+
+    function pausarTimer() {
+      clearInterval(timerInterval);
+      corriendo = false;
+    }
+
+    function reiniciarTimer() {
+      pausarTimer();
+      tiempoRestante = configBloques[bloqueActual - 1].estudio * 60;
+      enDescanso = false;
+      renderizarTimer();
+    }
+
+    function avanzarBloque() {
+      if (!enDescanso) {
+        enDescanso = true;
+        tiempoRestante = configBloques[bloqueActual - 1].descanso * 60;
+      } else {
+        enDescanso = false;
+        bloqueActual = bloqueActual >= 4 ? 1 : bloqueActual + 1;
+        tiempoRestante = configBloques[bloqueActual - 1].estudio * 60;
+      }
+      renderizarTimer();
+    }
+
+    function toggleConfigPomodoro() {
+      const m = document.getElementById("modal-config-pomodoro");
+      m.style.display = m.style.display === "block" ? "none" : "block";
+      if(m.style.display === "block") cargarModalConfigPomodoro();
+    }
+
+    function cargarModalConfigPomodoro() {
+      const cont = document.getElementById("contenedor-bloques-config");
+      cont.innerHTML = "";
+      configBloques.forEach((b, idx) => {
+        cont.innerHTML += `
+          <div class="block-config-row">
+            <span><strong>Bloque ${idx + 1}</strong></span>
+            <label>Estudio: <input type="number" id="pomo-e-${idx}" value="${b.estudio}" class="input-form" style="width:60px; padding:2px 6px;" /> min</label>
+            <label>Descanso: <input type="number" id="pomo-d-${idx}" value="${b.descanso}" class="input-form" style="width:60px; padding:2px 6px;" /> min</label>
+          </div>`;
+      });
+    }
+
+    function guardarConfigPomodoro() {
+      configBloques.forEach((b, idx) => {
+        b.estudio = parseInt(document.getElementById(`pomo-e-${idx}`).value) || 25;
+        b.descanso = parseInt(document.getElementById(`pomo-d-${idx}`).value) || 5;
+      });
+      localStorage.setItem("reminded_pomodoro_config", JSON.stringify(configBloques));
+      toggleConfigPomodoro();
+      reiniciarTimer();
+    }
+
+    // HOBBIES MULTIDÍA
+    function cargarHobbies() {
+      let hobbies = JSON.parse(localStorage.getItem("reminded_hobbies")) || [];
+      const cont = document.getElementById("lista-hobbies");
+      cont.innerHTML = "";
+
+      const diasNombre = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+      hobbies.forEach((h, idx) => {
+        let diasTxt = h.dias.map(d => diasNombre[d]).join(", ");
+        cont.innerHTML += `
+          <div class="item-list">
+            <span>🎨 <strong>${h.nombre}</strong> (${h.hora}) - Días: ${diasTxt}</span>
+            <button class="btn-del" onclick="eliminarHobby(${idx})">Eliminar</button>
+          </div>`;
+      });
+    }
+
+    function agregarHobbyMulti() {
+      const nom = document.getElementById("hobby-nombre").value.trim();
+      const hor = document.getElementById("hobby-hora-libre").value;
+      const chks = document.querySelectorAll(".chk-dia:checked");
+      
+      let dias = [];
+      chks.forEach(c => dias.push(parseInt(c.value)));
+
+      if (!nom || dias.length === 0) return;
+
+      let hobbies = JSON.parse(localStorage.getItem("reminded_hobbies")) || [];
+      hobbies.push({ nombre: nom, hora: hor, dias: dias });
+      localStorage.setItem("reminded_hobbies", JSON.stringify(hobbies));
+
+      document.getElementById("hobby-nombre").value = "";
+      cargarHobbies();
+    }
+
+    function eliminarHobby(idx) {
+      let hobbies = JSON.parse(localStorage.getItem("reminded_hobbies")) || [];
+      hobbies.splice(idx, 1);
+      localStorage.setItem("reminded_hobbies", JSON.stringify(hobbies));
+      cargarHobbies();
+    }
+
+    // CONTROL DE SUEÑO
+    function guardarConfigSueno() {
+      const h = parseFloat(document.getElementById("sueno-horas").value);
+      const a = document.getElementById("sueno-acostar").value;
+      const d = document.getElementById("sueno-despertar").value;
+
+      const cfg = { horas: h, acostar: a, despertar: d };
+      localStorage.setItem("reminded_sueno_config", JSON.stringify(cfg));
+      if(h >= 8) desbloquearTrofeo("trofeo_6");
+      actualizarResumenSueno();
+    }
+
+    function actualizarResumenSueno() {
+      const cfg = JSON.parse(localStorage.getItem("reminded_sueno_config")) || { horas: 8, acostar: "23:00", despertar: "07:00" };
+      document.getElementById("info-sueno").innerText = `Meta: Dormir ${cfg.horas}h (Ir a la cama a las ${cfg.acostar}).`;
+      document.getElementById("resumen-sueno-box").innerHTML = `
+        <p>🛌 Hora de acostarse objetivo: <strong>${cfg.acostar}</strong></p>
+        <p>⏰ Hora de despertar objetivo: <strong>${cfg.despertar}</strong></p>
+        <p>😴 Duración proyectada: <strong>${cfg.horas} horas</strong> de descanso.</p>`;
+    }
+
+    // NOTAS Y APUNTES
+    function cargarOpcionesAsignaturas() {
+      const sel1 = document.getElementById("examen-materia-select");
+      const sel2 = document.getElementById("nota-asig-select");
+      const sel3 = document.getElementById("filtro-asig");
+
+      sel1.innerHTML = "";
+      sel2.innerHTML = "";
+      sel3.innerHTML = '<option value="TODAS">Todas las asignaturas</option>';
+
+      asignaturasBase.forEach(a => {
+        sel1.innerHTML += `<option value="${a}">${a}</option>`;
+        sel2.innerHTML += `<option value="${a}">${a}</option>`;
+        sel3.innerHTML += `<option value="${a}">${a}</option>`;
+      });
+    }
+
+    function guardarApunte() {
+      const asig = document.getElementById("nota-asig-select").value;
+      const tit = document.getElementById("nota-titulo").value.trim();
+      const con = document.getElementById("nota-contenido").value.trim();
+
+      if(!tit || !con) return;
+
+      let notas = JSON.parse(localStorage.getItem("reminded_apuntes")) || [];
+      notas.push({ asignatura: asig, titulo: tit, contenido: con, fecha: obtenerFechaHoyString() });
+      localStorage.setItem("reminded_apuntes", JSON.stringify(notas));
+
+      if(notas.length >= 5) desbloquearTrofeo("trofeo_5");
+
+      document.getElementById("nota-titulo").value = "";
+      document.getElementById("nota-contenido").value = "";
+      filtrarNotas();
+    }
+
+    function filtrarNotas() {
+      const bus = document.getElementById("buscador-notas").value.toLowerCase();
+      const asig = document.getElementById("filtro-asig").value;
+      let notas = JSON.parse(localStorage.getItem("reminded_apuntes")) || [];
+
+      const cont = document.getElementById("contenedor-lista-apuntes");
+      cont.innerHTML = "";
+
+      let filtradas = notas.filter(n => {
+        let matchTexto = n.titulo.toLowerCase().includes(bus) || n.contenido.toLowerCase().includes(bus);
+        let matchAsig = asig === "TODAS" || n.asignatura === asig;
+        return matchTexto && matchAsig;
+      });
+
+      filtradas.forEach((n, idx) => {
+        cont.innerHTML += `
+          <div class="note-item">
+            <div class="note-header">
+              <span><strong>${n.asignatura}</strong></span>
+              <span>${n.fecha}</span>
+            </div>
+            <h4 style="margin:0 0 8px 0; color:var(--primary);">${n.titulo}</h4>
+            <p style="margin:0; font-size:0.9rem;">${n.contenido}</p>
+            <button class="btn-del" style="margin-top:10px;" onclick="eliminarNotaApunte(${idx})">Eliminar</button>
+          </div>`;
+      });
+    }
+
+    function eliminarNotaApunte(idx) {
+      let notas = JSON.parse(localStorage.getItem("reminded_apuntes")) || [];
+      notas.splice(idx, 1);
+      localStorage.setItem("reminded_apuntes", JSON.stringify(notas));
+      filtrarNotas();
+    }
+
+    // TROFEOS Y SALA
+    function cargarTrofeos() {
+      let unlocked = JSON.parse(localStorage.getItem("reminded_trofeos")) || [];
+      const grid = document.getElementById("grid-trofeos");
+      grid.innerHTML = "";
+
+      trofeosDefinicion.forEach(t => {
+        let esDesbloqueado = unlocked.includes(t.id);
+        let badgeClase = `badge-${t.nivel.toLowerCase()}`;
+
+        grid.innerHTML += `
+          <div class="trophy-card ${esDesbloqueado ? 'unlocked' : ''}">
+            <span class="badge-nivel ${badgeClase}">${t.nivel}</span>
+            <h3 style="margin:0 0 6px 0;">${esDesbloqueado ? '🏆' : '🔒'} ${t.titulo}</h3>
+            <p style="margin:0; font-size:0.85rem; color:#64748b;">${t.desc}</p>
+          </div>`;
+      });
+    }
+
+    function desbloquearTrofeo(id) {
+      let unlocked = JSON.parse(localStorage.getItem("reminded_trofeos")) || [];
+      if(!unlocked.includes(id)) {
+        unlocked.push(id);
+        localStorage.setItem("reminded_trofeos", JSON.stringify(unlocked));
+        cargarTrofeos();
+      }
+    }
+
+    // DIBUJO DE GRÁFICOS (CANVAS EJES X/Y)
+    function renderizarGraficos() {
+      dibujarGraficoNotas();
+      dibujarGraficoEstudio();
+    }
+
+    function dibujarGraficoNotas() {
+      const cvs = document.getElementById("canvas-lineas-notas");
+      const ctx = cvs.getContext("2d");
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+      let notas = JSON.parse(localStorage.getItem("reminded_calificaciones")) || {};
+      let promedios = asignaturasBase.map(a => {
+        let l = notas[a] || [];
+        return l.length > 0 ? (l.reduce((x,y)=>x+y,0)/l.length) : 0;
+      });
+
+      // Ejes
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(40, 20); ctx.lineTo(40, 210);
+      ctx.lineTo(480, 210);
+      ctx.stroke();
+
+      // Puntos
+      const stepX = (480 - 40) / (asignaturasBase.length - 1);
+      ctx.strokeStyle = "#6c5ce7";
+      ctx.fillStyle = "#6c5ce7";
+      ctx.beginPath();
+
+      promedios.forEach((p, idx) => {
+        let x = 40 + idx * stepX;
+        let y = 210 - (p / 20) * 180;
+        if(idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      promedios.forEach((p, idx) => {
+        let x = 40 + idx * stepX;
+        let y = 210 - (p / 20) * 180;
+        ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2); ctx.fill();
+      });
+    }
+
+    function dibujarGraficoEstudio() {
+      const cvs = document.getElementById("canvas-lineas-estudio");
+      const ctx = cvs.getContext("2d");
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+      let reg = JSON.parse(localStorage.getItem("reminded_estudio_dias")) || {};
+      let dias = [];
+      for(let i=6; i>=0; i--) {
+        let d = new Date(); d.setDate(d.getDate() - i);
+        dias.push(d.toISOString().split("T")[0]);
+      }
+
+      let valores = dias.map(d => reg[d] || 0);
+
+      // Ejes
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(40, 20); ctx.lineTo(40, 210);
+      ctx.lineTo(480, 210);
+      ctx.stroke();
+
+      const stepX = (480 - 40) / 6;
+      let maxVal = Math.max(...valores, 60);
+
+      ctx.strokeStyle = "#00cec9";
+      ctx.fillStyle = "#00cec9";
+      ctx.beginPath();
+
+      valores.forEach((v, idx) => {
+        let x = 40 + idx * stepX;
+        let y = 210 - (v / maxVal) * 180;
+        if(idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    // EXPORTAR E IMPORTAR
+    function exportarDatos() {
+      let data = {};
+      for(let i=0; i<localStorage.length; i++) {
+        let k = localStorage.key(i);
+        data[k] = localStorage.getItem(k);
+      }
+      let blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+      let a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "reminded_backup.json";
+      a.click();
+    }
+
+    function importarDatos(e) {
+      let file = e.target.files[0];
+      if(!file) return;
+      let reader = new FileReader();
+      reader.onload = function(evt) {
+        let data = JSON.parse(evt.target.result);
+        Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+        location.reload();
+      };
+      reader.readAsText(file);
+    }
+
+    // CARGA INICIAL COMPLETA
     window.onload = function() {
       aplicarModoOscuroAuto();
       inicializarUsuario();
+      cargarOpcionesAsignaturas();
+      cargarObjetivos();
+      cargarExamenes();
+      cargarCalificaciones();
+      cargarHobbies();
+      actualizarResumenSueno();
+      cargarTrofeos();
+      filtrarNotas();
+      renderizarTimer();
     };
   </script>
 </body>
