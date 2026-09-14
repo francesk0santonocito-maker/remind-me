@@ -29,7 +29,7 @@
     .hamburger { font-size: 1.8rem; cursor: pointer; background: none; border: none; color: var(--text-color); padding: 5px; }
     h1 { color: var(--primary); text-align: center; margin: 0; flex-grow: 1; font-size: 1.5rem; }
     
-    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 220px; }
+    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 230px; }
     .nav-menu button { width: 100%; text-align: left; padding: 12px; background: none; border: none; color: var(--text-color); font-size: 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
     .nav-menu button:last-child { border-bottom: none; }
     .nav-menu button:hover { background: var(--item-bg); }
@@ -54,7 +54,7 @@
     .input-form { padding: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 6px; margin-right: 5px; background: var(--card-bg); color: var(--text-color); }
     .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: var(--item-bg); padding: 8px 12px; border-radius: 6px; }
     .btn-del { background: #e53935; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
-    .form-group { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .form-group { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
 
     .section-page { display: none; }
     .section-active { display: block; }
@@ -73,6 +73,10 @@
 
     /* MODAL DE EDICIÓN POMODORO */
     .modal-config { display: none; background: var(--item-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-top: 15px; }
+
+    /* CHECKBOXES DIAS HOBBIES */
+    .days-checkboxes { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+    .days-checkboxes label { font-size: 0.9rem; cursor: pointer; }
 
     /* TROFEOS */
     .trophy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 10px; }
@@ -107,6 +111,7 @@
       <button onclick="navegarA('estudio')">Modo Estudio (Pomodoro)</button>
       <button onclick="navegarA('examenes')">Exámenes y Notas</button>
       <button onclick="navegarA('hobbies')">Mis Hobbies</button>
+      <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
       <button onclick="navegarA('objetivos')">Mis Objetivos</button>
       <button onclick="navegarA('notas')">Notas y Apuntes</button>
       <button onclick="navegarA('trofeos')">🏆 Trofeos</button>
@@ -138,8 +143,8 @@
     </div>
 
     <div class="card">
-      <h2>🌙 Higiene del Sueño</h2>
-      <p id="info-sueno">Cargando...</p>
+      <h2>🌙 Estado del Sueño</h2>
+      <p id="info-sueno">Cargando hábitos de descanso...</p>
     </div>
 
     <div class="card">
@@ -157,7 +162,7 @@
             <tr><td>11:50-12:40</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>FIL (A7)</td><td>PORT (A11)</td><td>EF (CP1)</td><td id="cell-6-11:50">-</td><td id="cell-0-11:50">-</td></tr>
             <tr><td>12:45-13:35</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>PORT (A7)</td><td>-</td><td>EF (CP1)</td><td id="cell-6-12:45">-</td><td id="cell-0-12:45">-</td></tr>
             <tr><td>13:55-16:40</td><td>-</td><td>-</td><td>-</td><td>FQ/BG (E2/E9)</td><td>-</td><td id="cell-6-13:55">-</td><td id="cell-0-13:55">-</td></tr>
-            <tr><td>17:00-18:30</td><td id="cell-1-17:00">-</td><td id="cell-2-17:00">-</td><td id="cell-3-17:00">-</td><td id="cell-4-17:00">-</td><td id="cell-5-17:00">-</td><td id="cell-6-17:00">-</td><td id="cell-0-17:00">-</td></tr>
+            <tr><td>Personalizado</td><td colspan="7" id="custom-hobbies-grid" style="font-size:0.9rem; color:var(--primary);">Consulta la sección Hobbies para eventos a horas libres.</td></tr>
           </tbody>
         </table>
       </div>
@@ -193,13 +198,14 @@
   <!-- EXÁMENES Y NOTAS -->
   <div id="page-examenes" class="section-page">
     <div class="card">
-      <h2>📅 Añadir Próximo Examen</h2>
+      <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
       <div class="form-group">
         <select id="examen-materia-select" class="input-form"></select>
         <input type="datetime-local" id="examen-fecha" class="input-form" />
+        <input type="text" id="examen-objetivo-nota" class="input-form" placeholder="Nota objetivo (ej. 18 / 9.5)" style="width:160px;" />
         <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
       </div>
-      <h3>Exámenes Programados</h3>
+      <h3>Exámenes Programados y Editables</h3>
       <div id="lista-examenes-completa"></div>
     </div>
 
@@ -212,32 +218,46 @@
   <!-- MIS HOBBIES -->
   <div id="page-hobbies" class="section-page">
     <div class="card">
-      <h2>🎨 Gestionar Mis Hobbies</h2>
+      <h2>🎨 Gestionar Mis Hobbies (Multidía y Hora Libre)</h2>
       <div class="form-group">
-        <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" />
-        <select id="hobby-dia" class="input-form">
-          <option value="1">Lunes</option>
-          <option value="2">Martes</option>
-          <option value="3">Miércoles</option>
-          <option value="4">Jueves</option>
-          <option value="5">Viernes</option>
-          <option value="6">Sábado</option>
-          <option value="0">Domingo</option>
-        </select>
-        <select id="hobby-hora" class="input-form">
-          <option value="08:00">08:00-08:50</option>
-          <option value="08:55">08:55-09:45</option>
-          <option value="09:55">09:55-10:45</option>
-          <option value="10:55">10:55-11:45</option>
-          <option value="11:50">11:50-12:40</option>
-          <option value="12:45">12:45-13:35</option>
-          <option value="13:55">13:55-16:40</option>
-          <option value="17:00">17:00-18:30</option>
-        </select>
-        <button onclick="agregarHobby()" class="btn-action">Añadir al Horario</button>
+        <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" style="flex:1;" />
+        <input type="time" id="hobby-hora-libre" class="input-form" value="23:00" />
       </div>
-      <h3>Hobbies Registrados</h3>
+      <label style="font-weight: bold; font-size: 0.9rem; display: block; margin: 8px 0 4px 0;">Selecciona los días que se repite:</label>
+      <div class="days-checkboxes">
+        <label><input type="checkbox" value="1" class="chk-dia"> Lunes</label>
+        <label><input type="checkbox" value="2" class="chk-dia"> Martes</label>
+        <label><input type="checkbox" value="3" class="chk-dia"> Miércoles</label>
+        <label><input type="checkbox" value="4" class="chk-dia"> Jueves</label>
+        <label><input type="checkbox" value="5" class="chk-dia"> Viernes</label>
+        <label><input type="checkbox" value="6" class="chk-dia"> Sábado</label>
+        <label><input type="checkbox" value="0" class="chk-dia"> Domingo</label>
+      </div>
+      <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;">Añadir Hobby a los Días Seleccionados</button>
+      
+      <h3 style="margin-top: 20px;">Hobbies Registrados</h3>
       <div id="lista-hobbies"></div>
+    </div>
+  </div>
+
+  <!-- CONTROL DE SUEÑO -->
+  <div id="page-sueno" class="section-page">
+    <div class="card">
+      <h2>💤 Configuración del Control de Sueño</h2>
+      <p>Establece tus metas de descanso para mantenerlo como hábito constante.</p>
+      <div class="form-group">
+        <label>Horas de sueño deseadas: <input type="number" step="0.5" id="sueno-horas" class="input-form" value="8" style="width:70px;" /></label>
+        <label>Hora de Dormir: <input type="time" id="sueno-acostar" class="input-form" value="23:00" /></label>
+        <label>Hora de Despertar: <input type="time" id="sueno-despertar" class="input-form" value="07:00" /></label>
+      </div>
+      <button onclick="guardarConfigSueno()" class="btn-action">Guardar Hábitos de Sueño</button>
+    </div>
+
+    <div class="card">
+      <h2>🌙 Resumen y Consejos de Descanso</h2>
+      <div id="resumen-sueno-box">
+        <p>Cargando datos de sueño...</p>
+      </div>
     </div>
   </div>
 
@@ -348,6 +368,7 @@
         'estudio': 'page-estudio',
         'examenes': 'page-examenes',
         'hobbies': 'page-hobbies',
+        'sueno': 'page-sueno',
         'objetivos': 'page-objetivos',
         'notas': 'page-notas',
         'trofeos': 'page-trofeos',
@@ -355,6 +376,7 @@
       };
       document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
       if (pagina === 'trofeos') evaluarTrofeos();
+      if (pagina === 'sueno') cargarControlSueno();
       toggleMenu();
     }
 
@@ -377,45 +399,48 @@
       }
     }
 
-    // HOBBIES
+    // HOBBIES MULTIDÍA Y HORA LIBRE
     function cargarHobbies() {
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const contLista = document.getElementById("lista-hobbies");
       contLista.innerHTML = "";
-
-      const horas = ["08:00", "08:55", "09:55", "10:55", "11:50", "12:45", "13:55", "17:00"];
-      const dias = [0, 1, 2, 3, 4, 5, 6];
-      dias.forEach(d => {
-        horas.forEach(h => {
-          const cell = document.getElementById(`cell-${d}-${h}`);
-          if (cell) cell.innerText = "-";
-        });
-      });
-
       const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
+      let customTexto = [];
+
       hobbies.forEach((hb, idx) => {
-        const cell = document.getElementById(`cell-${hb.dia}-${hb.hora}`);
-        if (cell) cell.innerText = hb.nombre;
+        customTexto.push(`<strong>${hb.nombre}</strong> (${diasNombres[hb.dia]} a las ${hb.hora})`);
 
         const div = document.createElement("div");
         div.className = "item-list";
-        div.innerHTML = `<span>• <strong>${hb.nombre}</strong> (${diasNombres[hb.dia]} a las ${hb.hora})</span> <button class="btn-del" onclick="borrarHobby(${idx})">Eliminar</button>`;
+        div.innerHTML = `<span>• <strong>${hb.nombre}</strong> — ${diasNombres[hb.dia]} a las ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">Eliminar</button>`;
         contLista.appendChild(div);
       });
+
+      const gridCustom = document.getElementById("custom-hobbies-grid");
+      if (customTexto.length > 0) {
+        gridCustom.innerHTML = customTexto.join(" | ");
+      } else {
+        gridCustom.innerHTML = "Sin hobbies o eventos personalizados registrados.";
+      }
     }
 
-    function agregarHobby() {
+    function agregarHobbyMulti() {
       const nombre = document.getElementById("hobby-nombre").value.trim();
-      const dia = parseInt(document.getElementById("hobby-dia").value);
-      const hora = document.getElementById("hobby-hora").value;
+      const hora = document.getElementById("hobby-hora-libre").value;
+      const checkboxes = document.querySelectorAll(".chk-dia:checked");
 
-      if (nombre !== "") {
+      if (nombre !== "" && checkboxes.length > 0) {
         const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
-        hobbies.push({ nombre, dia, hora });
+        checkboxes.forEach(chk => {
+          hobbies.push({ nombre, dia: parseInt(chk.value), hora });
+        });
         localStorage.setItem("misHobbies", JSON.stringify(hobbies));
         document.getElementById("hobby-nombre").value = "";
+        checkboxes.forEach(chk => chk.checked = false);
         cargarHobbies();
+      } else {
+        alert("Por favor, introduce el nombre del hobby y selecciona al menos un día.");
       }
     }
 
@@ -426,7 +451,7 @@
       cargarHobbies();
     }
 
-    // EXÁMENES, PROMEDIOS Y CUENTA ATRÁS
+    // EXÁMENES EDITABLES Y NOTA OBJETIVO
     let countdownInterval = null;
 
     function inicializarExamenesYNotas() {
@@ -469,9 +494,11 @@
       guardados.forEach((ex, index) => {
         const fechaEx = new Date(ex.fecha);
         const diff = Math.ceil((fechaEx - ahora) / (1000 * 60 * 60 * 24));
+        const objetivoStr = ex.objetivo ? ` | 🎯 Meta: ${ex.objetivo}` : "";
+        
         const div = document.createElement("div");
         div.className = "item-list";
-        let texto = diff > 0 ? `Faltan <span style='font-weight:bold; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})` : `Examen de ${ex.asignatura} (${ex.fecha.replace('T', ' ')})`;
+        let texto = diff > 0 ? `Faltan <span style='font-weight:bold; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `Examen de ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
         div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
         
         contCompleto.appendChild(div.cloneNode(true));
@@ -484,7 +511,7 @@
     function iniciarCuentaAtras(examenCercano) {
       if (!examenCercano) return;
       document.getElementById("box-cuenta-atras").style.display = "block";
-      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')})`;
+      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')}) ${examenCercano.objetivo ? '— Meta: ' + examenCercano.objetivo : ''}`;
 
       if (countdownInterval) clearInterval(countdownInterval);
 
@@ -512,12 +539,17 @@
     function agregarExamen() {
       const materia = document.getElementById("examen-materia-select").value;
       const fecha = document.getElementById("examen-fecha").value;
+      const objetivo = document.getElementById("examen-objetivo-nota").value.trim();
+
       if (materia !== "" && fecha !== "") {
         const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-        guardados.push({ asignatura: materia, fecha: fecha });
+        guardados.push({ asignatura: materia, fecha: fecha, objetivo: objetivo });
         localStorage.setItem("misExamenes", JSON.stringify(guardados));
         document.getElementById("examen-fecha").value = "";
+        document.getElementById("examen-objetivo-nota").value = "";
         cargarExamenes();
+      } else {
+        alert("Por favor selecciona una asignatura y una fecha para el examen.");
       }
     }
 
@@ -526,6 +558,39 @@
       guardados.splice(index, 1);
       localStorage.setItem("misExamenes", JSON.stringify(guardados));
       cargarExamenes();
+    }
+
+    // CONTROL DE SUEÑO (Con Ñ)
+    function guardarConfigSueno() {
+      const horas = parseFloat(document.getElementById("sueno-horas").value) || 8;
+      const acostar = document.getElementById("sueno-acostar").value;
+      const despertar = document.getElementById("sueno-despertar").value;
+
+      const suenoConfig = { horas, acostar, despertar };
+      localStorage.setItem("configSueno", JSON.stringify(suenoConfig));
+      alert("¡Hábitos de sueño guardados correctamente!");
+      cargarControlSueno();
+    }
+
+    function cargarControlSueno() {
+      const cfg = JSON.parse(localStorage.getItem("configSueno")) || { horas: 8, acostar: "23:00", despertar: "07:00" };
+      document.getElementById("sueno-horas").value = cfg.horas;
+      document.getElementById("sueno-acostar").value = cfg.acostar;
+      document.getElementById("sueno-despertar").value = cfg.despertar;
+
+      const box = document.getElementById("resumen-sueno-box");
+      box.innerHTML = `
+        <p>🛌 <strong>Meta de descanso:</strong> ${cfg.horas} horas diarias.</p>
+        <p>🌙 <strong>Hora recomendada para ir a dormir:</strong> ${cfg.acostar}</p>
+        <p>⏰ <strong>Hora de despertar:</strong> ${cfg.despertar}</p>
+        <p style="color:var(--primary); font-weight:bold; margin-top:10px;">¡Mantén este hábito constante para rendir al máximo en tus estudios y exámenes!</p>
+      `;
+
+      const horaActual = new Date().getHours();
+      const infoSuenoPanel = document.getElementById("info-sueno");
+      if (infoSuenoPanel) {
+        infoSuenoPanel.innerText = `💤 Hábito activo: Dormir ${cfg.horas}h (Acostarse a las ${cfg.acostar}).`;
+      }
     }
 
     function cargarAsignaturasYNotas() {
@@ -609,7 +674,7 @@
         return;
       }
 
-      filtrados.slice().reverse().forEach((ap, indexReal) => {
+      filtrados.slice().reverse().forEach((ap) => {
         const indexOriginal = apuntes.indexOf(ap);
         const div = document.createElement("div");
         div.className = "note-item";
@@ -741,7 +806,7 @@
       document.getElementById("progress-bar").style.width = `${porcentaje}%`;
     }
 
-    // POMODORO CONFIGURABLE Y SEGUIMIENTO DIARIO
+    // POMODORO CONFIGURABLE
     let timerInterval = null;
     let minEstudio = 25;
     let minDescanso = 5;
@@ -854,7 +919,6 @@
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const examenes = JSON.parse(localStorage.getItem("misExamenes")) || [];
 
-      // Calcular racha de objetivos perfectos consecutivos
       const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
       const objetivos = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       let rachaConsecutiva = 0;
@@ -937,7 +1001,8 @@
         misHobbies: localStorage.getItem("misHobbies"),
         configPomodoro: localStorage.getItem("configPomodoro"),
         logEstudioDiario: localStorage.getItem("logEstudioDiario"),
-        misApuntes: localStorage.getItem("misApuntes")
+        misApuntes: localStorage.getItem("misApuntes"),
+        configSueno: localStorage.getItem("configSueno")
       };
       const blob = new Blob([JSON.stringify(datos)], { type: "application/json" });
       const a = document.createElement("a");
@@ -960,6 +1025,7 @@
           if (datos.configPomodoro) localStorage.setItem("configPomodoro", datos.configPomodoro);
           if (datos.logEstudioDiario) localStorage.setItem("logEstudioDiario", datos.logEstudioDiario);
           if (datos.misApuntes) localStorage.setItem("misApuntes", datos.misApuntes);
+          if (datos.configSueno) localStorage.setItem("configSueno", datos.configSueno);
           alert("¡Datos restaurados con éxito!");
           location.reload();
         } catch (err) {
@@ -977,16 +1043,13 @@
       const elClase = document.getElementById("info-clase");
 
       if (!clasesHoy || clasesHoy.length === 0) {
-        elClase.innerHTML = "¡No tienes clases escolares hoy! 📖 <strong>Recordatorio:</strong> ¿Tienes algún hobby u objetivo agendado?";
+        elClase.innerHTML = "¡No tienes clases escolares hoy! 📖 <strong>Recordatorio:</strong> Revisa tus hobbies o actividades agendadas.";
       } else {
         const proxima = clasesHoy.find(c => c.inicio > horaStr);
         elClase.innerHTML = proxima ? `Próxima actividad: <strong>${proxima.asignatura}</strong> a las ${proxima.inicio} (${proxima.sala}).` : "Terminaste tus clases por hoy. 📚 Repasa para tus próximos exámenes.";
       }
 
-      const horaActual = ahora.getHours();
-      document.getElementById("info-sueno").innerText = (horaActual >= 23 || horaActual < 6) 
-        ? "🌙 Son más de las 23:00. Es hora de dormir para completar tus 7 horas." 
-        : "Tu recordatorio de descanso se activará a las 23:00.";
+      cargarControlSueno();
     }
 
     aplicarModoOscuroAuto();
