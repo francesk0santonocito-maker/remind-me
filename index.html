@@ -3,110 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Horario y Hábitos</title>
+  <title>Mi Horario, Hábitos y Estudios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #f0f2f5;
+      --bg-color: #f7f9fc;
       --card-bg: #ffffff;
-      --text-color: #333333;
-      --primary: #1a73e8;
-      --border-color: #ddd;
-      --item-bg: #f9f9f9;
+      --text-color: #2b2d42;
+      --primary: #6c5ce7;
+      --primary-hover: #5849d6;
+      --accent: #00cec9;
+      --success: #00b894;
+      --warning: #fdcb6e;
+      --danger: #ff7675;
+      --border-color: #e2e8f0;
+      --item-bg: #f8fafc;
+      --shadow: 0 10px 25px -5px rgba(108, 92, 231, 0.08), 0 8px 10px -6px rgba(108, 92, 231, 0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     body.dark-mode {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --text-color: #e0e0e0;
-      --primary: #64b5f6;
-      --border-color: #333333;
-      --item-bg: #2a2a2a;
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f1f5f9;
+      --primary: #818cf8;
+      --primary-hover: #6366f1;
+      --accent: #2dd4bf;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --border-color: #334155;
+      --item-bg: #0f172a;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
 
-    body { font-family: Arial, sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: background 0.3s, color 0.3s; }
+    body { font-family: 'Poppins', sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: var(--transition); }
     
-    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; }
-    .hamburger { font-size: 1.8rem; cursor: pointer; background: none; border: none; color: var(--text-color); padding: 5px; }
-    h1 { color: var(--primary); text-align: center; margin: 0; flex-grow: 1; font-size: 1.5rem; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; position: relative; }
+    .hamburger { font-size: 1.6rem; cursor: pointer; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary); padding: 8px 12px; box-shadow: var(--shadow); transition: var(--transition); }
+    .hamburger:hover { transform: scale(1.05); background: var(--primary); color: white; }
     
-    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 250px; }
-    .nav-menu button { width: 100%; text-align: left; padding: 12px; background: none; border: none; color: var(--text-color); font-size: 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+    h1 { color: var(--primary); text-align: center; margin: 0; flex-grow: 1; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+    
+    .nav-menu { display: none; position: absolute; top: 55px; left: 0; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 16px; box-shadow: 0 20px 30px rgba(0,0,0,0.15); z-index: 100; width: 280px; overflow: hidden; animation: fadeIn 0.25s ease; }
+    .nav-menu button { width: 100%; text-align: left; padding: 14px 18px; background: none; border: none; color: var(--text-color); font-size: 0.95rem; font-weight: 500; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: var(--transition); }
     .nav-menu button:last-child { border-bottom: none; }
-    .nav-menu button:hover { background: var(--item-bg); }
+    .nav-menu button:hover { background: var(--primary); color: white; padding-left: 24px; }
 
-    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; }
-    p, li { font-size: 1.05rem; line-height: 1.5; }
+    .card { background: var(--card-bg); padding: 24px; border-radius: 20px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border-color); transition: var(--transition); }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(108, 92, 231, 0.12); }
     
-    .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; cursor: pointer; }
-    .dot-red { background-color: #e53935; }
-    .dot-green { background-color: #4caf50; }
+    h2 { margin-top: 0; color: var(--primary); font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    p, li { font-size: 1rem; line-height: 1.6; }
+    
+    .dot { height: 14px; width: 14px; border-radius: 50%; display: inline-block; margin-right: 10px; cursor: pointer; transition: var(--transition); }
+    .dot:hover { transform: scale(1.3); }
+    .dot-red { background-color: var(--danger); box-shadow: 0 0 8px rgba(248, 113, 113, 0.5); }
+    .dot-green { background-color: var(--success); box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid var(--border-color); padding: 6px; text-align: center; font-size: 0.85rem; }
-    th { background: var(--primary); color: white; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+    th, td { border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); padding: 10px; text-align: center; font-size: 0.85rem; }
+    th:last-child, td:last-child { border-right: none; }
+    tr:last-child td { border-bottom: none; }
+    th { background: var(--primary); color: white; font-weight: 600; }
     
-    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
-    #welcome-screen input { padding: 10px; font-size: 1rem; border-radius: 6px; border: none; margin: 10px; text-align: center; }
-    #welcome-screen button, .btn-action { padding: 8px 16px; font-size: 0.9rem; border-radius: 6px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
-    #welcome-screen button { background: white; color: #1a73e8; }
+    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary), #a855f7); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
+    #welcome-screen input { padding: 14px 20px; font-size: 1.1rem; border-radius: 12px; border: none; margin: 15px; text-align: center; outline: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 280px; font-family: 'Poppins', sans-serif; }
+    #welcome-screen button, .btn-action { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+    #welcome-screen button:hover, .btn-action:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
+    #welcome-screen button { background: white; color: var(--primary); }
+    #welcome-screen button:hover { background: #f1f5f9; }
     
-    .input-form { padding: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 6px; margin-right: 5px; background: var(--card-bg); color: var(--text-color); }
-    .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: var(--item-bg); padding: 8px 12px; border-radius: 6px; }
-    .btn-del { background: #e53935; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
-    .form-group { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .input-form { padding: 10px 14px; font-size: 0.95rem; border: 2px solid var(--border-color); border-radius: 12px; margin-right: 8px; background: var(--card-bg); color: var(--text-color); outline: none; font-family: 'Poppins', sans-serif; transition: var(--transition); }
+    .input-form:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
 
-    .section-page { display: none; }
+    .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: var(--item-bg); padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border-color); transition: var(--transition); }
+    .item-list:hover { border-color: var(--primary); }
+    
+    .btn-del { background: var(--danger); color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: 500; font-size: 0.85rem; transition: var(--transition); }
+    .btn-del:hover { opacity: 0.85; transform: scale(1.05); }
+    
+    .form-group { margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    .section-page { display: none; animation: fadeIn 0.3s ease; }
     .section-active { display: block; }
-    .progress-bar-container { background: var(--item-bg); border-radius: 10px; height: 20px; width: 100%; overflow: hidden; margin-top: 8px; border: 1px solid var(--border-color); }
-    .progress-bar { background: #4caf50; height: 100%; width: 0%; transition: width 0.4s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .progress-bar-container { background: var(--item-bg); border-radius: 12px; height: 16px; width: 100%; overflow: hidden; margin-top: 10px; border: 1px solid var(--border-color); }
+    .progress-bar { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 12px; }
     
-    .timer-display { font-size: 3rem; font-weight: bold; text-align: center; margin: 15px 0; color: var(--primary); }
-    .timer-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .timer-display { font-size: 3.5rem; font-weight: 700; text-align: center; margin: 20px 0; color: var(--primary); letter-spacing: -2px; }
+    .timer-controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
     
-    .materia-card { border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 12px; background: var(--item-bg); }
-    .promedio-tag { font-weight: bold; color: var(--primary); float: right; }
+    .materia-card { border: 1px solid var(--border-color); padding: 16px; border-radius: 16px; margin-bottom: 14px; background: var(--item-bg); transition: var(--transition); }
+    .materia-card:hover { border-color: var(--primary); }
+    .promedio-tag { font-weight: 600; color: var(--primary); float: right; background: rgba(108, 92, 231, 0.1); padding: 2px 10px; border-radius: 8px; font-size: 0.9rem; }
 
-    /* CUENTA ATRÁS EXAMEN */
-    .countdown-box { background: var(--item-bg); border: 2px dashed var(--primary); padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
-    .countdown-timer { font-size: 1.5rem; font-weight: bold; color: #e53935; margin-top: 5px; }
+    .countdown-box { background: linear-gradient(135deg, rgba(108, 92, 231, 0.08), rgba(0, 206, 201, 0.08)); border: 2px dashed var(--primary); padding: 20px; border-radius: 18px; text-align: center; margin-bottom: 20px; }
+    .countdown-timer { font-size: 1.8rem; font-weight: 700; color: var(--danger); margin-top: 8px; letter-spacing: -1px; }
 
-    /* MODAL DE EDICIÓN POMODORO */
-    .modal-config { display: none; background: var(--item-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-top: 15px; }
-    .block-config-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: var(--card-bg); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); }
+    .modal-config { display: none; background: var(--item-bg); border: 2px solid var(--border-color); padding: 20px; border-radius: 16px; margin-top: 15px; animation: fadeIn 0.2s ease; }
+    .block-config-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--card-bg); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); }
 
-    /* CHECKBOXES DIAS HOBBIES */
-    .days-checkboxes { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-    .days-checkboxes label { font-size: 0.9rem; cursor: pointer; }
+    .days-checkboxes { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+    .days-checkboxes label { font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500; }
 
-    /* TROFEOS */
-    .trophy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 10px; }
-    .trophy-card { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; opacity: 0.4; transition: opacity 0.3s; }
-    .trophy-card.unlocked { opacity: 1; border-color: #fbc02d; box-shadow: 0 0 8px rgba(251, 192, 45, 0.3); }
-    .badge-nivel { font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; color: white; display: inline-block; margin-bottom: 5px; }
-    .badge-bronce { background: #cd7f32; }
-    .badge-plata { background: #9e9e9e; }
-    .badge-oro { background: #fbc02d; color: #333; }
-    .badge-diamante { background: #00bcd4; }
+    .trophy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 15px; }
+    .trophy-card { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; opacity: 0.45; transition: var(--transition); }
+    .trophy-card.unlocked { opacity: 1; border-color: var(--warning); box-shadow: 0 10px 25px rgba(251, 191, 36, 0.15); transform: translateY(-2px); }
+    .badge-nivel { font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 6px; color: white; display: inline-block; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .badge-bronce { background: #d97706; }
+    .badge-plata { background: #64748b; }
+    .badge-oro { background: #d97706; color: #fff; background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .badge-diamante { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
 
-    /* NOTAS */
-    .note-item { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
-    .note-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #777; margin-bottom: 4px; }
+    .note-item { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; transition: var(--transition); }
+    .note-item:hover { border-color: var(--primary); }
+    .note-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 6px; font-weight: 500; }
 
-    /* ESTILOS DE GRÁFICOS */
-    .chart-bar-wrap { margin-bottom: 12px; background: var(--card-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); }
-    .chart-bar-info { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; font-weight: bold; }
-    .chart-bar-track { background: var(--item-bg); height: 14px; border-radius: 7px; overflow: hidden; border: 1px solid var(--border-color); }
-    .chart-bar-fill { background: var(--primary); height: 100%; border-radius: 7px; transition: width 0.6s ease; }
+    .canvas-container { text-align: center; overflow-x: auto; padding: 10px 0; }
+    canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; max-width: 100%; box-shadow: var(--shadow); }
   </style>
 </head>
 <body>
 
   <div id="welcome-screen">
-    <h2 id="welcome-title" style="color:white; font-size: 2rem;">¡Hola! ¿Cómo te llamas?</h2>
+    <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Hola! ¿Cómo te llamas?</h2>
     <div id="form-registro">
       <input type="text" id="username-input" placeholder="Tu nombre..." />
-      <button onclick="guardarNombre()">Entrar</button>
+      <button onclick="guardarNombre()">Entrar a mi App</button>
     </div>
   </div>
 
@@ -114,24 +143,24 @@
     <button class="hamburger" onclick="toggleMenu()">☰</button>
     <h1 id="greeting-header">Panel de Control</h1>
     <div id="nav-menu" class="nav-menu">
-      <button onclick="navegarA('panel')">Panel de Control</button>
-      <button onclick="navegarA('estudio')">Modo Estudio (Pomodoro)</button>
-      <button onclick="navegarA('examenes')">Exámenes y Notas</button>
+      <button onclick="navegarA('panel')">📌 Panel de Control</button>
+      <button onclick="navegarA('estudio')">⏱️ Modo Estudio (Pomodoro)</button>
+      <button onclick="navegarA('examenes')">📅 Exámenes y Notas</button>
       <button onclick="navegarA('estadisticas')">📈 Estadísticas y Progreso</button>
-      <button onclick="navegarA('hobbies')">Mis Hobbies</button>
+      <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
       <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
-      <button onclick="navegarA('objetivos')">Mis Objetivos</button>
-      <button onclick="navegarA('notas')">Notas y Apuntes</button>
-      <button onclick="navegarA('trofeos')">🏆 Trofeos</button>
-      <button onclick="navegarA('ajustes')">Ajustes / Copia</button>
+      <button onclick="navegarA('objetivos')">🎯 Mis Objetivos</button>
+      <button onclick="navegarA('notas')">📝 Notas y Apuntes</button>
+      <button onclick="navegarA('trofeos')">🏆 Trofeos y Logros</button>
+      <button onclick="navegarA('ajustes')">⚙️ Ajustes / Copia</button>
     </div>
   </div>
 
   <!-- PANEL DE CONTROL -->
   <div id="page-panel" class="section-page section-active">
     <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
-      <span style="font-weight: bold;">⏳ Próximo Examen Más Cercano:</span>
-      <div id="nombre-examen-cercano" style="font-size: 1.1rem; margin-top: 4px;">-</div>
+      <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
+      <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
       <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
     </div>
 
@@ -170,7 +199,7 @@
             <tr><td>11:50-12:40</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>FIL (A7)</td><td>PORT (A11)</td><td>EF (CP1)</td><td id="cell-6-11:50">-</td><td id="cell-0-11:50">-</td></tr>
             <tr><td>12:45-13:35</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>PORT (A7)</td><td>-</td><td>EF (CP1)</td><td id="cell-6-12:45">-</td><td id="cell-0-12:45">-</td></tr>
             <tr><td>13:55-16:40</td><td>-</td><td>-</td><td>-</td><td>FQ/BG (E2/E9)</td><td>-</td><td id="cell-6-13:55">-</td><td id="cell-0-13:55">-</td></tr>
-            <tr><td>Personalizado</td><td colspan="7" id="custom-hobbies-grid" style="font-size:0.9rem; color:var(--primary);">Consulta la sección Hobbies para eventos a horas libres.</td></tr>
+            <tr><td>Personalizado</td><td colspan="7" id="custom-hobbies-grid" style="font-size:0.9rem; color:var(--primary); font-weight:500;">Consulta la sección Hobbies para eventos a horas libres.</td></tr>
           </tbody>
         </table>
       </div>
@@ -181,19 +210,19 @@
   <div id="page-estudio" class="section-page">
     <div class="card">
       <h2>⏱️ Modo Estudio (Pomodoro con Bloques Independientes)</h2>
-      <p style="text-align: center; font-size: 1.1rem; color: #4caf50;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
-      <p style="text-align: center;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
+      <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
+      <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
       <div class="timer-display" id="timer-display">25:00</div>
       <div class="timer-controls">
         <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
-        <button onclick="pausarTimer()" class="btn-action" style="background: #f57c00;">Pausar</button>
-        <button onclick="reiniciarTimer()" class="btn-action" style="background: #e53935;">Reiniciar</button>
-        <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #7b1fa2;">⚙️ Configurar Bloques</button>
+        <button onclick="pausarTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;">Pausar</button>
+        <button onclick="reiniciarTimer()" class="btn-action" style="background: var(--danger);">Reiniciar</button>
+        <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #a855f7;">⚙️ Configurar Bloques</button>
       </div>
 
       <div class="modal-config" id="modal-config-pomodoro">
-        <h3>Personalizar Duración de Cada Bloque</h3>
-        <p style="font-size: 0.9rem; color: #666;">Ajusta los minutos de estudio y descanso independientes para cada bloque:</p>
+        <h3 style="color: var(--primary); margin-top:0;">Personalizar Duración de Cada Bloque</h3>
+        <p style="font-size: 0.9rem; color: #64748b;">Ajusta los minutos de estudio y descanso independientes para cada bloque:</p>
         <div id="contenedor-bloques-config"></div>
         <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;">Guardar Configuración Personalizada</button>
       </div>
@@ -210,13 +239,13 @@
         <input type="text" id="examen-objetivo-nota" class="input-form" placeholder="Nota objetivo (ej. 18 / 9.5)" style="width:160px;" />
         <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
       </div>
-      <h3>Exámenes Programados y Editables</h3>
+      <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Exámenes Programados y Editables</h3>
       <div id="lista-examenes-completa"></div>
     </div>
 
     <div class="card">
       <h2>📊 Calificaciones y Nota Objetivo Final por Asignatura</h2>
-      <p style="font-size: 0.9rem; color: #666;">Registra tus notas parciales, elimina las erróneas y define tu nota objetivo global para la asignatura.</p>
+      <p style="font-size: 0.9rem; color: #64748b;">Registra tus notas parciales, elimina las erróneas y define tu nota objetivo global para la asignatura.</p>
       <div id="contenedor-asignaturas"></div>
     </div>
   </div>
@@ -224,15 +253,19 @@
   <!-- ESTADÍSTICAS Y GRÁFICOS -->
   <div id="page-estadisticas" class="section-page">
     <div class="card">
-      <h2>📈 Gráfica de Progreso de Asignaturas (Promedio vs Meta Final)</h2>
-      <p style="font-size: 0.9rem; color: #666;">Visualiza rápidamente tu rendimiento en comparación con tu nota objetivo establecida (escala sobre 20 o sobre 10).</p>
-      <div id="grafico-promedios-container"></div>
+      <h2>📈 Gráfica de Líneas: Evolución de Promedios por Asignatura (Ejes X / Y)</h2>
+      <p style="font-size: 0.9rem; color: #64748b;">Representación cartesiana de tu rendimiento académico actual frente a la nota objetivo.</p>
+      <div class="canvas-container">
+        <canvas id="canvas-lineas-notas" width="500" height="250"></canvas>
+      </div>
     </div>
 
     <div class="card">
-      <h2>⏱️ Gráfica de Estudio Diario (Últimos 7 días)</h2>
-      <p style="font-size: 0.9rem; color: #666;">Minutos dedicados al estudio mediante el temporizador Pomodoro.</p>
-      <div id="grafico-estudio-container"></div>
+      <h2>⏱️ Gráfica de Líneas: Estudio Diario en los Últimos 7 Días (Ejes X / Y)</h2>
+      <p style="font-size: 0.9rem; color: #64748b;">Seguimiento temporal del tiempo en minutos dedicado al temporizador Pomodoro.</p>
+      <div class="canvas-container">
+        <canvas id="canvas-lineas-estudio" width="500" height="250"></canvas>
+      </div>
     </div>
   </div>
 
@@ -244,7 +277,7 @@
         <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" style="flex:1;" />
         <input type="time" id="hobby-hora-libre" class="input-form" value="23:00" />
       </div>
-      <label style="font-weight: bold; font-size: 0.9rem; display: block; margin: 8px 0 4px 0;">Selecciona los días que se repite:</label>
+      <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;">Selecciona los días que se repite:</label>
       <div class="days-checkboxes">
         <label><input type="checkbox" value="1" class="chk-dia"> Lunes</label>
         <label><input type="checkbox" value="2" class="chk-dia"> Martes</label>
@@ -256,7 +289,7 @@
       </div>
       <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;">Añadir Hobby a los Días Seleccionados</button>
       
-      <h3 style="margin-top: 20px;">Hobbies Registrados</h3>
+      <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Hobbies Registrados</h3>
       <div id="lista-hobbies"></div>
     </div>
   </div>
@@ -295,12 +328,12 @@
 
     <div class="card">
       <h2>📈 Constancia y Éxito del Mes</h2>
-      <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: bold; color: var(--primary);">0% de Éxito</p>
+      <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">0% de Éxito</p>
       <div class="progress-bar-container">
         <div id="progress-bar" class="progress-bar"></div>
       </div>
       <br>
-      <h3>Registro Mensual (Últimos 30 días)</h3>
+      <h3 style="color:var(--primary); font-size:1.1rem;">Registro Mensual (Últimos 30 días)</h3>
       <div style="overflow-x:auto;">
         <table>
           <thead>
@@ -321,7 +354,7 @@
         <input type="text" id="nota-titulo" class="input-form" placeholder="Título del apunte..." style="flex:1;" />
       </div>
       <div class="form-group">
-        <textarea id="nota-contenido" class="input-form" placeholder="Escribe tu apunte aquí..." style="width:100%; height:80px; resize:vertical;"></textarea>
+        <textarea id="nota-contenido" class="input-form" placeholder="Escribe tu apunte aquí..." style="width:100%; height:90px; resize:vertical;"></textarea>
       </div>
       <button onclick="guardarApunte()" class="btn-action">Guardar Apunte</button>
     </div>
@@ -355,7 +388,7 @@
       <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
       <br><br>
       <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
-      <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: #4caf50;">Restaurar Datos desde Archivo</button>
+      <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos desde Archivo</button>
     </div>
   </div>
 
@@ -505,8 +538,8 @@
       contCompleto.innerHTML = "";
 
       if (guardados.length === 0) {
-        contResumen.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes.</p>";
-        contCompleto.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes.</p>";
+        contResumen.innerHTML = "<p style='color:#64748b;'>No tienes exámenes pendientes.</p>";
+        contCompleto.innerHTML = "<p style='color:#64748b;'>No tienes exámenes pendientes.</p>";
         document.getElementById("box-cuenta-atras").style.display = "none";
         return;
       }
@@ -521,7 +554,7 @@
         
         const div = document.createElement("div");
         div.className = "item-list";
-        let texto = diff > 0 ? `Faltan <span style='font-weight:bold; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `Examen de ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
+        let texto = diff > 0 ? `Faltan <span style='font-weight:600; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `Examen de ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
         div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
         
         contCompleto.appendChild(div.cloneNode(true));
@@ -606,7 +639,7 @@
         <p>🛌 <strong>Meta de descanso:</strong> ${cfg.horas} horas diarias.</p>
         <p>🌙 <strong>Hora recomendada para ir a dormir:</strong> ${cfg.acostar}</p>
         <p>⏰ <strong>Hora de despertar:</strong> ${cfg.despertar}</p>
-        <p style="color:var(--primary); font-weight:bold; margin-top:10px;">¡Mantén este hábito constante para rendir al máximo en tus estudios y exámenes!</p>
+        <p style="color:var(--primary); font-weight:600; margin-top:10px;">¡Mantén este hábito constante para rendir al máximo en tus estudios y exámenes!</p>
       `;
 
       const infoSuenoPanel = document.getElementById("info-sueno");
@@ -623,7 +656,6 @@
 
       asignaturasBase.forEach((asig) => {
         const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
-        // Compatibilidad con versiones previas donde era array directo
         const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
         const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
 
@@ -632,7 +664,7 @@
 
         let notasItemsHTML = "";
         listaNotas.forEach((n, idx) => {
-          notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:4px;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:#e53935; font-weight:bold; cursor:pointer;">×</button></span>`;
+          notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
         });
 
         const div = document.createElement("div");
@@ -642,15 +674,15 @@
             <strong>${asig}</strong>
             <span class="promedio-tag">Promedio: ${promedio}</span>
           </div>
-          <div style="margin-top: 8px;" class="form-group">
+          <div style="margin-top: 10px;" class="form-group">
             <input type="number" step="0.1" min="0" max="20" placeholder="Nueva nota" id="input-nota-${asig}" class="input-form" style="width: 100px;" />
             <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
-            <div style="margin-left:auto; display:flex; align-items:center; gap:5px;">
-              <span style="font-size:0.85rem; font-weight:bold;">🎯 Meta Final:</span>
+            <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+              <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Final:</span>
               <input type="text" placeholder="Ej. 18 / 9.5" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 100px;" onchange="guardarMetaAsignatura('${asig}')" />
             </div>
           </div>
-          <div style="font-size: 0.9rem; color: #666; margin-top:6px;">
+          <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
             <strong>Notas guardadas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Ninguna nota registrada"}
           </div>
         `;
@@ -698,73 +730,190 @@
       }
       localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
       
-      // Respaldo independiente
       const metas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
       metas[asignatura] = metaInput;
       localStorage.setItem("metasAsignaturas", JSON.stringify(metas));
     }
 
-    // GENERADOR DE GRÁFICOS VISUALES
+    // GENERADOR DE GRÁFICOS CARTESIANOS CON CANVAS (LÍNEAS X e Y)
     function generarGraficosEstadisticas() {
-      // 1. Gráfica de Promedios y Metas
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      const contPromedios = document.getElementById("grafico-promedios-container");
-      contPromedios.innerHTML = "";
+      generarGraficoNotasCanvas();
+      generarGraficoEstudioCanvas();
+    }
 
-      asignaturasBase.forEach(asig => {
+    function generarGraficoNotasCanvas() {
+      const canvas = document.getElementById("canvas-lineas-notas");
+      if (!canvas || !canvas.getContext) return;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      
+      const puntos = [];
+      asignaturasBase.forEach((asig, index) => {
         const datos = notasGuardadas[asig];
         const lista = Array.isArray(datos) ? datos : (datos ? datos.lista : []);
-        const meta = !Array.isArray(datos) && datos ? datos.metaFinal : "";
         const suma = lista.reduce((a, b) => a + b, 0);
         const prom = lista.length > 0 ? (suma / lista.length) : 0;
-        
-        // Asumiendo escala de 20 (máximo) o 10 para la barra visual (si supera 10 se calcula sobre 20, si no sobre 10)
-        let maxEscala = 20;
-        let porcentaje = (prom / maxEscala) * 100;
-        if (porcentaje > 100) porcentaje = 100;
-
-        const div = document.createElement("div");
-        div.className = "chart-bar-wrap";
-        div.innerHTML = `
-          <div class="chart-bar-info">
-            <span>${asig}</span>
-            <span>Promedio: ${lista.length > 0 ? prom.toFixed(1) : 'Sin notas'} ${meta ? '— 🎯 Meta: ' + meta : ''}</span>
-          </div>
-          <div class="chart-bar-track">
-            <div class="chart-bar-fill" style="width: ${porcentaje}%;"></div>
-          </div>
-        `;
-        contPromedios.appendChild(div);
+        const nombreCorto = asig.split(" ")[0]; 
+        puntos.push({ label: nombreCorto, valor: prom });
       });
 
-      // 2. Gráfica de Estudio de los últimos 7 días
-      const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-      const contEstudio = document.getElementById("grafico-estudio-container");
-      contEstudio.innerHTML = "";
+      const width = canvas.width;
+      const height = canvas.height;
+      const padding = 40;
+      const graphWidth = width - padding * 2;
+      const graphHeight = height - padding * 2;
 
-      let maxMinutos = 120; // Escala base para la barra
+      const isDark = document.body.classList.contains("dark-mode");
+      const textColor = isDark ? "#cbd5e1" : "#475569";
+      const lineColor = isDark ? "#818cf8" : "#6c5ce7";
+      const gridColor = isDark ? "#334155" : "#e2e8f0";
+
+      ctx.strokeStyle = textColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, height - padding);
+      ctx.lineTo(width - padding, height - padding);
+      ctx.stroke();
+
+      const maxValY = 20;
+      ctx.fillStyle = textColor;
+      ctx.font = "10px Poppins, Arial";
+      ctx.textAlign = "right";
+
+      for (let i = 0; i <= 4; i++) {
+        const val = (maxValY / 4) * i;
+        const yCoord = (height - padding) - (graphHeight / 4) * i;
+        
+        ctx.strokeStyle = gridColor;
+        ctx.beginPath();
+        ctx.moveTo(padding, yCoord);
+        ctx.lineTo(width - padding, yCoord);
+        ctx.stroke();
+
+        ctx.fillText(val.toFixed(0), padding - 8, yCoord + 4);
+      }
+
+      if (puntos.length === 0) return;
+
+      const stepX = graphWidth / (puntos.length - 1 || 1);
+      const coords = puntos.map((p, idx) => {
+        const x = padding + (idx * stepX);
+        const y = (height - padding) - (p.valor / maxValY) * graphHeight;
+        return { x, y, ...p };
+      });
+
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      coords.forEach((c, idx) => {
+        if (idx === 0) ctx.moveTo(c.x, c.y);
+        else ctx.lineTo(c.x, c.y);
+      });
+      ctx.stroke();
+
+      coords.forEach(c => {
+        ctx.fillStyle = lineColor;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = textColor;
+        ctx.font = "10px Poppins, Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(c.label, c.x, height - padding + 18);
+        ctx.fillText(c.valor > 0 ? c.valor.toFixed(1) : "-", c.x, c.y - 10);
+      });
+    }
+
+    function generarGraficoEstudioCanvas() {
+      const canvas = document.getElementById("canvas-lineas-estudio");
+      if (!canvas || !canvas.getContext) return;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
+      const diasDatos = [];
+      let maxMinutosY = 60;
+
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         const fechaStr = d.toISOString().split('T')[0];
         const mins = logEstudio[fechaStr] || 0;
-        if (mins > maxMinutos) maxMinutos = mins;
-
-        const porc = Math.min(Math.round((mins / maxMinutos) * 100), 100);
-
-        const div = document.createElement("div");
-        div.className = "chart-bar-wrap";
-        div.innerHTML = `
-          <div class="chart-bar-info">
-            <span>📅 ${fechaStr}</span>
-            <span style="color: #4caf50;">${mins} minutos estudiados</span>
-          </div>
-          <div class="chart-bar-track">
-            <div class="chart-bar-fill" style="background: #4caf50; width: ${porc}%;"></div>
-          </div>
-        `;
-        contEstudio.appendChild(div);
+        if (mins > maxMinutosY) maxMinutosY = mins;
+        
+        const partes = fechaStr.split("-");
+        const corto = `${partes[2]}/${partes[1]}`;
+        diasDatos.push({ label: corto, valor: mins });
       }
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const padding = 45;
+      const graphWidth = width - padding * 2;
+      const graphHeight = height - padding * 2;
+
+      const isDark = document.body.classList.contains("dark-mode");
+      const textColor = isDark ? "#cbd5e1" : "#475569";
+      const lineColor = "#00b894";
+      const gridColor = isDark ? "#334155" : "#e2e8f0";
+
+      ctx.strokeStyle = textColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, height - padding);
+      ctx.lineTo(width - padding, height - padding);
+      ctx.stroke();
+
+      ctx.fillStyle = textColor;
+      ctx.font = "10px Poppins, Arial";
+      ctx.textAlign = "right";
+
+      for (let i = 0; i <= 4; i++) {
+        const val = Math.round((maxMinutosY / 4) * i);
+        const yCoord = (height - padding) - (graphHeight / 4) * i;
+        
+        ctx.strokeStyle = gridColor;
+        ctx.beginPath();
+        ctx.moveTo(padding, yCoord);
+        ctx.lineTo(width - padding, yCoord);
+        ctx.stroke();
+
+        ctx.fillText(`${val}m`, padding - 6, yCoord + 4);
+      }
+
+      const stepX = graphWidth / (diasDatos.length - 1 || 1);
+      const coords = diasDatos.map((d, idx) => {
+        const x = padding + (idx * stepX);
+        const y = (height - padding) - (d.valor / (maxMinutosY || 1)) * graphHeight;
+        return { x, y, ...d };
+      });
+
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      coords.forEach((c, idx) => {
+        if (idx === 0) ctx.moveTo(c.x, c.y);
+        else ctx.lineTo(c.x, c.y);
+      });
+      ctx.stroke();
+
+      coords.forEach(c => {
+        ctx.fillStyle = lineColor;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = textColor;
+        ctx.font = "10px Poppins, Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(c.label, c.x, height - padding + 18);
+        ctx.fillText(`${c.valor}m`, c.x, c.y - 10);
+      });
     }
 
     // NOTAS Y APUNTES
@@ -803,7 +952,7 @@
       });
 
       if (filtrados.length === 0) {
-        contenedor.innerHTML = "<p style='color:#777;'>No se encontraron apuntes.</p>";
+        contenedor.innerHTML = "<p style='color:#64748b;'>No se encontraron apuntes.</p>";
         return;
       }
 
@@ -814,9 +963,9 @@
         div.innerHTML = `
           <div class="note-header">
             <span>📚 <strong>${ap.asignatura}</strong> | 📅 ${ap.fecha}</span>
-            <button class="btn-del" onclick="borrarApunte(${indexOriginal})" style="padding:2px 6px; font-size:0.75rem;">Eliminar</button>
+            <button class="btn-del" onclick="borrarApunte(${indexOriginal})" style="padding:4px 8px; font-size:0.75rem;">Eliminar</button>
           </div>
-          <div style="font-weight: bold; font-size: 1.05rem; margin-bottom: 4px;">${ap.titulo}</div>
+          <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">${ap.titulo}</div>
           <div style="white-space: pre-wrap; font-size: 0.95rem;">${ap.contenido}</div>
         `;
         contenedor.appendChild(div);
@@ -844,8 +993,8 @@
       contAdmin.innerHTML = "";
 
       if (guardados.length === 0) {
-        contDiario.innerHTML = "<p style='color:#777;'>Añade objetivos en 'Mis Objetivos'.</p>";
-        contAdmin.innerHTML = "<p style='color:#777;'>No has añadido objetivos aún.</p>";
+        contDiario.innerHTML = "<p style='color:#64748b;'>Añade objetivos en 'Mis Objetivos'.</p>";
+        contAdmin.innerHTML = "<p style='color:#64748b;'>No has añadido objetivos aún.</p>";
       }
 
       guardados.forEach((obj, index) => {
@@ -930,7 +1079,7 @@
 
         const tr = document.createElement("tr");
         const exitoDia = guardados.length > 0 && verdesDia === guardados.length;
-        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? '#4caf50' : '#e53935'}; font-weight:bold;">${exitoDia ? 'Completado (Verde)' : 'Incompleto (Rojo)'}</td>`;
+        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">${exitoDia ? 'Completado (Verde)' : 'Incompleto (Rojo)'}</td>`;
         tabla.appendChild(tr);
       }
 
@@ -971,8 +1120,8 @@
         row.innerHTML = `
           <span><strong>Bloque ${idx + 1}</strong></span>
           <div>
-            <label style="font-size:0.85rem;">Estudio (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:55px;" /></label>
-            <label style="font-size:0.85rem; margin-left:8px;">Descanso (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:55px;" /></label>
+            <label style="font-size:0.85rem;">Estudio (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
+            <label style="font-size:0.85rem; margin-left:8px;">Descanso (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label>
           </div>
         `;
         contenedor.appendChild(row);
@@ -1138,9 +1287,9 @@
         card.className = `trophy-card ${tr.desbloqueado ? 'unlocked' : ''}`;
         card.innerHTML = `
           <span class="badge-nivel badge-${tr.nivel}">${tr.nivel.toUpperCase()}</span>
-          <div style="font-weight: bold; font-size: 1.05rem; margin: 4px 0;">${tr.nombre}</div>
-          <div style="font-size: 0.9rem; color: #666;">${tr.desc}</div>
-          <div style="margin-top: 8px; font-weight: bold; font-size: 0.85rem; color: ${tr.desbloqueado ? '#4caf50' : '#e53935'};">
+          <div style="font-weight: 600; font-size: 1.05rem; margin: 4px 0;">${tr.nombre}</div>
+          <div style="font-size: 0.9rem; color: #64748b;">${tr.desc}</div>
+          <div style="margin-top: 8px; font-weight: 600; font-size: 0.85rem; color: ${tr.desbloqueado ? 'var(--success)' : 'var(--danger)'};">
             ${tr.desbloqueado ? '✅ ¡Desbloqueado!' : '🔒 Bloqueado'}
           </div>
         `;
