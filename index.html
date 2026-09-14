@@ -3,128 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Horario y Hábitos</title>
+  <title>RemindEd - Organización Inteligente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #f0f2f5;
+      --bg-color: #f7f9fc;
       --card-bg: #ffffff;
-      --text-color: #333333;
-      --primary: #1a73e8;
-      --border-color: #ddd;
-      --item-bg: #f9f9f9;
+      --text-color: #2b2d42;
+      --primary: #6c5ce7;
+      --primary-hover: #5849d6;
+      --accent: #00cec9;
+      --success: #00b894;
+      --warning: #fdcb6e;
+      --danger: #ff7675;
+      --border-color: #e2e8f0;
+      --item-bg: #f8fafc;
+      --shadow: 0 10px 25px -5px rgba(108, 92, 231, 0.08);
+      --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Glows de Neón */
+      --glow-red: 0 0 15px rgba(255, 118, 117, 0.6), inset 0 0 10px rgba(255, 118, 117, 0.2);
+      --glow-yellow: 0 0 15px rgba(253, 203, 110, 0.7), inset 0 0 10px rgba(253, 203, 110, 0.25);
+      --glow-green: 0 0 18px rgba(0, 184, 148, 0.8), inset 0 0 12px rgba(0, 184, 148, 0.3);
     }
 
     body.dark-mode {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --text-color: #e0e0e0;
-      --primary: #64b5f6;
-      --border-color: #333333;
-      --item-bg: #2a2a2a;
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f1f5f9;
+      --primary: #818cf8;
+      --primary-hover: #6366f1;
+      --accent: #2dd4bf;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --border-color: #334155;
+      --item-bg: #0f172a;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+
+      --glow-red: 0 0 18px rgba(248, 113, 113, 0.7), inset 0 0 10px rgba(248, 113, 113, 0.25);
+      --glow-yellow: 0 0 18px rgba(251, 191, 36, 0.8), inset 0 0 10px rgba(251, 191, 36, 0.3);
+      --glow-green: 0 0 22px rgba(52, 211, 153, 0.9), inset 0 0 12px rgba(52, 211, 153, 0.35);
     }
 
-    body { font-family: Arial, sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: background 0.3s, color 0.3s; }
+    body { font-family: 'Poppins', sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: var(--transition); }
     
-    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; }
-    .hamburger { font-size: 1.8rem; cursor: pointer; background: none; border: none; color: var(--text-color); padding: 5px; }
-    h1 { color: var(--primary); text-align: center; margin: 0; flex-grow: 1; font-size: 1.5rem; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; position: relative; }
+    .hamburger { font-size: 1.6rem; cursor: pointer; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary); padding: 8px 12px; box-shadow: var(--shadow); transition: var(--transition); }
+    .hamburger:hover { transform: scale(1.05); background: var(--primary); color: white; }
     
-    .nav-menu { display: none; position: absolute; top: 40px; left: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 100; width: 230px; }
-    .nav-menu button { width: 100%; text-align: left; padding: 12px; background: none; border: none; color: var(--text-color); font-size: 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+    .brand-logo { font-size: 1.7rem; font-weight: 700; color: var(--primary); text-align: center; flex-grow: 1; letter-spacing: -0.5px; }
+    .brand-logo span { color: var(--accent); }
+
+    .nav-menu { display: none; position: absolute; top: 55px; left: 0; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 16px; box-shadow: 0 20px 30px rgba(0,0,0,0.15); z-index: 100; width: 280px; overflow: hidden; animation: fadeIn 0.25s ease; }
+    .nav-menu button { width: 100%; text-align: left; padding: 14px 18px; background: none; border: none; color: var(--text-color); font-size: 0.95rem; font-weight: 500; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: var(--transition); }
     .nav-menu button:last-child { border-bottom: none; }
-    .nav-menu button:hover { background: var(--item-bg); }
+    .nav-menu button:hover { background: var(--primary); color: white; padding-left: 24px; }
 
-    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; }
-    p, li { font-size: 1.05rem; line-height: 1.5; }
+    .card { background: var(--card-bg); padding: 24px; border-radius: 20px; margin-bottom: 20px; box-shadow: var(--shadow); border: 2px solid var(--border-color); transition: var(--transition); position: relative; }
+    .card:hover { transform: translateY(-3px); }
     
-    .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; cursor: pointer; }
-    .dot-red { background-color: #e53935; }
-    .dot-green { background-color: #4caf50; }
+    /* Clases para los Bordes Luminosos de Tareas y Promedios */
+    .glow-border-red { border-color: var(--danger) !important; box-shadow: var(--glow-red) !important; }
+    .glow-border-yellow { border-color: var(--warning) !important; box-shadow: var(--glow-yellow) !important; }
+    .glow-border-green { border-color: var(--success) !important; box-shadow: var(--glow-green) !important; }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid var(--border-color); padding: 6px; text-align: center; font-size: 0.85rem; }
-    th { background: var(--primary); color: white; }
+    h2 { margin-top: 0; color: var(--primary); font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    p, li { font-size: 1rem; line-height: 1.6; }
     
-    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
-    #welcome-screen input { padding: 10px; font-size: 1rem; border-radius: 6px; border: none; margin: 10px; text-align: center; }
-    #welcome-screen button, .btn-action { padding: 8px 16px; font-size: 0.9rem; border-radius: 6px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
-    #welcome-screen button { background: white; color: #1a73e8; }
-    
-    .input-form { padding: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 6px; margin-right: 5px; background: var(--card-bg); color: var(--text-color); }
-    .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: var(--item-bg); padding: 8px 12px; border-radius: 6px; }
-    .btn-del { background: #e53935; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
-    .form-group { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .dot { height: 16px; width: 16px; border-radius: 50%; display: inline-block; margin-right: 10px; cursor: pointer; transition: var(--transition); }
+    .dot:hover { transform: scale(1.3); }
+    .dot-red { background-color: var(--danger); box-shadow: 0 0 8px rgba(248, 113, 113, 0.6); }
+    .dot-green { background-color: var(--success); box-shadow: 0 0 8px rgba(52, 211, 153, 0.8); }
 
-    .section-page { display: none; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+    th, td { border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); padding: 10px; text-align: center; font-size: 0.85rem; }
+    th:last-child, td:last-child { border-right: none; }
+    tr:last-child td { border-bottom: none; }
+    th { background: var(--primary); color: white; font-weight: 600; }
+    
+    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary), #a855f7); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
+    #welcome-screen input { padding: 14px 20px; font-size: 1.1rem; border-radius: 12px; border: none; margin: 15px; text-align: center; outline: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 280px; font-family: 'Poppins', sans-serif; }
+    #welcome-screen button, .btn-action { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+    #welcome-screen button:hover, .btn-action:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
+    #welcome-screen button { background: white; color: var(--primary); }
+    #welcome-screen button:hover { background: #f1f5f9; }
+    
+    .input-form { padding: 10px 14px; font-size: 0.95rem; border: 2px solid var(--border-color); border-radius: 12px; margin-right: 8px; background: var(--card-bg); color: var(--text-color); outline: none; font-family: 'Poppins', sans-serif; transition: var(--transition); }
+    .input-form:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
+
+    .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: var(--item-bg); padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border-color); transition: var(--transition); }
+    .item-list:hover { border-color: var(--primary); }
+    
+    .btn-del { background: var(--danger); color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: 500; font-size: 0.85rem; transition: var(--transition); }
+    .btn-del:hover { opacity: 0.85; transform: scale(1.05); }
+    
+    .form-group { margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    .section-page { display: none; animation: fadeIn 0.3s ease; }
     .section-active { display: block; }
-    .progress-bar-container { background: var(--item-bg); border-radius: 10px; height: 20px; width: 100%; overflow: hidden; margin-top: 8px; border: 1px solid var(--border-color); }
-    .progress-bar { background: #4caf50; height: 100%; width: 0%; transition: width 0.4s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .progress-bar-container { background: var(--item-bg); border-radius: 12px; height: 16px; width: 100%; overflow: hidden; margin-top: 10px; border: 1px solid var(--border-color); }
+    .progress-bar { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 12px; }
     
-    .timer-display { font-size: 3rem; font-weight: bold; text-align: center; margin: 15px 0; color: var(--primary); }
-    .timer-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .timer-display { font-size: 3.5rem; font-weight: 700; text-align: center; margin: 20px 0; color: var(--primary); letter-spacing: -2px; }
+    .timer-controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
     
-    .materia-card { border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 12px; background: var(--item-bg); }
-    .promedio-tag { font-weight: bold; color: var(--primary); float: right; }
+    .materia-card { border: 2px solid var(--border-color); padding: 18px; border-radius: 18px; margin-bottom: 16px; background: var(--item-bg); transition: var(--transition); }
+    .promedio-tag { font-weight: 600; color: var(--primary); float: right; background: rgba(108, 92, 231, 0.1); padding: 3px 12px; border-radius: 8px; font-size: 0.9rem; }
 
-    /* CUENTA ATRÁS EXAMEN */
-    .countdown-box { background: var(--item-bg); border: 2px dashed var(--primary); padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
-    .countdown-timer { font-size: 1.5rem; font-weight: bold; color: #e53935; margin-top: 5px; }
+    .countdown-box { background: linear-gradient(135deg, rgba(108, 92, 231, 0.08), rgba(0, 206, 201, 0.08)); border: 2px dashed var(--primary); padding: 20px; border-radius: 18px; text-align: center; margin-bottom: 20px; }
+    .countdown-timer { font-size: 1.8rem; font-weight: 700; color: var(--danger); margin-top: 8px; letter-spacing: -1px; }
 
-    /* MODAL DE EDICIÓN POMODORO */
-    .modal-config { display: none; background: var(--item-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-top: 15px; }
-    .block-config-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: var(--card-bg); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); }
+    .modal-config { display: none; background: var(--item-bg); border: 2px solid var(--border-color); padding: 20px; border-radius: 16px; margin-top: 15px; animation: fadeIn 0.2s ease; }
+    .block-config-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--card-bg); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); }
 
-    /* CHECKBOXES DIAS HOBBIES */
-    .days-checkboxes { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-    .days-checkboxes label { font-size: 0.9rem; cursor: pointer; }
+    .days-checkboxes { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+    .days-checkboxes label { font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500; }
 
-    /* TROFEOS */
-    .trophy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 10px; }
-    .trophy-card { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; opacity: 0.4; transition: opacity 0.3s; }
-    .trophy-card.unlocked { opacity: 1; border-color: #fbc02d; box-shadow: 0 0 8px rgba(251, 192, 45, 0.3); }
-    .badge-nivel { font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; color: white; display: inline-block; margin-bottom: 5px; }
-    .badge-bronce { background: #cd7f32; }
-    .badge-plata { background: #9e9e9e; }
-    .badge-oro { background: #fbc02d; color: #333; }
-    .badge-diamante { background: #00bcd4; }
+    .trophy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 15px; }
+    .trophy-card { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; opacity: 0.45; transition: var(--transition); }
+    .trophy-card.unlocked { opacity: 1; border-color: var(--warning); box-shadow: 0 10px 25px rgba(251, 191, 36, 0.15); transform: translateY(-2px); }
+    .badge-nivel { font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 6px; color: white; display: inline-block; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .badge-bronce { background: #d97706; }
+    .badge-plata { background: #64748b; }
+    .badge-oro { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .badge-diamante { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
 
-    /* NOTAS */
-    .note-item { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
-    .note-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #777; margin-bottom: 4px; }
+    .note-item { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; transition: var(--transition); }
+    .note-item:hover { border-color: var(--primary); }
+    .note-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 6px; font-weight: 500; }
+
+    .canvas-container { text-align: center; overflow-x: auto; padding: 10px 0; }
+    canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; max-width: 100%; box-shadow: var(--shadow); }
   </style>
 </head>
 <body>
 
   <div id="welcome-screen">
-    <h2 id="welcome-title" style="color:white; font-size: 2rem;">¡Hola! ¿Cómo te llamas?</h2>
+    <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
     <div id="form-registro">
       <input type="text" id="username-input" placeholder="Tu nombre..." />
-      <button onclick="guardarNombre()">Entrar</button>
+      <button onclick="guardarNombre()">Comenzar mi Organización</button>
     </div>
   </div>
 
   <div class="top-bar">
     <button class="hamburger" onclick="toggleMenu()">☰</button>
-    <h1 id="greeting-header">Panel de Control</h1>
+    <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
     <div id="nav-menu" class="nav-menu">
-      <button onclick="navegarA('panel')">Panel de Control</button>
-      <button onclick="navegarA('estudio')">Modo Estudio (Pomodoro)</button>
-      <button onclick="navegarA('examenes')">Exámenes y Notas</button>
-      <button onclick="navegarA('hobbies')">Mis Hobbies</button>
+      <button onclick="navegarA('panel')">📌 Panel de Control</button>
+      <button onclick="navegarA('estudio')">⏱️ Modo Estudio (Pomodoro)</button>
+      <button onclick="navegarA('examenes')">📅 Exámenes y Notas</button>
+      <button onclick="navegarA('estadisticas')">📈 Estadísticas y Progreso</button>
+      <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
       <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
-      <button onclick="navegarA('objetivos')">Mis Objetivos</button>
-      <button onclick="navegarA('notas')">Notas y Apuntes</button>
-      <button onclick="navegarA('trofeos')">🏆 Trofeos</button>
-      <button onclick="navegarA('ajustes')">Ajustes / Copia</button>
+      <button onclick="navegarA('objetivos')">🎯 Mis Objetivos</button>
+      <button onclick="navegarA('notas')">📝 Notas y Apuntes</button>
+      <button onclick="navegarA('trofeos')">🏆 Trofeos y Logros</button>
+      <button onclick="navegarA('ajustes')">⚙️ Ajustes / Copia</button>
     </div>
   </div>
 
   <!-- PANEL DE CONTROL -->
   <div id="page-panel" class="section-page section-active">
     <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
-      <span style="font-weight: bold;">⏳ Próximo Examen Más Cercano:</span>
-      <div id="nombre-examen-cercano" style="font-size: 1.1rem; margin-top: 4px;">-</div>
+      <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
+      <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
       <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
     </div>
 
@@ -133,14 +183,16 @@
       <p id="info-clase">Cargando...</p>
     </div>
 
-    <div class="card">
-      <h2>📅 Próximos Exámenes Destacados</h2>
-      <div id="lista-examenes-resumen"></div>
+    <!-- TARJETA CON LUZ LUMINOSA DINÁMICA DE TAREAS -->
+    <div class="card" id="card-objetivos-contenedor">
+      <h2>🎯 Objetivos / Tareas Diarias</h2>
+      <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde resplandeciente cuando completas tus tareas del día.</p>
+      <div id="lista-objetivos-diarios"></div>
     </div>
 
     <div class="card">
-      <h2>🎯 Objetivos Diarios</h2>
-      <div id="lista-objetivos-diarios"></div>
+      <h2>📅 Próximos Exámenes Destacados</h2>
+      <div id="lista-examenes-resumen"></div>
     </div>
 
     <div class="card">
@@ -163,7 +215,7 @@
             <tr><td>11:50-12:40</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>FIL (A7)</td><td>PORT (A11)</td><td>EF (CP1)</td><td id="cell-6-11:50">-</td><td id="cell-0-11:50">-</td></tr>
             <tr><td>12:45-13:35</td><td>MAT-A (E10)</td><td>ING (D7)</td><td>PORT (A7)</td><td>-</td><td>EF (CP1)</td><td id="cell-6-12:45">-</td><td id="cell-0-12:45">-</td></tr>
             <tr><td>13:55-16:40</td><td>-</td><td>-</td><td>-</td><td>FQ/BG (E2/E9)</td><td>-</td><td id="cell-6-13:55">-</td><td id="cell-0-13:55">-</td></tr>
-            <tr><td>Personalizado</td><td colspan="7" id="custom-hobbies-grid" style="font-size:0.9rem; color:var(--primary);">Consulta la sección Hobbies para eventos a horas libres.</td></tr>
+            <tr><td>Personalizado</td><td colspan="7" id="custom-hobbies-grid" style="font-size:0.9rem; color:var(--primary); font-weight:500;">Consulta la sección Hobbies para eventos a horas libres.</td></tr>
           </tbody>
         </table>
       </div>
@@ -173,27 +225,27 @@
   <!-- MODO ESTUDIO (POMODORO) -->
   <div id="page-estudio" class="section-page">
     <div class="card">
-      <h2>⏱️ Modo Estudio (Pomodoro con Bloques Independientes)</h2>
-      <p style="text-align: center; font-size: 1.1rem; color: #4caf50;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
-      <p style="text-align: center;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
+      <h2>⏱️ Modo Estudio (Pomodoro por Bloques)</h2>
+      <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
+      <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
       <div class="timer-display" id="timer-display">25:00</div>
       <div class="timer-controls">
         <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
-        <button onclick="pausarTimer()" class="btn-action" style="background: #f57c00;">Pausar</button>
-        <button onclick="reiniciarTimer()" class="btn-action" style="background: #e53935;">Reiniciar</button>
-        <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #7b1fa2;">⚙️ Configurar Bloques</button>
+        <button onclick="pausarTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;">Pausar</button>
+        <button onclick="reiniciarTimer()" class="btn-action" style="background: var(--danger);">Reiniciar</button>
+        <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #a855f7;">⚙️ Configurar Bloques</button>
       </div>
 
       <div class="modal-config" id="modal-config-pomodoro">
-        <h3>Personalizar Duración de Cada Bloque</h3>
-        <p style="font-size: 0.9rem; color: #666;">Ajusta los minutos de estudio y descanso independientes para cada bloque:</p>
+        <h3 style="color: var(--primary); margin-top:0;">Personalizar Duración de Bloques</h3>
+        <p style="font-size: 0.9rem; color: #64748b;">Ajusta los minutos de estudio y descanso independientes:</p>
         <div id="contenedor-bloques-config"></div>
-        <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;">Guardar Configuración Personalizada</button>
+        <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;">Guardar Configuración</button>
       </div>
     </div>
   </div>
 
-  <!-- EXÁMENES Y NOTAS -->
+  <!-- EXÁMENES Y NOTAS CON BORDES LUMINOSOS POR ASIGNATURA -->
   <div id="page-examenes" class="section-page">
     <div class="card">
       <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
@@ -203,26 +255,43 @@
         <input type="text" id="examen-objetivo-nota" class="input-form" placeholder="Nota objetivo (ej. 18 / 9.5)" style="width:160px;" />
         <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
       </div>
-      <h3>Exámenes Programados y Editables</h3>
+      <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Exámenes Programados</h3>
       <div id="lista-examenes-completa"></div>
     </div>
 
     <div class="card">
-      <h2>📊 Calificaciones y Promedios por Asignatura</h2>
-      <p style="font-size: 0.9rem; color: #666;">Puedes registrar tus notas o borrarlas fácilmente si te equivocaste.</p>
+      <h2>📊 Calificaciones y Nota Objetivo Final</h2>
+      <p style="font-size: 0.9rem; color: #64748b;">Las materias se iluminarán en <strong>Verde Neón</strong> al alcanzar o superar tu Meta Objetivo, o en <strong>Rojo Neón</strong> si estás por debajo.</p>
       <div id="contenedor-asignaturas"></div>
+    </div>
+  </div>
+
+  <!-- ESTADÍSTICAS Y GRÁFICOS -->
+  <div id="page-estadisticas" class="section-page">
+    <div class="card">
+      <h2>📈 Evolución de Promedios por Asignatura (Ejes X / Y)</h2>
+      <div class="canvas-container">
+        <canvas id="canvas-lineas-notas" width="500" height="250"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⏱️ Estudio Diario en los Últimos 7 Días (Ejes X / Y)</h2>
+      <div class="canvas-container">
+        <canvas id="canvas-lineas-estudio" width="500" height="250"></canvas>
+      </div>
     </div>
   </div>
 
   <!-- MIS HOBBIES -->
   <div id="page-hobbies" class="section-page">
     <div class="card">
-      <h2>🎨 Gestionar Mis Hobbies (Multidía y Hora Libre)</h2>
+      <h2>🎨 Gestionar Mis Hobbies (Multidía)</h2>
       <div class="form-group">
         <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" style="flex:1;" />
         <input type="time" id="hobby-hora-libre" class="input-form" value="23:00" />
       </div>
-      <label style="font-weight: bold; font-size: 0.9rem; display: block; margin: 8px 0 4px 0;">Selecciona los días que se repite:</label>
+      <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;">Días de repetición:</label>
       <div class="days-checkboxes">
         <label><input type="checkbox" value="1" class="chk-dia"> Lunes</label>
         <label><input type="checkbox" value="2" class="chk-dia"> Martes</label>
@@ -232,9 +301,9 @@
         <label><input type="checkbox" value="6" class="chk-dia"> Sábado</label>
         <label><input type="checkbox" value="0" class="chk-dia"> Domingo</label>
       </div>
-      <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;">Añadir Hobby a los Días Seleccionados</button>
+      <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;">Añadir Hobby</button>
       
-      <h3 style="margin-top: 20px;">Hobbies Registrados</h3>
+      <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Hobbies Registrados</h3>
       <div id="lista-hobbies"></div>
     </div>
   </div>
@@ -243,7 +312,6 @@
   <div id="page-sueno" class="section-page">
     <div class="card">
       <h2>💤 Configuración del Control de Sueño</h2>
-      <p>Establece tus metas de descanso para mantenerlo como hábito constante.</p>
       <div class="form-group">
         <label>Horas de sueño deseadas: <input type="number" step="0.5" id="sueno-horas" class="input-form" value="8" style="width:70px;" /></label>
         <label>Hora de Dormir: <input type="time" id="sueno-acostar" class="input-form" value="23:00" /></label>
@@ -253,7 +321,7 @@
     </div>
 
     <div class="card">
-      <h2>🌙 Resumen y Consejos de Descanso</h2>
+      <h2>🌙 Resumen de Descanso</h2>
       <div id="resumen-sueno-box">
         <p>Cargando datos de sueño...</p>
       </div>
@@ -263,7 +331,7 @@
   <!-- MIS OBJETIVOS -->
   <div id="page-objetivos" class="section-page">
     <div class="card">
-      <h2>🎯 Administrar Objetivos</h2>
+      <h2>🎯 Administrar Objetivos Diarios</h2>
       <div class="form-group">
         <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" placeholder="Nuevo objetivo..." />
         <button onclick="agregarObjetivo()" class="btn-action">Añadir Objetivo</button>
@@ -273,12 +341,12 @@
 
     <div class="card">
       <h2>📈 Constancia y Éxito del Mes</h2>
-      <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: bold; color: var(--primary);">0% de Éxito</p>
+      <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">0% de Éxito</p>
       <div class="progress-bar-container">
         <div id="progress-bar" class="progress-bar"></div>
       </div>
       <br>
-      <h3>Registro Mensual (Últimos 30 días)</h3>
+      <h3 style="color:var(--primary); font-size:1.1rem;">Registro Mensual (Últimos 30 días)</h3>
       <div style="overflow-x:auto;">
         <table>
           <thead>
@@ -293,21 +361,21 @@
   <!-- NOTAS Y APUNTES -->
   <div id="page-notas" class="section-page">
     <div class="card">
-      <h2>📝 Añadir Nuevo Apunte</h2>
+      <h2>📝 Añadir Apunte</h2>
       <div class="form-group">
         <select id="nota-asig-select" class="input-form"></select>
         <input type="text" id="nota-titulo" class="input-form" placeholder="Título del apunte..." style="flex:1;" />
       </div>
       <div class="form-group">
-        <textarea id="nota-contenido" class="input-form" placeholder="Escribe tu apunte aquí..." style="width:100%; height:80px; resize:vertical;"></textarea>
+        <textarea id="nota-contenido" class="input-form" placeholder="Escribe tu apunte aquí..." style="width:100%; height:90px; resize:vertical;"></textarea>
       </div>
       <button onclick="guardarApunte()" class="btn-action">Guardar Apunte</button>
     </div>
 
     <div class="card">
-      <h2>🔍 Buscar y Filtrar Apuntes</h2>
+      <h2>🔍 Buscar Apuntes</h2>
       <div class="form-group">
-        <input type="text" id="buscador-notas" class="input-form" placeholder="Buscar por palabra clave..." style="flex:1;" oninput="filtrarNotas()" />
+        <input type="text" id="buscador-notas" class="input-form" placeholder="Buscar..." style="flex:1;" oninput="filtrarNotas()" />
         <select id="filtro-asig" class="input-form" onchange="filtrarNotas()">
           <option value="TODAS">Todas las asignaturas</option>
         </select>
@@ -319,8 +387,7 @@
   <!-- TROFEOS -->
   <div id="page-trofeos" class="section-page">
     <div class="card">
-      <h2>🏆 Sala de Trofeos y Logros</h2>
-      <p>Desbloquea logros cumpliendo metas en tus estudios, organización y constancia.</p>
+      <h2>🏆 Sala de Trofeos RemindEd</h2>
       <div class="trophy-grid" id="grid-trofeos"></div>
     </div>
   </div>
@@ -329,11 +396,10 @@
   <div id="page-ajustes" class="section-page">
     <div class="card">
       <h2>⚙️ Copia de Seguridad</h2>
-      <p>Guarda tus datos o transfiérelos a otro dispositivo fácilmente.</p>
       <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
       <br><br>
       <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
-      <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: #4caf50;">Restaurar Datos desde Archivo</button>
+      <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos</button>
     </div>
   </div>
 
@@ -366,6 +432,7 @@
         'panel': 'page-panel',
         'estudio': 'page-estudio',
         'examenes': 'page-examenes',
+        'estadisticas': 'page-estadisticas',
         'hobbies': 'page-hobbies',
         'sueno': 'page-sueno',
         'objetivos': 'page-objetivos',
@@ -376,6 +443,7 @@
       document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
       if (pagina === 'trofeos') evaluarTrofeos();
       if (pagina === 'sueno') cargarControlSueno();
+      if (pagina === 'estadisticas') generarGraficosEstadisticas();
       toggleMenu();
     }
 
@@ -384,8 +452,8 @@
       if (nombre) {
         document.getElementById("form-registro").style.display = "none";
         document.getElementById("welcome-title").innerText = `¡Hola de nuevo, ${nombre}!`;
-        document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
-        setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1500);
+        document.getElementById("greeting-header").innerHTML = `Remind<span>Ed</span> — ${nombre}`;
+        setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1200);
       }
     }
 
@@ -393,324 +461,12 @@
       const nombre = document.getElementById("username-input").value.trim();
       if (nombre !== "") {
         localStorage.setItem("userName", nombre);
-        document.getElementById("greeting-header").innerText = `Panel de Control de ${nombre}`;
+        document.getElementById("greeting-header").innerHTML = `Remind<span>Ed</span> — ${nombre}`;
         document.getElementById("welcome-screen").style.display = "none";
       }
     }
 
-    // HOBBIES MULTIDÍA Y HORA LIBRE
-    function cargarHobbies() {
-      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
-      const contLista = document.getElementById("lista-hobbies");
-      contLista.innerHTML = "";
-      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-
-      let customTexto = [];
-
-      hobbies.forEach((hb, idx) => {
-        customTexto.push(`<strong>${hb.nombre}</strong> (${diasNombres[hb.dia]} a las ${hb.hora})`);
-
-        const div = document.createElement("div");
-        div.className = "item-list";
-        div.innerHTML = `<span>• <strong>${hb.nombre}</strong> — ${diasNombres[hb.dia]} a las ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">Eliminar</button>`;
-        contLista.appendChild(div);
-      });
-
-      const gridCustom = document.getElementById("custom-hobbies-grid");
-      if (customTexto.length > 0) {
-        gridCustom.innerHTML = customTexto.join(" | ");
-      } else {
-        gridCustom.innerHTML = "Sin hobbies o eventos personalizados registrados.";
-      }
-    }
-
-    function agregarHobbyMulti() {
-      const nombre = document.getElementById("hobby-nombre").value.trim();
-      const hora = document.getElementById("hobby-hora-libre").value;
-      const checkboxes = document.querySelectorAll(".chk-dia:checked");
-
-      if (nombre !== "" && checkboxes.length > 0) {
-        const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
-        checkboxes.forEach(chk => {
-          hobbies.push({ nombre, dia: parseInt(chk.value), hora });
-        });
-        localStorage.setItem("misHobbies", JSON.stringify(hobbies));
-        document.getElementById("hobby-nombre").value = "";
-        checkboxes.forEach(chk => chk.checked = false);
-        cargarHobbies();
-      } else {
-        alert("Por favor, introduce el nombre del hobby y selecciona al menos un día.");
-      }
-    }
-
-    function borrarHobby(idx) {
-      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
-      hobbies.splice(idx, 1);
-      localStorage.setItem("misHobbies", JSON.stringify(hobbies));
-      cargarHobbies();
-    }
-
-    // EXÁMENES EDITABLES Y NOTA OBJETIVO
-    let countdownInterval = null;
-
-    function inicializarExamenesYNotas() {
-      const select = document.getElementById("examen-materia-select");
-      const notaSel = document.getElementById("nota-asig-select");
-      const filtroSel = document.getElementById("filtro-asig");
-      
-      select.innerHTML = "";
-      notaSel.innerHTML = "";
-      filtroSel.innerHTML = `<option value="TODAS">Todas las asignaturas</option>`;
-
-      asignaturasBase.forEach(asig => {
-        select.add(new Option(asig, asig));
-        notaSel.add(new Option(asig, asig));
-        filtroSel.add(new Option(asig, asig));
-      });
-
-      cargarExamenes();
-      cargarAsignaturasYNotas();
-      cargarApuntes();
-    }
-
-    function cargarExamenes() {
-      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-      const contResumen = document.getElementById("lista-examenes-resumen");
-      const contCompleto = document.getElementById("lista-examenes-completa");
-      contResumen.innerHTML = "";
-      contCompleto.innerHTML = "";
-
-      if (guardados.length === 0) {
-        contResumen.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes.</p>";
-        contCompleto.innerHTML = "<p style='color:#777;'>No tienes exámenes pendientes.</p>";
-        document.getElementById("box-cuenta-atras").style.display = "none";
-        return;
-      }
-
-      const ahora = new Date();
-      guardados.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
-
-      guardados.forEach((ex, index) => {
-        const fechaEx = new Date(ex.fecha);
-        const diff = Math.ceil((fechaEx - ahora) / (1000 * 60 * 60 * 24));
-        const objetivoStr = ex.objetivo ? ` | 🎯 Meta: ${ex.objetivo}` : "";
-        
-        const div = document.createElement("div");
-        div.className = "item-list";
-        let texto = diff > 0 ? `Faltan <span style='font-weight:bold; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `Examen de ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
-        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
-        
-        contCompleto.appendChild(div.cloneNode(true));
-        contResumen.appendChild(div);
-      });
-
-      iniciarCuentaAtras(guardados[0]);
-    }
-
-    function iniciarCuentaAtras(examenCercano) {
-      if (!examenCercano) return;
-      document.getElementById("box-cuenta-atras").style.display = "block";
-      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')}) ${examenCercano.objetivo ? '— Meta: ' + examenCercano.objetivo : ''}`;
-
-      if (countdownInterval) clearInterval(countdownInterval);
-
-      const targetDate = new Date(examenCercano.fecha).getTime();
-
-      countdownInterval = setInterval(() => {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        if (distance < 0) {
-          clearInterval(countdownInterval);
-          document.getElementById("timer-cuenta-atras").innerText = "¡El examen es ahora o ha finalizado!";
-          return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        document.getElementById("timer-cuenta-atras").innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-      }, 1000);
-    }
-
-    function agregarExamen() {
-      const materia = document.getElementById("examen-materia-select").value;
-      const fecha = document.getElementById("examen-fecha").value;
-      const objetivo = document.getElementById("examen-objetivo-nota").value.trim();
-
-      if (materia !== "" && fecha !== "") {
-        const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-        guardados.push({ asignatura: materia, fecha: fecha, objetivo: objetivo });
-        localStorage.setItem("misExamenes", JSON.stringify(guardados));
-        document.getElementById("examen-fecha").value = "";
-        document.getElementById("examen-objetivo-nota").value = "";
-        cargarExamenes();
-      } else {
-        alert("Por favor selecciona una asignatura y una fecha para el examen.");
-      }
-    }
-
-    function borrarExamen(index) {
-      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-      guardados.splice(index, 1);
-      localStorage.setItem("misExamenes", JSON.stringify(guardados));
-      cargarExamenes();
-    }
-
-    // CONTROL DE SUEÑO (Con Ñ)
-    function guardarConfigSueno() {
-      const horas = parseFloat(document.getElementById("sueno-horas").value) || 8;
-      const acostar = document.getElementById("sueno-acostar").value;
-      const despertar = document.getElementById("sueno-despertar").value;
-
-      const suenoConfig = { horas, acostar, despertar };
-      localStorage.setItem("configSueno", JSON.stringify(suenoConfig));
-      alert("¡Hábitos de sueño guardados correctamente!");
-      cargarControlSueno();
-    }
-
-    function cargarControlSueno() {
-      const cfg = JSON.parse(localStorage.getItem("configSueno")) || { horas: 8, acostar: "23:00", despertar: "07:00" };
-      document.getElementById("sueno-horas").value = cfg.horas;
-      document.getElementById("sueno-acostar").value = cfg.acostar;
-      document.getElementById("sueno-despertar").value = cfg.despertar;
-
-      const box = document.getElementById("resumen-sueno-box");
-      box.innerHTML = `
-        <p>🛌 <strong>Meta de descanso:</strong> ${cfg.horas} horas diarias.</p>
-        <p>🌙 <strong>Hora recomendada para ir a dormir:</strong> ${cfg.acostar}</p>
-        <p>⏰ <strong>Hora de despertar:</strong> ${cfg.despertar}</p>
-        <p style="color:var(--primary); font-weight:bold; margin-top:10px;">¡Mantén este hábito constante para rendir al máximo en tus estudios y exámenes!</p>
-      `;
-
-      const infoSuenoPanel = document.getElementById("info-sueno");
-      if (infoSuenoPanel) {
-        infoSuenoPanel.innerText = `💤 Hábito activo: Dormir ${cfg.horas}h (Acostarse a las ${cfg.acostar}).`;
-      }
-    }
-
-    function cargarAsignaturasYNotas() {
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      const contenedor = document.getElementById("contenedor-asignaturas");
-      contenedor.innerHTML = "";
-
-      asignaturasBase.forEach((asig) => {
-        const listaNotas = notasGuardadas[asig] || [];
-        const suma = listaNotas.reduce((a, b) => a + b, 0);
-        const promedio = listaNotas.length > 0 ? (suma / listaNotas.length).toFixed(1) : "-";
-
-        let notasItemsHTML = "";
-        listaNotas.forEach((n, idx) => {
-          notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:4px;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:#e53935; font-weight:bold; cursor:pointer;">×</button></span>`;
-        });
-
-        const div = document.createElement("div");
-        div.className = "materia-card";
-        div.innerHTML = `
-          <div>
-            <strong>${asig}</strong>
-            <span class="promedio-tag">Promedio: ${promedio}</span>
-          </div>
-          <div style="margin-top: 8px;" class="form-group">
-            <input type="number" step="0.1" min="0" max="20" placeholder="Nota" id="input-nota-${asig}" class="input-form" style="width: 80px;" />
-            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
-          </div>
-          <div style="font-size: 0.9rem; color: #666; margin-top:6px;">
-            <strong>Notas guardadas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Ninguna nota registrada"}
-          </div>
-        `;
-        contenedor.appendChild(div);
-      });
-    }
-
-    function agregarNota(asignatura) {
-      const input = document.getElementById(`input-nota-${asignatura}`);
-      const valor = parseFloat(input.value);
-      if (!isNaN(valor)) {
-        const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-        if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = [];
-        notasGuardadas[asignatura].push(valor);
-        localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
-        input.value = "";
-        cargarAsignaturasYNotas();
-      }
-    }
-
-    function quitarNotaAsignatura(asignatura, indexNota) {
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      if (notasGuardadas[asignatura]) {
-        notasGuardadas[asignatura].splice(indexNota, 1);
-        localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
-        cargarAsignaturasYNotas();
-      }
-    }
-
-    // NOTAS Y APUNTES (BÚSQUEDA Y FILTROS)
-    function guardarApunte() {
-      const asignatura = document.getElementById("nota-asig-select").value;
-      const titulo = document.getElementById("nota-titulo").value.trim();
-      const contenido = document.getElementById("nota-contenido").value.trim();
-
-      if (titulo !== "" && contenido !== "") {
-        const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
-        const fecha = new Date().toISOString().split('T')[0];
-        apuntes.push({ asignatura, titulo, contenido, fecha });
-        localStorage.setItem("misApuntes", JSON.stringify(apuntes));
-
-        document.getElementById("nota-titulo").value = "";
-        document.getElementById("nota-contenido").value = "";
-        cargarApuntes();
-      }
-    }
-
-    function cargarApuntes() {
-      filtrarNotas();
-    }
-
-    function filtrarNotas() {
-      const busqueda = document.getElementById("buscador-notas").value.toLowerCase();
-      const filtroAsig = document.getElementById("filtro-asig").value;
-      const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
-      const contenedor = document.getElementById("contenedor-lista-apuntes");
-      contenedor.innerHTML = "";
-
-      const filtrados = apuntes.filter(ap => {
-        const coincideAsig = (filtroAsig === "TODAS" || ap.asignatura === filtroAsig);
-        const coincideTexto = ap.titulo.toLowerCase().includes(busqueda) || ap.contenido.toLowerCase().includes(busqueda);
-        return coincideAsig && coincideTexto;
-      });
-
-      if (filtrados.length === 0) {
-        contenedor.innerHTML = "<p style='color:#777;'>No se encontraron apuntes.</p>";
-        return;
-      }
-
-      filtrados.slice().reverse().forEach((ap) => {
-        const indexOriginal = apuntes.indexOf(ap);
-        const div = document.createElement("div");
-        div.className = "note-item";
-        div.innerHTML = `
-          <div class="note-header">
-            <span>📚 <strong>${ap.asignatura}</strong> | 📅 ${ap.fecha}</span>
-            <button class="btn-del" onclick="borrarApunte(${indexOriginal})" style="padding:2px 6px; font-size:0.75rem;">Eliminar</button>
-          </div>
-          <div style="font-weight: bold; font-size: 1.05rem; margin-bottom: 4px;">${ap.titulo}</div>
-          <div style="white-space: pre-wrap; font-size: 0.95rem;">${ap.contenido}</div>
-        `;
-        contenedor.appendChild(div);
-      });
-    }
-
-    function borrarApunte(index) {
-      const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
-      apuntes.splice(index, 1);
-      localStorage.setItem("misApuntes", JSON.stringify(apuntes));
-      cargarApuntes();
-    }
-
-    // OBJETIVOS
+    // OBJETIVOS CON LUZ NEÓN DINÁMICA
     function cargarObjetivos() {
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       const fechaHoy = new Date().toISOString().split('T')[0];
@@ -720,32 +476,56 @@
 
       const contDiario = document.getElementById("lista-objetivos-diarios");
       const contAdmin = document.getElementById("lista-objetivos-admin");
+      const cardContenedor = document.getElementById("card-objetivos-contenedor");
+      
       contDiario.innerHTML = "";
       contAdmin.innerHTML = "";
 
-      if (guardados.length === 0) {
-        contDiario.innerHTML = "<p style='color:#777;'>Añade objetivos en 'Mis Objetivos'.</p>";
-        contAdmin.innerHTML = "<p style='color:#777;'>No has añadido objetivos aún.</p>";
+      let totalTareas = guardados.length;
+      let tareasCompletadas = 0;
+
+      if (totalTareas === 0) {
+        contDiario.innerHTML = "<p style='color:#64748b;'>Añade tareas en la sección 'Mis Objetivos'.</p>";
+        contAdmin.innerHTML = "<p style='color:#64748b;'>No has añadido tareas aún.</p>";
+        cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
+      } else {
+        guardados.forEach((obj, index) => {
+          const cumplido = estados[fechaHoy][index] || false;
+          if (cumplido) tareasCompletadas++;
+
+          const divDiario = document.createElement("div");
+          divDiario.className = "item-list";
+          divDiario.innerHTML = `
+            <div>
+              <span class="dot ${cumplido ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${index})"></span>
+              <span style="${cumplido ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${obj}</span>
+            </div>
+          `;
+          contDiario.appendChild(divDiario);
+
+          const divAdmin = document.createElement("div");
+          divAdmin.className = "item-list";
+          divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
+          contAdmin.appendChild(divAdmin);
+        });
+
+        // LÓGICA DE BORDES LUMINOSOS SEGÚN NÚMERO DE TAREAS
+        cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
+
+        if (totalTareas === 1) {
+          if (tareasCompletadas === 1) cardContenedor.classList.add("glow-border-green");
+          else cardContenedor.classList.add("glow-border-red");
+        } else {
+          const proporcion = tareasCompletadas / totalTareas;
+          if (tareasCompletadas === totalTareas) {
+            cardContenedor.classList.add("glow-border-green");
+          } else if (proporcion >= 0.5) {
+            cardContenedor.classList.add("glow-border-yellow");
+          } else {
+            cardContenedor.classList.add("glow-border-red");
+          }
+        }
       }
-
-      guardados.forEach((obj, index) => {
-        const cumplido = estados[fechaHoy][index] || false;
-        
-        const divDiario = document.createElement("div");
-        divDiario.className = "item-list";
-        divDiario.innerHTML = `
-          <div>
-            <span class="dot ${cumplido ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${index})"></span>
-            <span>${obj}</span>
-          </div>
-        `;
-        contDiario.appendChild(divDiario);
-
-        const divAdmin = document.createElement("div");
-        divAdmin.className = "item-list";
-        divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
-        contAdmin.appendChild(divAdmin);
-      });
 
       calcularPorcentajeExito();
     }
@@ -779,6 +559,436 @@
       cargarObjetivos();
     }
 
+    // ASIGNATURAS CON LUZ NEÓN SI CUMPLE META
+    function cargarAsignaturasYNotas() {
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+      const contenedor = document.getElementById("contenedor-asignaturas");
+      contenedor.innerHTML = "";
+
+      asignaturasBase.forEach((asig) => {
+        const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
+        const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
+        const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
+
+        const suma = listaNotas.reduce((a, b) => a + b, 0);
+        const promedioNum = listaNotas.length > 0 ? (suma / listaNotas.length) : null;
+        const promedioStr = promedioNum !== null ? promedioNum.toFixed(1) : "-";
+
+        let notasItemsHTML = "";
+        listaNotas.forEach((n, idx) => {
+          notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
+        });
+
+        // LÓGICA DE ILUMINACIÓN DE METAS
+        let glowClass = "";
+        const metaNum = parseFloat(metaFinalVal);
+        if (promedioNum !== null && !isNaN(metaNum)) {
+          if (promedioNum >= metaNum) glowClass = "glow-border-green";
+          else glowClass = "glow-border-red";
+        }
+
+        const div = document.createElement("div");
+        div.className = `materia-card ${glowClass}`;
+        div.innerHTML = `
+          <div>
+            <strong>${asig}</strong>
+            <span class="promedio-tag">Promedio: ${promedioStr}</span>
+          </div>
+          <div style="margin-top: 10px;" class="form-group">
+            <input type="number" step="0.1" min="0" max="20" placeholder="Nueva nota" id="input-nota-${asig}" class="input-form" style="width: 100px;" />
+            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
+            <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+              <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
+              <input type="text" placeholder="Ej. 18 / 9.5" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 100px;" onchange="guardarMetaAsignatura('${asig}')" />
+            </div>
+          </div>
+          <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
+            <strong>Notas guardadas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Ninguna nota registrada"}
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function agregarNota(asignatura) {
+      const input = document.getElementById(`input-nota-${asignatura}`);
+      const valor = parseFloat(input.value);
+      if (!isNaN(valor)) {
+        const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+        if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = { lista: [], metaFinal: "" };
+        if (Array.isArray(notasGuardadas[asignatura])) {
+          notasGuardadas[asignatura] = { lista: notasGuardadas[asignatura], metaFinal: "" };
+        }
+        notasGuardadas[asignatura].lista.push(valor);
+        localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
+        input.value = "";
+        cargarAsignaturasYNotas();
+      }
+    }
+
+    function quitarNotaAsignatura(asignatura, indexNota) {
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      if (notasGuardadas[asignatura]) {
+        if (Array.isArray(notasGuardadas[asignatura])) {
+          notasGuardadas[asignatura].splice(indexNota, 1);
+        } else if (notasGuardadas[asignatura].lista) {
+          notasGuardadas[asignatura].lista.splice(indexNota, 1);
+        }
+        localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
+        cargarAsignaturasYNotas();
+      }
+    }
+
+    function guardarMetaAsignatura(asignatura) {
+      const metaInput = document.getElementById(`input-meta-${asignatura}`).value.trim();
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = { lista: [], metaFinal: metaInput };
+      if (Array.isArray(notasGuardadas[asignatura])) {
+        notasGuardadas[asignatura] = { lista: notasGuardadas[asignatura], metaFinal: metaInput };
+      } else {
+        notasGuardadas[asignatura].metaFinal = metaInput;
+      }
+      localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
+      
+      const metas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+      metas[asignatura] = metaInput;
+      localStorage.setItem("metasAsignaturas", JSON.stringify(metas));
+      cargarAsignaturasYNotas();
+    }
+
+    // OTRAS FUNCIONES BASE
+    function cargarHobbies() {
+      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
+      const contLista = document.getElementById("lista-hobbies");
+      contLista.innerHTML = "";
+      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      let customTexto = [];
+
+      hobbies.forEach((hb, idx) => {
+        customTexto.push(`<strong>${hb.nombre}</strong> (${diasNombres[hb.dia]} a las ${hb.hora})`);
+        const div = document.createElement("div");
+        div.className = "item-list";
+        div.innerHTML = `<span>• <strong>${hb.nombre}</strong> — ${diasNombres[hb.dia]} a las ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">Eliminar</button>`;
+        contLista.appendChild(div);
+      });
+
+      const gridCustom = document.getElementById("custom-hobbies-grid");
+      if (customTexto.length > 0) gridCustom.innerHTML = customTexto.join(" | ");
+      else gridCustom.innerHTML = "Sin hobbies registrados.";
+    }
+
+    function agregarHobbyMulti() {
+      const nombre = document.getElementById("hobby-nombre").value.trim();
+      const hora = document.getElementById("hobby-hora-libre").value;
+      const checkboxes = document.querySelectorAll(".chk-dia:checked");
+
+      if (nombre !== "" && checkboxes.length > 0) {
+        const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
+        checkboxes.forEach(chk => {
+          hobbies.push({ nombre, dia: parseInt(chk.value), hora });
+        });
+        localStorage.setItem("misHobbies", JSON.stringify(hobbies));
+        document.getElementById("hobby-nombre").value = "";
+        checkboxes.forEach(chk => chk.checked = false);
+        cargarHobbies();
+      } else alert("Introduce el nombre del hobby y selecciona un día.");
+    }
+
+    function borrarHobby(idx) {
+      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
+      hobbies.splice(idx, 1);
+      localStorage.setItem("misHobbies", JSON.stringify(hobbies));
+      cargarHobbies();
+    }
+
+    let countdownInterval = null;
+    function inicializarExamenesYNotas() {
+      const select = document.getElementById("examen-materia-select");
+      const notaSel = document.getElementById("nota-asig-select");
+      const filtroSel = document.getElementById("filtro-asig");
+      
+      select.innerHTML = ""; notaSel.innerHTML = "";
+      filtroSel.innerHTML = `<option value="TODAS">Todas las asignaturas</option>`;
+
+      asignaturasBase.forEach(asig => {
+        select.add(new Option(asig, asig));
+        notaSel.add(new Option(asig, asig));
+        filtroSel.add(new Option(asig, asig));
+      });
+
+      cargarExamenes();
+      cargarAsignaturasYNotas();
+      cargarApuntes();
+    }
+
+    function cargarExamenes() {
+      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+      const contResumen = document.getElementById("lista-examenes-resumen");
+      const contCompleto = document.getElementById("lista-examenes-completa");
+      contResumen.innerHTML = ""; contCompleto.innerHTML = "";
+
+      if (guardados.length === 0) {
+        contResumen.innerHTML = "<p style='color:#64748b;'>No tienes exámenes pendientes.</p>";
+        contCompleto.innerHTML = "<p style='color:#64748b;'>No tienes exámenes pendientes.</p>";
+        document.getElementById("box-cuenta-atras").style.display = "none";
+        return;
+      }
+
+      const ahora = new Date();
+      guardados.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+
+      guardados.forEach((ex, index) => {
+        const fechaEx = new Date(ex.fecha);
+        const diff = Math.ceil((fechaEx - ahora) / (1000 * 60 * 60 * 24));
+        const objetivoStr = ex.objetivo ? ` | 🎯 Meta: ${ex.objetivo}` : "";
+        
+        const div = document.createElement("div");
+        div.className = "item-list";
+        let texto = diff > 0 ? `Faltan <span style='font-weight:600; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `Examen de ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
+        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
+        
+        contCompleto.appendChild(div.cloneNode(true));
+        contResumen.appendChild(div);
+      });
+
+      iniciarCuentaAtras(guardados[0]);
+    }
+
+    function iniciarCuentaAtras(examenCercano) {
+      if (!examenCercano) return;
+      document.getElementById("box-cuenta-atras").style.display = "block";
+      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')}) ${examenCercano.objetivo ? '— Meta: ' + examenCercano.objetivo : ''}`;
+
+      if (countdownInterval) clearInterval(countdownInterval);
+      const targetDate = new Date(examenCercano.fecha).getTime();
+
+      countdownInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+          clearInterval(countdownInterval);
+          document.getElementById("timer-cuenta-atras").innerText = "¡El examen es ahora o ha finalizado!";
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("timer-cuenta-atras").innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
+    }
+
+    function agregarExamen() {
+      const materia = document.getElementById("examen-materia-select").value;
+      const fecha = document.getElementById("examen-fecha").value;
+      const objetivo = document.getElementById("examen-objetivo-nota").value.trim();
+
+      if (materia !== "" && fecha !== "") {
+        const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+        guardados.push({ asignatura: materia, fecha: fecha, objetivo: objetivo });
+        localStorage.setItem("misExamenes", JSON.stringify(guardados));
+        document.getElementById("examen-fecha").value = "";
+        document.getElementById("examen-objetivo-nota").value = "";
+        cargarExamenes();
+      } else alert("Selecciona asignatura y fecha.");
+    }
+
+    function borrarExamen(index) {
+      const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
+      guardados.splice(index, 1);
+      localStorage.setItem("misExamenes", JSON.stringify(guardados));
+      cargarExamenes();
+    }
+
+    function guardarConfigSueno() {
+      const horas = parseFloat(document.getElementById("sueno-horas").value) || 8;
+      const acostar = document.getElementById("sueno-acostar").value;
+      const despertar = document.getElementById("sueno-despertar").value;
+
+      localStorage.setItem("configSueno", JSON.stringify({ horas, acostar, despertar }));
+      alert("¡Hábitos de sueño guardados!");
+      cargarControlSueno();
+    }
+
+    function cargarControlSueno() {
+      const cfg = JSON.parse(localStorage.getItem("configSueno")) || { horas: 8, acostar: "23:00", despertar: "07:00" };
+      document.getElementById("sueno-horas").value = cfg.horas;
+      document.getElementById("sueno-acostar").value = cfg.acostar;
+      document.getElementById("sueno-despertar").value = cfg.despertar;
+
+      document.getElementById("resumen-sueno-box").innerHTML = `
+        <p>🛌 <strong>Meta:</strong> ${cfg.horas}h diarias.</p>
+        <p>🌙 <strong>Acostarse:</strong> ${cfg.acostar} | ⏰ <strong>Despertar:</strong> ${cfg.despertar}</p>
+      `;
+
+      const infoSuenoPanel = document.getElementById("info-sueno");
+      if (infoSuenoPanel) infoSuenoPanel.innerText = `💤 Meta: Dormir ${cfg.horas}h (Ir a la cama a las ${cfg.acostar}).`;
+    }
+
+    function generarGraficosEstadisticas() {
+      generarGraficoNotasCanvas();
+      generarGraficoEstudioCanvas();
+    }
+
+    function generarGraficoNotasCanvas() {
+      const canvas = document.getElementById("canvas-lineas-notas");
+      if (!canvas || !canvas.getContext) return;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const puntos = [];
+      asignaturasBase.forEach((asig) => {
+        const datos = notasGuardadas[asig];
+        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista : []);
+        const suma = lista.reduce((a, b) => a + b, 0);
+        const prom = lista.length > 0 ? (suma / lista.length) : 0;
+        puntos.push({ label: asig.split(" ")[0], valor: prom });
+      });
+
+      const width = canvas.width, height = canvas.height, padding = 40;
+      const graphWidth = width - padding * 2, graphHeight = height - padding * 2;
+      const isDark = document.body.classList.contains("dark-mode");
+      const textColor = isDark ? "#cbd5e1" : "#475569";
+      const lineColor = isDark ? "#818cf8" : "#6c5ce7";
+      const gridColor = isDark ? "#334155" : "#e2e8f0";
+
+      ctx.strokeStyle = textColor; ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.moveTo(padding, padding); ctx.lineTo(padding, height - padding); ctx.lineTo(width - padding, height - padding); ctx.stroke();
+
+      for (let i = 0; i <= 4; i++) {
+        const val = (20 / 4) * i;
+        const yCoord = (height - padding) - (graphHeight / 4) * i;
+        ctx.strokeStyle = gridColor; ctx.beginPath(); ctx.moveTo(padding, yCoord); ctx.lineTo(width - padding, yCoord); ctx.stroke();
+        ctx.fillStyle = textColor; ctx.font = "10px Poppins"; ctx.textAlign = "right";
+        ctx.fillText(val.toFixed(0), padding - 8, yCoord + 4);
+      }
+
+      const stepX = graphWidth / (puntos.length - 1 || 1);
+      const coords = puntos.map((p, idx) => ({ x: padding + (idx * stepX), y: (height - padding) - (p.valor / 20) * graphHeight, ...p }));
+
+      ctx.strokeStyle = lineColor; ctx.lineWidth = 3; ctx.beginPath();
+      coords.forEach((c, idx) => { if (idx === 0) ctx.moveTo(c.x, c.y); else ctx.lineTo(c.x, c.y); });
+      ctx.stroke();
+
+      coords.forEach(c => {
+        ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(c.x, c.y, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = textColor; ctx.textAlign = "center";
+        ctx.fillText(c.label, c.x, height - padding + 18);
+        ctx.fillText(c.valor > 0 ? c.valor.toFixed(1) : "-", c.x, c.y - 10);
+      });
+    }
+
+    function generarGraficoEstudioCanvas() {
+      const canvas = document.getElementById("canvas-lineas-estudio");
+      if (!canvas || !canvas.getContext) return;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
+      const diasDatos = [];
+      let maxMinutosY = 60;
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const fechaStr = d.toISOString().split('T')[0];
+        const mins = logEstudio[fechaStr] || 0;
+        if (mins > maxMinutosY) maxMinutosY = mins;
+        const partes = fechaStr.split("-");
+        diasDatos.push({ label: `${partes[2]}/${partes[1]}`, valor: mins });
+      }
+
+      const width = canvas.width, height = canvas.height, padding = 45;
+      const graphWidth = width - padding * 2, graphHeight = height - padding * 2;
+      const isDark = document.body.classList.contains("dark-mode");
+      const textColor = isDark ? "#cbd5e1" : "#475569";
+      const lineColor = "#00b894";
+      const gridColor = isDark ? "#334155" : "#e2e8f0";
+
+      ctx.strokeStyle = textColor; ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.moveTo(padding, padding); ctx.lineTo(padding, height - padding); ctx.lineTo(width - padding, height - padding); ctx.stroke();
+
+      for (let i = 0; i <= 4; i++) {
+        const val = Math.round((maxMinutosY / 4) * i);
+        const yCoord = (height - padding) - (graphHeight / 4) * i;
+        ctx.strokeStyle = gridColor; ctx.beginPath(); ctx.moveTo(padding, yCoord); ctx.lineTo(width - padding, yCoord); ctx.stroke();
+        ctx.fillStyle = textColor; ctx.font = "10px Poppins"; ctx.textAlign = "right";
+        ctx.fillText(`${val}m`, padding - 6, yCoord + 4);
+      }
+
+      const stepX = graphWidth / (diasDatos.length - 1 || 1);
+      const coords = diasDatos.map((d, idx) => ({ x: padding + (idx * stepX), y: (height - padding) - (d.valor / (maxMinutosY || 1)) * graphHeight, ...d }));
+
+      ctx.strokeStyle = lineColor; ctx.lineWidth = 3; ctx.beginPath();
+      coords.forEach((c, idx) => { if (idx === 0) ctx.moveTo(c.x, c.y); else ctx.lineTo(c.x, c.y); });
+      ctx.stroke();
+
+      coords.forEach(c => {
+        ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(c.x, c.y, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = textColor; ctx.textAlign = "center";
+        ctx.fillText(c.label, c.x, height - padding + 18);
+        ctx.fillText(`${c.valor}m`, c.x, c.y - 10);
+      });
+    }
+
+    function guardarApunte() {
+      const asignatura = document.getElementById("nota-asig-select").value;
+      const titulo = document.getElementById("nota-titulo").value.trim();
+      const contenido = document.getElementById("nota-contenido").value.trim();
+
+      if (titulo !== "" && contenido !== "") {
+        const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
+        apuntes.push({ asignatura, titulo, contenido, fecha: new Date().toISOString().split('T')[0] });
+        localStorage.setItem("misApuntes", JSON.stringify(apuntes));
+        document.getElementById("nota-titulo").value = "";
+        document.getElementById("nota-contenido").value = "";
+        cargarApuntes();
+      }
+    }
+
+    function cargarApuntes() { filtrarNotas(); }
+
+    function filtrarNotas() {
+      const busqueda = document.getElementById("buscador-notas").value.toLowerCase();
+      const filtroAsig = document.getElementById("filtro-asig").value;
+      const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
+      const contenedor = document.getElementById("contenedor-lista-apuntes");
+      contenedor.innerHTML = "";
+
+      const filtrados = apuntes.filter(ap => (filtroAsig === "TODAS" || ap.asignatura === filtroAsig) && (ap.titulo.toLowerCase().includes(busqueda) || ap.contenido.toLowerCase().includes(busqueda)));
+
+      if (filtrados.length === 0) {
+        contenedor.innerHTML = "<p style='color:#64748b;'>No se encontraron apuntes.</p>";
+        return;
+      }
+
+      filtrados.slice().reverse().forEach((ap) => {
+        const idxOrig = apuntes.indexOf(ap);
+        const div = document.createElement("div");
+        div.className = "note-item";
+        div.innerHTML = `
+          <div class="note-header">
+            <span>📚 <strong>${ap.asignatura}</strong> | 📅 ${ap.fecha}</span>
+            <button class="btn-del" onclick="borrarApunte(${idxOrig})" style="padding:4px 8px; font-size:0.75rem;">Eliminar</button>
+          </div>
+          <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">${ap.titulo}</div>
+          <div style="white-space: pre-wrap; font-size: 0.95rem;">${ap.contenido}</div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function borrarApunte(index) {
+      const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
+      apuntes.splice(index, 1);
+      localStorage.setItem("misApuntes", JSON.stringify(apuntes));
+      cargarApuntes();
+    }
+
     function calcularPorcentajeExito() {
       const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
@@ -791,51 +1001,34 @@
         return;
       }
 
-      let totalPuntos = 0;
-      let puntosVerdes = 0;
-
+      let totalPuntos = 0, puntosVerdes = 0;
       for (let i = 0; i < 30; i++) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
+        const d = new Date(); d.setDate(d.getDate() - i);
         const fechaStr = d.toISOString().split('T')[0];
-        
         let verdesDia = 0;
         guardados.forEach((_, idx) => {
           totalPuntos++;
-          if (estados[fechaStr] && estados[fechaStr][idx]) {
-            puntosVerdes++;
-            verdesDia++;
-          }
+          if (estados[fechaStr] && estados[fechaStr][idx]) { puntosVerdes++; verdesDia++; }
         });
 
         const tr = document.createElement("tr");
-        const exitoDia = guardados.length > 0 && verdesDia === guardados.length;
-        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? '#4caf50' : '#e53935'}; font-weight:bold;">${exitoDia ? 'Completado (Verde)' : 'Incompleto (Rojo)'}</td>`;
+        const exitoDia = verdesDia === guardados.length;
+        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">${exitoDia ? 'Completado (Verde)' : 'Incompleto (Rojo)'}</td>`;
         tabla.appendChild(tr);
       }
 
-      const porcentaje = totalPuntos > 0 ? Math.round((puntosVerdes / totalPuntos) * 100) : 0;
+      const porcentaje = Math.round((puntosVerdes / totalPuntos) * 100);
       document.getElementById("porcentaje-exito").innerText = `${porcentaje}% de Éxito y Constancia`;
       document.getElementById("progress-bar").style.width = `${porcentaje}%`;
     }
 
-    // POMODORO CON BLOQUES INDEPENDIENTES
     let timerInterval = null;
-    let bloquesConfig = [
-      { estudio: 25, descanso: 5 },
-      { estudio: 25, descanso: 5 },
-      { estudio: 25, descanso: 5 },
-      { estudio: 25, descanso: 5 }
-    ];
-    let indiceBloqueActual = 0; // 0 a 3 (4 bloques)
-    let modoEstudio = true; // true = estudio, false = descanso
-    let tiempoRestante = 25 * 60;
+    let bloquesConfig = [{ estudio: 25, descanso: 5 }, { estudio: 25, descanso: 5 }, { estudio: 25, descanso: 5 }, { estudio: 25, descanso: 5 }];
+    let indiceBloqueActual = 0, modoEstudio = true, tiempoRestante = 25 * 60;
 
     function cargarConfigPomodoro() {
       const guardado = JSON.parse(localStorage.getItem("bloquesPomodoroIndependientes"));
-      if (guardado && Array.isArray(guardado)) {
-        bloquesConfig = guardado;
-      }
+      if (guardado && Array.isArray(guardado)) bloquesConfig = guardado;
       renderizarConfigBloquesUI();
       reiniciarTimer();
       actualizarTiempoEstudiadoHoy();
@@ -844,15 +1037,14 @@
     function renderizarConfigBloquesUI() {
       const contenedor = document.getElementById("contenedor-bloques-config");
       contenedor.innerHTML = "";
-
       bloquesConfig.forEach((b, idx) => {
         const row = document.createElement("div");
         row.className = "block-config-row";
         row.innerHTML = `
           <span><strong>Bloque ${idx + 1}</strong></span>
           <div>
-            <label style="font-size:0.85rem;">Estudio (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:55px;" /></label>
-            <label style="font-size:0.85rem; margin-left:8px;">Descanso (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:55px;" /></label>
+            <label style="font-size:0.85rem;">Estudio (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
+            <label style="font-size:0.85rem; margin-left:8px;">Descanso (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label>
           </div>
         `;
         contenedor.appendChild(row);
@@ -871,20 +1063,17 @@
         if (!isNaN(estVal) && estVal > 0) bloquesConfig[i].estudio = estVal;
         if (!isNaN(descVal) && descVal >= 0) bloquesConfig[i].descanso = descVal;
       }
-
       localStorage.setItem("bloquesPomodoroIndependientes", JSON.stringify(bloquesConfig));
       toggleConfigPomodoro();
       reiniciarTimer();
-      alert("¡Configuración de bloques guardada con éxito!");
     }
 
     function actualizarDisplayTimer() {
       const min = Math.floor(tiempoRestante / 60).toString().padStart(2, '0');
       const sec = (tiempoRestante % 60).toString().padStart(2, '0');
-      const bloqueActualObj = bloquesConfig[indiceBloqueActual];
-      
+      const bObj = bloquesConfig[indiceBloqueActual];
       document.getElementById("timer-display").innerText = `${min}:${sec}`;
-      document.getElementById("timer-mode").innerText = `Bloque ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Sesión de Estudio (${bloqueActualObj.estudio} min)` : `Descanso (${bloqueActualObj.descanso} min)`}`;
+      document.getElementById("timer-mode").innerText = `Bloque ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Estudio (${bObj.estudio} min)` : `Descanso (${bObj.descanso} min)`}`;
     }
 
     function registrarTiempoEstudio(minutos) {
@@ -898,8 +1087,7 @@
     function actualizarTiempoEstudiadoHoy() {
       const fechaHoy = new Date().toISOString().split('T')[0];
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-      const minutosHoy = logEstudio[fechaHoy] || 0;
-      document.getElementById("tiempo-estudiado-hoy").innerText = `Estudiado hoy: ${minutosHoy} min`;
+      document.getElementById("tiempo-estudiado-hoy").innerText = `Estudiado hoy: ${logEstudio[fechaHoy] || 0} min`;
     }
 
     function iniciarTimer() {
@@ -909,118 +1097,52 @@
           tiempoRestante--;
           actualizarDisplayTimer();
         } else {
-          clearInterval(timerInterval);
-          timerInterval = null;
-          const bloqueActualObj = bloquesConfig[indiceBloqueActual];
-
+          clearInterval(timerInterval); timerInterval = null;
+          const bObj = bloquesConfig[indiceBloqueActual];
           if (modoEstudio) {
-            registrarTiempoEstudio(bloqueActualObj.estudio);
+            registrarTiempoEstudio(bObj.estudio);
             modoEstudio = false;
-            tiempoRestante = bloqueActualObj.descanso * 60;
-            alert(`¡Bloque ${indiceBloqueActual + 1} de estudio finalizado! Disfruta de tu descanso de ${bloqueActualObj.descanso} min.`);
+            tiempoRestante = bObj.descanso * 60;
+            alert(`¡Bloque ${indiceBloqueActual + 1} completado! Descanso de ${bObj.descanso} min.`);
           } else {
             modoEstudio = true;
-            if (indiceBloqueActual < bloquesConfig.length - 1) {
-              indiceBloqueActual++;
-              tiempoRestante = bloquesConfig[indiceBloqueActual].estudio * 60;
-            } else {
-              indiceBloqueActual = 0;
-              tiempoRestante = bloquesConfig[0].estudio * 60;
-              alert("¡Felicidades! Has completado todos los bloques configurados del día.");
-            }
+            if (indiceBloqueActual < bloquesConfig.length - 1) indiceBloqueActual++;
+            else indiceBloqueActual = 0;
+            tiempoRestante = bloquesConfig[indiceBloqueActual].estudio * 60;
           }
           actualizarDisplayTimer();
         }
       }, 1000);
     }
 
-    function pausarTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
+    function pausarTimer() { clearInterval(timerInterval); timerInterval = null; }
+    function reiniciarTimer() { pausarTimer(); modoEstudio = true; indiceBloqueActual = 0; tiempoRestante = bloquesConfig[0].estudio * 60; actualizarDisplayTimer(); }
 
-    function reiniciarTimer() {
-      pausarTimer();
-      modoEstudio = true;
-      indiceBloqueActual = 0;
-      tiempoRestante = bloquesConfig[0].estudio * 60;
-      actualizarDisplayTimer();
-    }
-
-    // SISTEMA DE TROFEOS Y LOGROS
     function evaluarTrofeos() {
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-      let totalMinutosHistorico = Object.values(logEstudio).reduce((a, b) => a + b, 0);
-      const fechaHoy = new Date().toISOString().split('T')[0];
-      const minutosHoy = logEstudio[fechaHoy] || 0;
-
+      let totalMinutos = Object.values(logEstudio).reduce((a, b) => a + b, 0);
+      const minutosHoy = logEstudio[new Date().toISOString().split('T')[0]] || 0;
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const examenes = JSON.parse(localStorage.getItem("misExamenes")) || [];
 
-      const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
-      const objetivos = JSON.parse(localStorage.getItem("misObjetivos")) || [];
-      let rachaConsecutiva = 0;
-      if (objetivos.length > 0) {
-        for (let i = 0; i < 10; i++) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          const fStr = d.toISOString().split('T')[0];
-          const diaEst = estados[fStr] || {};
-          let completos = objetivos.every((_, idx) => diaEst[idx]);
-          if (completos) rachaConsecutiva++;
-          else break;
-        }
-      }
-
       const listaLogros = [
-        {
-          id: 'bronze_racha',
-          nivel: 'bronce',
-          nombre: '🌱 Racha de Constancia',
-          desc: 'Completa todos tus objetivos diarios durante 3 días seguidos.',
-          desbloqueado: rachaConsecutiva >= 3
-        },
-        {
-          id: 'silver_organizado',
-          nivel: 'plata',
-          nombre: '🗂️ Organización Impecable',
-          desc: 'Añade al menos 3 hobbies y 2 exámenes próximos.',
-          desbloqueado: hobbies.length >= 3 && examenes.length >= 2
-        },
-        {
-          id: 'silver_pomodoro',
-          nivel: 'plata',
-          nombre: '⏱️ Maestro del Tiempo',
-          desc: 'Acumula un total de 5 horas (300 min) de estudio con el Pomodoro.',
-          desbloqueado: totalMinutosHistorico >= 300
-        },
-        {
-          id: 'gold_maraton',
-          nivel: 'oro',
-          nombre: '🔥 Maratón de Estudio',
-          desc: 'Acumula 3 horas (180 min) de estudio usando el Pomodoro en un solo día.',
-          desbloqueado: minutosHoy >= 180
-        },
-        {
-          id: 'diamante_leyenda',
-          nivel: 'diamante',
-          nombre: '💎 Leyenda del Estudio',
-          desc: 'Acumula 20 horas (1200 min) de estudio totales y mantén racha perfecta de 5 días.',
-          desbloqueado: totalMinutosHistorico >= 1200 && rachaConsecutiva >= 5
-        }
+        { nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Añade al menos 1 objetivo diario.', desbloqueado: (JSON.parse(localStorage.getItem("misObjetivos")) || []).length >= 1 },
+        { nivel: 'plata', nombre: '🗂️ Organización Impecable', desc: 'Añade 3 hobbies y 2 exámenes.', desbloqueado: hobbies.length >= 3 && examenes.length >= 2 },
+        { nivel: 'plata', nombre: '⏱️ Maestro del Tiempo', desc: 'Acumula 300 min de estudio Pomodoro.', desbloqueado: totalMinutos >= 300 },
+        { nivel: 'oro', nombre: '🔥 Maratón de Estudio', desc: 'Estudia 180 min en un solo día.', desbloqueado: minutosHoy >= 180 },
+        { nivel: 'diamante', nombre: '💎 Leyenda RemindEd', desc: 'Acumula 1200 min de estudio totales.', desbloqueado: totalMinutos >= 1200 }
       ];
 
       const grid = document.getElementById("grid-trofeos");
       grid.innerHTML = "";
-
       listaLogros.forEach(tr => {
         const card = document.createElement("div");
         card.className = `trophy-card ${tr.desbloqueado ? 'unlocked' : ''}`;
         card.innerHTML = `
           <span class="badge-nivel badge-${tr.nivel}">${tr.nivel.toUpperCase()}</span>
-          <div style="font-weight: bold; font-size: 1.05rem; margin: 4px 0;">${tr.nombre}</div>
-          <div style="font-size: 0.9rem; color: #666;">${tr.desc}</div>
-          <div style="margin-top: 8px; font-weight: bold; font-size: 0.85rem; color: ${tr.desbloqueado ? '#4caf50' : '#e53935'};">
+          <div style="font-weight: 600; font-size: 1.05rem; margin: 4px 0;">${tr.nombre}</div>
+          <div style="font-size: 0.9rem; color: #64748b;">${tr.desc}</div>
+          <div style="margin-top: 8px; font-weight: 600; font-size: 0.85rem; color: ${tr.desbloqueado ? 'var(--success)' : 'var(--danger)'};">
             ${tr.desbloqueado ? '✅ ¡Desbloqueado!' : '🔒 Bloqueado'}
           </div>
         `;
@@ -1028,24 +1150,16 @@
       });
     }
 
-    // EXPORTACIÓN / IMPORTACIÓN
     function exportarDatos() {
-      const datos = {
-        userName: localStorage.getItem("userName"),
-        misObjetivos: localStorage.getItem("misObjetivos"),
-        estadosObjetivos: localStorage.getItem("estadosObjetivos"),
-        misExamenes: localStorage.getItem("misExamenes"),
-        notasAsignaturas: localStorage.getItem("notasAsignaturas"),
-        misHobbies: localStorage.getItem("misHobbies"),
-        bloquesPomodoroIndependientes: localStorage.getItem("bloquesPomodoroIndependientes"),
-        logEstudioDiario: localStorage.getItem("logEstudioDiario"),
-        misApuntes: localStorage.getItem("misApuntes"),
-        configSueno: localStorage.getItem("configSueno")
-      };
+      const datos = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        datos[key] = localStorage.getItem(key);
+      }
       const blob = new Blob([JSON.stringify(datos)], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "copia_seguridad_estudios.json";
+      a.download = "copia_reminded.json";
       a.click();
     }
 
@@ -1054,39 +1168,26 @@
       reader.onload = function(e) {
         try {
           const datos = JSON.parse(e.target.result);
-          if (datos.userName) localStorage.setItem("userName", datos.userName);
-          if (datos.misObjetivos) localStorage.setItem("misObjetivos", datos.misObjetivos);
-          if (datos.estadosObjetivos) localStorage.setItem("estadosObjetivos", datos.estadosObjetivos);
-          if (datos.misExamenes) localStorage.setItem("misExamenes", datos.misExamenes);
-          if (datos.notasAsignaturas) localStorage.setItem("notasAsignaturas", datos.notasAsignaturas);
-          if (datos.misHobbies) localStorage.setItem("misHobbies", datos.misHobbies);
-          if (datos.bloquesPomodoroIndependientes) localStorage.setItem("bloquesPomodoroIndependientes", datos.bloquesPomodoroIndependientes);
-          if (datos.logEstudioDiario) localStorage.setItem("logEstudioDiario", datos.logEstudioDiario);
-          if (datos.misApuntes) localStorage.setItem("misApuntes", datos.misApuntes);
-          if (datos.configSueno) localStorage.setItem("configSueno", datos.configSueno);
-          alert("¡Datos restaurados con éxito!");
+          Object.keys(datos).forEach(k => localStorage.setItem(k, datos[k]));
+          alert("¡Datos restaurados en RemindEd!");
           location.reload();
-        } catch (err) {
-          alert("Error al cargar el archivo de copia de seguridad.");
-        }
+        } catch (err) { alert("Error al importar los datos."); }
       };
       reader.readAsText(event.target.files[0]);
     }
 
     function actualizarPanel() {
       const ahora = new Date();
-      const diaSemana = ahora.getDay();
       const horaStr = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-      const clasesHoy = horarioEscolar[diaSemana];
+      const clasesHoy = horarioEscolar[ahora.getDay()];
       const elClase = document.getElementById("info-clase");
 
       if (!clasesHoy || clasesHoy.length === 0) {
-        elClase.innerHTML = "¡No tienes clases escolares hoy! 📖 <strong>Recordatorio:</strong> Revisa tus hobbies o actividades agendadas.";
+        elClase.innerHTML = "¡Sin clases hoy! 📖 Revisa tus hobbies o actividades pendientes.";
       } else {
         const proxima = clasesHoy.find(c => c.inicio > horaStr);
-        elClase.innerHTML = proxima ? `Próxima actividad: <strong>${proxima.asignatura}</strong> a las ${proxima.inicio} (${proxima.sala}).` : "Terminaste tus clases por hoy. 📚 Repasa para tus próximos exámenes.";
+        elClase.innerHTML = proxima ? `Próxima actividad: <strong>${proxima.asignatura}</strong> a las ${proxima.inicio} (${proxima.sala}).` : "Terminaste tus clases escolares por hoy. 📚";
       }
-
       cargarControlSueno();
     }
 
