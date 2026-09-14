@@ -1279,7 +1279,76 @@
     cargarObjetivos();
     cargarConfigPomodoro();
     actualizarPanel();
+  // Tus funciones actuales
+actualizarPanel();
+
+// CÓDIGO DEL TUTORIAL DE BIENVENIDA
+const pasosTutorial = [
+  {
+    titulo: "¡Bienvenido a RemindEd!",
+    desc: "Te daremos un recorrido rápido por los bloques principales de tu panel de control para que aproveches al máximo la plataforma."
+  },
+  {
+    titulo: "1. Panel Principal",
+    desc: "Aquí verás el resumen diario de tus tareas activas, eventos próximos y recordatorios importantes."
+  },
+  {
+    titulo: "2. Gestión de Horarios",
+    desc: "Configura las asignaturas, aulas y horas de clase para mantener tu rutina organizada."
+  },
+  {
+    titulo: "3. Objetivos y Trofeos",
+    desc: "Completa tus metas diarias para desbloquear logros y seguir tu progreso semanal."
+  },
+  {
+    titulo: "4. Copias de Seguridad",
+    desc: "Desde la sección de ajustes puedes exportar tus datos para no perder nunca tu información."
+  }
+];
+
+let pasoActual = 0;
+
+function iniciarTutorial() {
+  const yaVisto = localStorage.getItem("tutorialVisto");
+  if (!yaVisto) {
+    document.getElementById("tutorial-overlay").style.display = "flex";
+    mostrarPaso();
+  }
+}
+
+function mostrarPaso() {
+  document.getElementById("step-tag").innerText = `Paso ${pasoActual + 1} de ${pasosTutorial.length}`;
+  document.getElementById("step-title").innerText = pasosTutorial[pasoActual].titulo;
+  document.getElementById("step-desc").innerText = pasosTutorial[pasoActual].desc;
   
+  const btnNext = document.getElementById("btn-next");
+  if (pasoActual === pasosTutorial.length - 1) {
+    btnNext.innerText = "Comenzar";
+  } else {
+    btnNext.innerText = "Siguiente";
+  }
+}
+
+function siguientePaso() {
+  if (pasoActual < pasosTutorial.length - 1) {
+    pasoActual++;
+    mostrarPaso();
+  } else {
+    finalizarTutorial();
+  }
+}
+
+function omitirTutorial() {
+  finalizarTutorial();
+}
+
+function finalizarTutorial() {
+  localStorage.setItem("tutorialVisto", "true");
+  document.getElementById("tutorial-overlay").style.display = "none";
+}
+
+// Ejecutar el tutorial al cargar la app
+iniciarTutorial();
   </script>
 </body>
 </html>
