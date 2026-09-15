@@ -148,38 +148,30 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.45); /* opacidad suave para no tapar la pantalla */
-  z-index: 9998; all;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
 }
 
 .tutorial-card {
   position: fixed;
-  top: 50%;
+  bottom: 20px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  background: #1e1e2e;
-  color: #fff;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid #ff007f;
+  transform: translateX(-50%);
   z-index: 10000;
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-}
-
-.tutorial-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 90%;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 .tutorial-highlight {
   position: relative !important;
   z-index: 9999 !important;
-  box-shadow: 0 0 25px rgba(255, 0, 127, 0.8) !important;
+  box-shadow: 0 0 0 4px #6c5ce7, 0 0 20px rgba(108, 92, 231, 0.5) !important;
   border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .hidden {
@@ -1251,59 +1243,76 @@
     cargarConfigPomodoro();
     actualizarPanel();
     actualizarPanel();
+aplicarModoOscuroAuto();
+inicializarUsuario();
+inicializarExamenesYNotas();
+cargarHobbies();
+cargarObjetivos();
+cargarConfigPomodoro();
+actualizarPanel();
 
-  // --- LÓGICA DEL TUTORIAL INTERACTIVO CORREGIDA ---
-  const pasosTutorial = [
-    { target: null, texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
-    { target: "Próxima Clase", texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente" },
-    { target: "Objetivos / Tareas Diarias", texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
-    { target: "Horario Semanal Completo", texto: "Por último, aquí tienes el desglose completo de tu horario de lunes a domingo.", btnText: "¡Entendido, empezar!" }
-  ];
+// --- LÓGICA DEL TUTORIAL INTERACTIVO ---
+const pasosTutorial = [
+  { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido", titulo: null },
+  { texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente", titulo: "Próxima Clase" },
+  { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente", titulo: "Objetivos / Tareas Diarias" },
+  { texto: "Por último, aquí tienes el desglose completo de tu horario de lunes a domingo.", btnText: "¡Entendido, empezar!", titulo: "Horario Semanal Completo" }
+];
 
-  let pasoActual = 0;
+let pasoActual = 0;
 
-  function iniciarTutorial() {
-    pasoActual = 0;
-    document.getElementById('tutorial-overlay').classList.remove('hidden');
-    document.getElementById('tutorial-card').classList.remove('hidden');
+function iniciarTutorial() {
+  pasoActual = 0;
+  document.getElementById('tutorial-overlay').classList.remove('hidden');
+  document.getElementById('tutorial-card').classList.remove('hidden');
+  mostrarPaso();
+}
+
+function mostrarPaso() {
+  const paso = pasosTutorial[pasoActual];
+  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+  
+  document.getElementById('tutorial-text').innerText = paso.texto;
+  document.getElementById('tutorial-btn-next').innerText = paso.btnText;
+
+  if (paso.titulo) {
+    const elementos = Array.from(document.querySelectorAll('h1, h2, h3, h4, div, span'));
+    const coincidencia = elementos.find(el => el.textContent.trim().includes(paso.titulo));
+    const contenedor = coincidencia ? (coincidencia.closest('.card') || coincidencia.parentElement) : null;
+
+    if (contenedor) {
+      contenedor.classList.add('tutorial-highlight');
+      contenedor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+function siguientePaso() {
+  pasoActual++;
+  if (pasoActual < pasosTutorial.length) {
     mostrarPaso();
+  } else {
+    cerrarTutorial();
   }
+}
 
-  function mostrarPaso() {
-    const paso = pasosTutorial[pasoActual];
-    document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-    
-    document.getElementById('tutorial-text').innerText = paso.texto;
-    document.getElementById('tutorial-btn-next').innerText = paso.btnText;
+function cerrarTutorial() {
+  document.getElementById('tutorial-overlay').classList.add('hidden');
+  document.getElementById('tutorial-card').classList.add('hidden');
+  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+  localStorage.setItem('tutorialCompletado', 'true');
+}
 
-    if (paso.target) {
-      const elementos = Array.from(document.querySelectorAll('h3, h2, div, span'));
-      const coincidencia = elementos.find(el => el.textContent.trim().includes(paso.target));
-      const contenedorTarjeta = coincidencia ? coincidencia.closest('.card') || coincidencia.parentElement : null;
-
-      if (contenedorTarjeta) {
-        contenedorTarjeta.classList.add('tutorial-highlight');
-        contenedorTarjeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+// Escuchar el clic en el botón de bienvenida
+document.addEventListener('click', function (e) {
+  if (e.target && e.target.textContent.trim().includes('Comenzar mi Organización')) {
+    if (!localStorage.getItem('tutorialCompletado')) {
+      setTimeout(() => {
+        iniciarTutorial();
+      }, 400);
     }
   }
-
-  function siguientePaso() {
-    pasoActual++;
-    if (pasoActual < pasosTutorial.length) {
-      mostrarPaso();
-    } else {
-      cerrarTutorial();
-    }
-  }
-
-  function cerrarTutorial() {
-    document.getElementById('tutorial-overlay').classList.add('hidden');
-    document.getElementById('tutorial-card').classList.add('hidden');
-    document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-    localStorage.setItem('tutorialCompletado', 'true');
-  }
-</script>
+});
   </script>
 </body>
 </html>
