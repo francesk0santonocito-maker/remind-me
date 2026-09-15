@@ -47,14 +47,14 @@
 
     body { font-family: 'Poppins', sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: var(--transition); }
     
-    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; position: relative; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; position: relative; z-index: 1000; }
     .hamburger { font-size: 1.6rem; cursor: pointer; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary); padding: 8px 12px; box-shadow: var(--shadow); transition: var(--transition); }
     .hamburger:hover { transform: scale(1.05); background: var(--primary); color: white; }
     
     .brand-logo { font-size: 1.7rem; font-weight: 700; color: var(--primary); text-align: center; flex-grow: 1; letter-spacing: -0.5px; }
     .brand-logo span { color: var(--accent); }
 
-    .nav-menu { display: none; position: absolute; top: 55px; left: 0; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 16px; box-shadow: 0 20px 30px rgba(0,0,0,0.15); z-index: 100; width: 280px; overflow: hidden; animation: fadeIn 0.25s ease; }
+    .nav-menu { display: none; position: absolute; top: 55px; left: 0; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 16px; box-shadow: 0 20px 30px rgba(0,0,0,0.25); z-index: 2000; width: 280px; overflow: hidden; animation: fadeIn 0.25s ease; }
     .nav-menu button { width: 100%; text-align: left; padding: 14px 18px; background: none; border: none; color: var(--text-color); font-size: 0.95rem; font-weight: 500; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: var(--transition); }
     .nav-menu button:last-child { border-bottom: none; }
     .nav-menu button:hover { background: var(--primary); color: white; padding-left: 24px; }
@@ -197,7 +197,7 @@
     </div>
 
     <div class="card tarjeta-tutorial">
-      <h2>📌 Próxima Clase</h2>
+      <h2>📌 Próxima Clase / Actividad</h2>
       <p id="info-clase">Cargando...</p>
     </div>
 
@@ -218,7 +218,7 @@
     </div>
 
     <div class="card tarjeta-tutorial">
-      <h2>🗓️ Horario Semanal Completo</h2>
+      <h2>🗓️ Horario Semanal Completo (Clases y Hobbies)</h2>
       <div style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
         <h3 style="margin-top:0; font-size:1rem; color:var(--primary);">Añadir Horas al Horario</h3>
         <div class="form-group">
@@ -607,18 +607,26 @@
 
     function renderizarHorarioTabla() {
       const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: [] };
+      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const tbody = document.getElementById("tabla-horario-body");
       if (!tbody) return;
       tbody.innerHTML = "";
 
+      let horarioCombinado = JSON.parse(JSON.stringify(horario));
+      
+      hobbies.forEach(hb => {
+        if (!horarioCombinado[hb.dia]) horarioCombinado[hb.dia] = [];
+        horarioCombinado[hb.dia].push({ inicio: hb.hora, asignatura: `🎨 ${hb.nombre}`, sala: "Hobby" });
+      });
+
       let horasSet = new Set();
-      Object.keys(horario).forEach(d => {
-        horario[d].forEach(item => horasSet.add(item.inicio));
+      Object.keys(horarioCombinado).forEach(d => {
+        horarioCombinado[d].forEach(item => horasSet.add(item.inicio));
       });
 
       const horasOrdenadas = Array.from(horasSet).sort();
       if (horasOrdenadas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay clases programadas. Registra una clase arriba.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay clases ni hobbies programados. Registra actividades arriba.</td></tr>`;
         return;
       }
 
@@ -627,9 +635,9 @@
         const tr = document.createElement("tr");
         let html = `<td><strong>${h}</strong></td>`;
         mapaDias.forEach(d => {
-          const item = (horario[d] || []).find(i => i.inicio === h);
+          const item = (horarioCombinado[d] || []).find(i => i.inicio === h);
           if (item) {
-            html += `<td>${item.asignatura} ${item.sala ? '(' + item.sala + ')' : ''}</td>`;
+            html += `<td>${item.asignatura} ${item.sala && item.sala !== "Hobby" ? '(' + item.sala + ')' : ''}</td>`;
           } else {
             html += `<td>-</td>`;
           }
@@ -668,7 +676,9 @@
       if (pagina === 'trofeos') evaluarTrofeos();
       if (pagina === 'sueno') cargarControlSueno();
       if (pagina === 'estadisticas') generarGraficosEstadisticas();
-      toggleMenu();
+      
+      const menu = document.getElementById("nav-menu");
+      if (menu) menu.style.display = "none";
     }
 
     function inicializarUsuario() {
@@ -839,15 +849,14 @@
       const contLista = document.getElementById("lista-hobbies");
       contLista.innerHTML = "";
       const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-      let customTexto = [];
 
       hobbies.forEach((hb, idx) => {
-        customTexto.push(`<strong>${hb.nombre}</strong> (${diasNombres[hb.dia]} a las ${hb.hora})`);
         const div = document.createElement("div");
         div.className = "item-list";
         div.innerHTML = `<span>• <strong>${hb.nombre}</strong> — ${diasNombres[hb.dia]} a las ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">Eliminar</button>`;
         contLista.appendChild(div);
       });
+      renderizarHorarioTabla();
     }
 
     function agregarHobbyMulti() {
@@ -864,7 +873,8 @@
         document.getElementById("hobby-nombre").value = "";
         checkboxes.forEach(chk => chk.checked = false);
         cargarHobbies();
-      } else alert("Introduce el nombre del hobby y selecciona un día.");
+        actualizarPanel();
+      } else alert("Introduce el nombre del hobby y selecciona al menos un día.");
     }
 
     function borrarHobby(idx) {
@@ -872,6 +882,7 @@
       hobbies.splice(idx, 1);
       localStorage.setItem("misHobbies", JSON.stringify(hobbies));
       cargarHobbies();
+      actualizarPanel();
     }
 
     let countdownInterval = null;
@@ -1336,21 +1347,37 @@
       const ahora = new Date();
       const horaStr = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
       const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || {};
-      const clasesHoy = horario[ahora.getDay()] || [];
+      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const elClase = document.getElementById("info-clase");
 
-      if (!clasesHoy || clasesHoy.length === 0) {
-        elClase.innerHTML = "¡Sin clases hoy! 📖 Revisa tus hobbies o actividades pendientes.";
+      let actividadesHoy = [];
+      const diaHoy = ahora.getDay();
+
+      if (horario[diaHoy]) {
+        horario[diaHoy].forEach(c => actividadesHoy.push({ inicio: c.inicio, nombre: c.asignatura, tipo: "Clase", sala: c.sala }));
+      }
+      hobbies.filter(h => h.dia === diaHoy).forEach(h => {
+        actividadesHoy.push({ inicio: h.hora, nombre: `🎨 ${h.nombre}`, tipo: "Hobby" });
+      });
+
+      actividadesHoy.sort((a, b) => a.inicio.localeCompare(b.inicio));
+
+      if (actividadesHoy.length === 0) {
+        elClase.innerHTML = "¡Sin actividades programadas para hoy! 📖 Día libre.";
       } else {
-        const proxima = clasesHoy.find(c => c.inicio > horaStr);
-        elClase.innerHTML = proxima ? `Próxima actividad: <strong>${proxima.asignatura}</strong> a las ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.` : "Terminaste tus clases escolares por hoy. 📚";
+        const proxima = actividadesHoy.find(a => a.inicio > horaStr);
+        if (proxima) {
+          elClase.innerHTML = `Próxima actividad: <strong>${proxima.nombre}</strong> a las ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.`;
+        } else {
+          elClase.innerHTML = "Terminaste todas tus actividades programadas por hoy. 📚";
+        }
       }
       cargarControlSueno();
     }
 
     const pasosTutorial = [
       { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
-      { texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente" },
+      { texto: "Aquí verás la información sobre tu siguiente clase o hobby programado del día.", btnText: "Siguiente" },
       { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
       { texto: "Aquí se muestran tus exámenes destacados.", btnText: "Siguiente" },
       { texto: "En esta sección puedes revisar tu estado de sueño y hábitos de descanso.", btnText: "Siguiente" },
