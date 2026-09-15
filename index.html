@@ -154,11 +154,20 @@
       max-width: 90%; 
       width: 400px; 
       box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
-      transition: var(--transition);
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
     .welcome-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #a8c0ff, #3f2b96); z-index: 10001 !important; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
     .hidden { display: none !important; }
-    .tutorial-highlight { position: relative !important; z-index: 9999 !important; box-shadow: 0 0 0 4px #6c5ce7, 0 0 25px rgba(108, 92, 231, 0.8) !important; background-color: var(--card-bg) !important; color: var(--text-color) !important; border-radius: 12px !important; transition: all 0.3s ease !important; }
+    .tutorial-highlight { 
+      position: relative !important; 
+      z-index: 9999 !important; 
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.8), 0 0 40px rgba(0, 229, 255, 0.4) !important; 
+      border: 2px solid #00e5ff !important; 
+      background-color: var(--card-bg) !important; 
+      color: var(--text-color) !important; 
+      border-radius: 12px !important; 
+      transition: all 0.3s ease !important; 
+    }
   </style>
 </head>
 <body>
@@ -196,7 +205,7 @@
       <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
     </div>
 
-    <div class="card tarjeta-tutorial">
+    <div class="card tarjeta-tutorial" id="card-proxima-clase">
       <h2>📌 Próxima Clase / Actividad</h2>
       <p id="info-clase">Cargando...</p>
     </div>
@@ -207,17 +216,17 @@
       <div id="lista-objetivos-diarios"></div>
     </div>
 
-    <div class="card tarjeta-tutorial">
+    <div class="card tarjeta-tutorial" id="card-examenes-destacados">
       <h2>📅 Próximos Exámenes Destacados</h2>
       <div id="lista-examenes-resumen"></div>
     </div>
 
-    <div class="card tarjeta-tutorial">
+    <div class="card tarjeta-tutorial" id="card-estado-sueno">
       <h2>🌙 Estado del Sueño</h2>
       <p id="info-sueno">Cargando hábitos de descanso...</p>
     </div>
 
-    <div class="card tarjeta-tutorial">
+    <div class="card tarjeta-tutorial" id="card-horario-semanal">
       <h2>🗓️ Horario Semanal Completo (Clases y Hobbies)</h2>
       <div style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
         <h3 style="margin-top:0; font-size:1rem; color:var(--primary);">Añadir Horas al Horario</h3>
@@ -232,7 +241,6 @@
             <option value="0">Domingo</option>
           </select>
           
-          <!-- Seleccionador de Hora con botón/cuadrado gráfico -->
           <label style="font-size: 0.85rem; font-weight:600;">Desde:</label>
           <input type="time" id="horario-inicio-time" class="input-form" value="08:00" />
           <label style="font-size: 0.85rem; font-weight:600;">Hasta:</label>
@@ -437,26 +445,27 @@
   <!-- AJUSTES -->
   <div id="page-ajustes" class="section-page">
     <div class="card">
-      <h2>⚙️ Copia de Seguridad</h2>
+      <h2>⚙️ Copia de Seguridad y Guías</h2>
       <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
       <br><br>
       <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
       <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos</button>
+      <br><br>
+      <button onclick="reiniciarTutoriales()" class="btn-action" style="background: var(--warning); color: #2b2d42;">🔄 Reactivar Guías Contextuales</button>
     </div>
   </div>
 
-  <!-- TUTORIAL -->
+  <!-- TUTORIAL CONTEXTUAL -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
   <div id="tutorial-card" class="tutorial-card hidden">
     <p id="tutorial-text"></p>
     <div class="tutorial-buttons" style="display:flex; justify-content:space-between; margin-top:15px;">
-      <button id="tutorial-btn-skip" class="btn-action" style="background:var(--danger);" onclick="cerrarTutorial()">Omitir</button>
-      <button id="tutorial-btn-next" class="btn-action" onclick="siguientePaso()">Iniciar recorrido</button>
+      <button id="tutorial-btn-skip" class="btn-action" style="background:var(--danger);" onclick="cerrarTutorialModulo()">Omitir</button>
+      <button id="tutorial-btn-next" class="btn-action" onclick="siguientePaso()">Entendido</button>
     </div>
   </div>
 
   <script>
-    // Materias por defecto solicitadas
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
 
     function obtenerAsignaturas() {
@@ -648,7 +657,6 @@
         horarioCombinado[d].forEach(item => horasSet.add(item.inicio));
       });
 
-      // Ordenar horas cronológicamente (Estructura de menor a mayor)
       const horasOrdenadas = Array.from(horasSet).sort((a, b) => {
         return normalizarHoraParaOrdenar(a).localeCompare(normalizarHoraParaOrdenar(b));
       });
@@ -686,8 +694,44 @@
       menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
 
+    // --- SISTEMA DE NAVEGACIÓN Y TUTORIALES CONTEXTUALES POR SECCIÓN ---
+    const tutorialesPorSeccion = {
+      panel: [
+        { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel Principal." },
+        { target: "#card-proxima-clase", texto: "Aquí verás la clase o hobby más próximo según tu horario diario." },
+        { target: "#card-objetivos-contenedor", texto: "Revisa y marca tus metas diarias aquí. El borde cambiará de color según tu progreso." },
+        { target: "#card-examenes-destacados", texto: "Consulta tus próximos exámenes y cuentas regresivas activas." },
+        { target: "#card-horario-semanal", texto: "Por último, aquí puedes construir tu horario semanal completo ordenado automáticamente." }
+      ],
+      estudio: [
+        { target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Utiliza este reloj para gestionar tus bloques de concentración sin distracciones." },
+        { target: ".timer-controls", texto: "Puedes iniciar, pausar o configurar la duración independiente de estudio y descanso." }
+      ],
+      examenes: [
+        { target: "#page-examenes .card:nth-of-type(1)", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas o añade nuevas clases al sistema." },
+        { target: "#contenedor-asignaturas", texto: "Ingresa tus notas y metas. La tarjeta se iluminará en <strong>Verde Neón</strong> o <strong>Rojo Neón</strong> según tu promedio." }
+      ],
+      hobbies: [
+        { target: "#page-hobbies .card", texto: "🎨 Registra tus actividades extracurriculares o deportes para que se integren automáticamente a tu Horario Semanal." }
+      ],
+      sueno: [
+        { target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configura tus metas de descanso para mantener tu energía y rendimiento al máximo." }
+      ],
+      objetivos: [
+        { target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Define las rutinas o tareas diarias que deseas cumplir regularmente." }
+      ],
+      notas: [
+        { target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escribe tus apuntes rápidos organizados por asignatura." },
+        { target: "#buscador-notas", texto: "Usa el buscador para filtrar tus temas guardados fácilmente durante tus semanas de repaso." }
+      ]
+    };
+
+    let seccionActualTutorial = null;
+    let pasoTutorialActual = 0;
+
     function navegarA(pagina) {
       document.querySelectorAll(".section-page").forEach(p => p.classList.remove("section-active"));
+      
       const mapaPaginas = {
         'panel': 'page-panel',
         'estudio': 'page-estudio',
@@ -700,13 +744,91 @@
         'trofeos': 'page-trofeos',
         'ajustes': 'page-ajustes'
       };
+
       document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
+      
       if (pagina === 'trofeos') evaluarTrofeos();
       if (pagina === 'sueno') cargarControlSueno();
       if (pagina === 'estadisticas') generarGraficosEstadisticas();
       
       const menu = document.getElementById("nav-menu");
       if (menu) menu.style.display = "none";
+
+      comprobarTutorialSeccion(pagina);
+    }
+
+    function comprobarTutorialSeccion(seccion) {
+      const vistos = JSON.parse(localStorage.getItem("tutorialesVistos")) || {};
+      
+      if (!vistos[seccion] && tutorialesPorSeccion[seccion]) {
+        seccionActualTutorial = seccion;
+        pasoTutorialActual = 0;
+        lanzarTutorialModulo();
+      }
+    }
+
+    function lanzarTutorialModulo() {
+      const overlay = document.getElementById('tutorial-overlay');
+      const card = document.getElementById('tutorial-card');
+      
+      if (overlay) overlay.classList.remove('hidden');
+      if (card) card.classList.remove('hidden');
+      
+      mostrarPasoModulo();
+    }
+
+    function mostrarPasoModulo() {
+      const pasos = tutorialesPorSeccion[seccionActualTutorial];
+      const paso = pasos[pasoTutorialActual];
+      
+      document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+      
+      const textEl = document.getElementById('tutorial-text');
+      const btnEl = document.getElementById('tutorial-btn-next');
+      
+      if (textEl) textEl.innerHTML = paso.texto;
+      if (btnEl) {
+        btnEl.innerText = (pasoTutorialActual === pasos.length - 1) ? "¡Entendido!" : "Siguiente";
+      }
+
+      if (paso.target) {
+        const elTarget = document.querySelector(paso.target);
+        if (elTarget) {
+          elTarget.classList.add('tutorial-highlight');
+          elTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+
+    function siguientePaso() {
+      const pasos = tutorialesPorSeccion[seccionActualTutorial];
+      pasoTutorialActual++;
+      
+      if (pasoTutorialActual < pasos.length) {
+        mostrarPasoModulo();
+      } else {
+        cerrarTutorialModulo();
+      }
+    }
+
+    function cerrarTutorialModulo() {
+      const overlay = document.getElementById('tutorial-overlay');
+      const card = document.getElementById('tutorial-card');
+      
+      if (overlay) overlay.classList.add('hidden');
+      if (card) card.classList.add('hidden');
+      
+      document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+      
+      const vistos = JSON.parse(localStorage.getItem("tutorialesVistos")) || {};
+      vistos[seccionActualTutorial] = true;
+      localStorage.setItem("tutorialesVistos", JSON.stringify(vistos));
+    }
+
+    function reiniciarTutoriales() {
+      localStorage.removeItem("tutorialesVistos");
+      alert("¡Guías contextuales reiniciadas! Las explicaciones se activarán la próxima vez que ingreses a cada sección.");
+      navegarA('panel');
     }
 
     function inicializarUsuario() {
@@ -715,7 +837,10 @@
         document.getElementById("form-registro").style.display = "none";
         document.getElementById("welcome-title").innerText = `¡Hola de nuevo, ${nombre}!`;
         document.getElementById("greeting-header").innerHTML = `Remind<span>Ed</span> — ${nombre}`;
-        setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1200);
+        setTimeout(() => { 
+          document.getElementById("welcome-screen").style.display = "none"; 
+          comprobarTutorialSeccion('panel');
+        }, 1200);
       }
     }
 
@@ -727,9 +852,7 @@
         localStorage.setItem('nombreUsuario', nombre);
         const welcome = document.getElementById('welcome-screen');
         if (welcome) welcome.classList.add('hidden');
-
-        localStorage.removeItem('tutorialCompletado');
-        setTimeout(() => { iniciarTutorial(); }, 200);
+        comprobarTutorialSeccion('panel');
       }
     }
 
@@ -1401,70 +1524,6 @@
         }
       }
       cargarControlSueno();
-    }
-
-    const pasosTutorial = [
-      { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
-      { texto: "Aquí verás la información sobre tu siguiente clase o hobby programado del día.", btnText: "Siguiente" },
-      { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
-      { texto: "Aquí se muestran tus exámenes destacados.", btnText: "Siguiente" },
-      { texto: "En esta sección puedes revisar tu estado de sueño y hábitos de descanso.", btnText: "Siguiente" },
-      { texto: "Por último, aquí tienes la vista general de tu Horario Semanal Completo con todas tus asignaturas y hobbies.", btnText: "¡Entendido, empezar!" }
-    ];
-
-    let pasoActual = 0;
-
-    function iniciarTutorial() {
-      pasoActual = 0;
-      const overlay = document.getElementById('tutorial-overlay');
-      const card = document.getElementById('tutorial-card');
-      
-      if (overlay) overlay.classList.remove('hidden');
-      if (card) card.classList.remove('hidden');
-      
-      mostrarPaso();
-    }
-
-    function mostrarPaso() {
-      const paso = pasosTutorial[pasoActual];
-      
-      document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-      
-      const textEl = document.getElementById('tutorial-text');
-      const btnEl = document.getElementById('tutorial-btn-next');
-      
-      if (textEl) textEl.innerText = paso.texto;
-      if (btnEl) btnEl.innerText = paso.btnText;
-
-      if (pasoActual > 0) {
-        const tarjetas = document.querySelectorAll('.tarjeta-tutorial');
-        const tarjetaObjetivo = tarjetas[pasoActual - 1];
-
-        if (tarjetaObjetivo) {
-          tarjetaObjetivo.classList.add('tutorial-highlight');
-          tarjetaObjetivo.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-    }
-
-    function siguientePaso() {
-      pasoActual++;
-      if (pasoActual < pasosTutorial.length) {
-        mostrarPaso();
-      } else {
-        cerrarTutorial();
-      }
-    }
-
-    function cerrarTutorial() {
-      const overlay = document.getElementById('tutorial-overlay');
-      const card = document.getElementById('tutorial-card');
-      
-      if (overlay) overlay.classList.add('hidden');
-      if (card) card.classList.add('hidden');
-      
-      document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-      localStorage.setItem('tutorialCompletado', 'true');
     }
 
     // INICIALIZACIÓN
