@@ -6,7 +6,6 @@
   <title>RemindEd - Organización Inteligente</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-
     :root {
       --bg-color: #f7f9fc;
       --card-bg: #ffffff;
@@ -22,7 +21,6 @@
       --shadow: 0 10px 25px -5px rgba(108, 92, 231, 0.08);
       --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
-      /* Glows de Neón */
       --glow-red: 0 0 15px rgba(255, 118, 117, 0.6), inset 0 0 10px rgba(255, 118, 117, 0.2);
       --glow-yellow: 0 0 15px rgba(253, 203, 110, 0.7), inset 0 0 10px rgba(253, 203, 110, 0.25);
       --glow-green: 0 0 18px rgba(0, 184, 148, 0.8), inset 0 0 12px rgba(0, 184, 148, 0.3);
@@ -64,7 +62,6 @@
     .card { background: var(--card-bg); padding: 24px; border-radius: 20px; margin-bottom: 20px; box-shadow: var(--shadow); border: 2px solid var(--border-color); transition: var(--transition); position: relative; }
     .card:hover { transform: translateY(-3px); }
     
-    /* Clases para los Bordes Luminosos de Tareas y Promedios */
     .glow-border-red { border-color: var(--danger) !important; box-shadow: var(--glow-red) !important; }
     .glow-border-yellow { border-color: var(--warning) !important; box-shadow: var(--glow-yellow) !important; }
     .glow-border-green { border-color: var(--success) !important; box-shadow: var(--glow-green) !important; }
@@ -83,7 +80,6 @@
     tr:last-child td { border-bottom: none; }
     th { background: var(--primary); color: white; font-weight: 600; }
     
-    #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary), #a855f7); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box; }
     #welcome-screen input { padding: 14px 20px; font-size: 1.1rem; border-radius: 12px; border: none; margin: 15px; text-align: center; outline: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 280px; font-family: 'Poppins', sans-serif; }
     #welcome-screen button, .btn-action { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
     #welcome-screen button:hover, .btn-action:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
@@ -142,82 +138,25 @@
 
     .canvas-container { text-align: center; overflow-x: auto; padding: 10px 0; }
     canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; max-width: 100%; box-shadow: var(--shadow); }
-  .tutorial-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
-}
-
-.tutorial-card {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10000;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 90%;
-  width: 400px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-
-.tutorial-highlight {
-  position: relative !important;
-  z-index: 99999 !important;
-  box-shadow: 0 0 0 4px #6c5ce7, 0 0 25px rgba(108, 92, 231, 0.8) !important;
-  background-color: #ffffff !important;
-  border-radius: 12px !important;
-}
-.hidden {
-  display: none !important;
-}
     
-    /* Pantalla de bienvenida en pantalla completa */
-    .welcome-overlay {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(135deg, #a8c0ff, #3f2b96);
-      z-index: 10001 !important;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
+    .tutorial-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); z-index: 9998; }
+    .tutorial-card { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; background: #ffffff; padding: 20px; border-radius: 12px; max-width: 90%; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
 
-    /* Ocultar elementos */
-    .hidden {
-      display: none !important;
-    }
+    .welcome-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #a8c0ff, #3f2b96); z-index: 10001 !important; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .hidden { display: none !important; }
 
-    /* Efecto Neón para iluminar las tarjetas */
-    .tutorial-highlight {
-      position: relative !important;
-      z-index: 9999 !important;
-      box-shadow: 0 0 0 4px #6c5ce7, 0 0 25px rgba(108, 92, 231, 0.8) !important;
-      background-color: #ffffff !important;
-      border-radius: 12px !important;
-      transition: all 0.3s ease !important;
-    }
+    .tutorial-highlight { position: relative !important; z-index: 9999 !important; box-shadow: 0 0 0 4px #6c5ce7, 0 0 25px rgba(108, 92, 231, 0.8) !important; background-color: #ffffff !important; border-radius: 12px !important; transition: all 0.3s ease !important; }
   </style>
 </head>
 <body>
 
   <div id="welcome-screen" class="welcome-overlay">
-  <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
-  <div id="form-registro">
-    <input type="text" id="username-input" placeholder="Tu nombre..." />
-    <button onclick="guardarNombre()">Comenzar mi Organización</button>
+    <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
+    <div id="form-registro">
+      <input type="text" id="username-input" placeholder="Tu nombre..." />
+      <button onclick="guardarNombre()">Comenzar mi Organización</button>
+    </div>
   </div>
-</div>
 
   <div class="top-bar">
     <button class="hamburger" onclick="toggleMenu()">☰</button>
@@ -249,8 +188,7 @@
       <p id="info-clase">Cargando...</p>
     </div>
 
-    <!-- TARJETA CON LUZ LUMINOSA DINÁMICA DE TAREAS -->
-  <div class="card tarjeta-tutorial">
+    <div class="card tarjeta-tutorial" id="card-objetivos-contenedor">
       <h2>🎯 Objetivos / Tareas Diarias</h2>
       <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde resplandeciente cuando completas tus tareas del día.</p>
       <div id="lista-objetivos-diarios"></div>
@@ -311,7 +249,7 @@
     </div>
   </div>
 
-  <!-- EXÁMENES Y NOTAS CON BORDES LUMINOSOS POR ASIGNATURA -->
+  <!-- EXÁMENES Y NOTAS -->
   <div id="page-examenes" class="section-page">
     <div class="card">
       <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
@@ -468,15 +406,17 @@
       <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos</button>
     </div>
   </div>
-<!-- Cuadro del Tutorial -->
-<div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
-<div id="tutorial-card" class="tutorial-card hidden">
-  <p id="tutorial-text"></p>
-  <div class="tutorial-buttons">
-    <button id="tutorial-btn-skip" class="btn-secondary" onclick="cerrarTutorial()">Omitir</button>
-    <button id="tutorial-btn-next" class="btn-primary" onclick="siguientePaso()">Iniciar recorrido</button>
+
+  <!-- TUTORIAL -->
+  <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
+  <div id="tutorial-card" class="tutorial-card hidden">
+    <p id="tutorial-text"></p>
+    <div class="tutorial-buttons" style="display:flex; justify-content:space-between; margin-top:15px;">
+      <button id="tutorial-btn-skip" class="btn-action" style="background:var(--danger);" onclick="cerrarTutorial()">Omitir</button>
+      <button id="tutorial-btn-next" class="btn-action" onclick="siguientePaso()">Iniciar recorrido</button>
+    </div>
   </div>
-</div>
+
   <script>
     const asignaturasBase = ["Biología y Geología (BG)", "Física y Química (FQ)", "Matemáticas (MAT)", "Filosofía (FIL)", "Portugués (PORT)", "Inglés (ING)", "Educación Física (EF)"];
 
@@ -522,7 +462,7 @@
     }
 
     function inicializarUsuario() {
-      const nombre = localStorage.getItem("userName");
+      const nombre = localStorage.getItem("nombreUsuario");
       if (nombre) {
         document.getElementById("form-registro").style.display = "none";
         document.getElementById("welcome-title").innerText = `¡Hola de nuevo, ${nombre}!`;
@@ -530,28 +470,21 @@
         setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1200);
       }
     }
-function guardarNombre() {
-  const input = document.getElementById('username-input');
-  const nombre = input ? input.value.trim() : '';
-  
-  if (nombre !== '') {
-    localStorage.setItem('nombreUsuario', nombre);
-    
-    // 1. Ocultar la pantalla de bienvenida
-    const welcome = document.getElementById('welcome-screen');
-    if (welcome) welcome.classList.add('hidden');
 
-    // 2. Limpiar cualquier registro previo para que SIEMPRE salte
-    localStorage.removeItem('tutorialCompletado');
+    function guardarNombre() {
+      const input = document.getElementById('username-input');
+      const nombre = input ? input.value.trim() : '';
+      
+      if (nombre !== '') {
+        localStorage.setItem('nombreUsuario', nombre);
+        const welcome = document.getElementById('welcome-screen');
+        if (welcome) welcome.classList.add('hidden');
 
-    // 3. Arrancar el tutorial inmediatamente
-    setTimeout(() => {
-      iniciarTutorial();
-    }, 200);
-  }
-}
+        localStorage.removeItem('tutorialCompletado');
+        setTimeout(() => { iniciarTutorial(); }, 200);
+      }
+    }
 
-    // OBJETIVOS CON LUZ NEÓN DINÁMICA
     function cargarObjetivos() {
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       const fechaHoy = new Date().toISOString().split('T')[0];
@@ -572,7 +505,7 @@ function guardarNombre() {
       if (totalTareas === 0) {
         contDiario.innerHTML = "<p style='color:#64748b;'>Añade tareas en la sección 'Mis Objetivos'.</p>";
         contAdmin.innerHTML = "<p style='color:#64748b;'>No has añadido tareas aún.</p>";
-        cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
+        if(cardContenedor) cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
       } else {
         guardados.forEach((obj, index) => {
           const cumplido = estados[fechaHoy][index] || false;
@@ -594,20 +527,21 @@ function guardarNombre() {
           contAdmin.appendChild(divAdmin);
         });
 
-        // LÓGICA DE BORDES LUMINOSOS SEGÚN NÚMERO DE TAREAS
-        cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
+        if(cardContenedor) {
+          cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
 
-        if (totalTareas === 1) {
-          if (tareasCompletadas === 1) cardContenedor.classList.add("glow-border-green");
-          else cardContenedor.classList.add("glow-border-red");
-        } else {
-          const proporcion = tareasCompletadas / totalTareas;
-          if (tareasCompletadas === totalTareas) {
-            cardContenedor.classList.add("glow-border-green");
-          } else if (proporcion >= 0.5) {
-            cardContenedor.classList.add("glow-border-yellow");
+          if (totalTareas === 1) {
+            if (tareasCompletadas === 1) cardContenedor.classList.add("glow-border-green");
+            else cardContenedor.classList.add("glow-border-red");
           } else {
-            cardContenedor.classList.add("glow-border-red");
+            const proporcion = tareasCompletadas / totalTareas;
+            if (tareasCompletadas === totalTareas) {
+              cardContenedor.classList.add("glow-border-green");
+            } else if (proporcion >= 0.5) {
+              cardContenedor.classList.add("glow-border-yellow");
+            } else {
+              cardContenedor.classList.add("glow-border-red");
+            }
           }
         }
       }
@@ -644,7 +578,6 @@ function guardarNombre() {
       cargarObjetivos();
     }
 
-    // ASIGNATURAS CON LUZ NEÓN SI CUMPLE META
     function cargarAsignaturasYNotas() {
       const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
       const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
@@ -665,7 +598,6 @@ function guardarNombre() {
           notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
         });
 
-        // LÓGICA DE ILUMINACIÓN DE METAS
         let glowClass = "";
         const metaNum = parseFloat(metaFinalVal);
         if (promedioNum !== null && !isNaN(metaNum)) {
@@ -742,7 +674,6 @@ function guardarNombre() {
       cargarAsignaturasYNotas();
     }
 
-    // OTRAS FUNCIONES BASE
     function cargarHobbies() {
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const contLista = document.getElementById("lista-hobbies");
@@ -1224,12 +1155,10 @@ function guardarNombre() {
         const card = document.createElement("div");
         card.className = `trophy-card ${tr.desbloqueado ? 'unlocked' : ''}`;
         card.innerHTML = `
-          <span class="badge-nivel badge-${tr.nivel}">${tr.nivel.toUpperCase()}</span>
-          <div style="font-weight: 600; font-size: 1.05rem; margin: 4px 0;">${tr.nombre}</div>
-          <div style="font-size: 0.9rem; color: #64748b;">${tr.desc}</div>
-          <div style="margin-top: 8px; font-weight: 600; font-size: 0.85rem; color: ${tr.desbloqueado ? 'var(--success)' : 'var(--danger)'};">
-            ${tr.desbloqueado ? '✅ ¡Desbloqueado!' : '🔒 Bloqueado'}
-          </div>
+          <span class="badge-nivel ${tr.desbloqueado ? 'badge-oro' : 'badge-bronce'}">${tr.nivel.toUpperCase()}</span>
+          <h3 style="margin:6px 0;">${tr.nombre}</h3>
+          <p style="font-size:0.85rem; margin-bottom:8px;">${tr.desc}</p>
+          <div style="font-size:0.85rem; font-weight:600;">${tr.desbloqueado ? '✅ ¡Desbloqueado!' : '🔒 Bloqueado'}</div>
         `;
         grid.appendChild(card);
       });
@@ -1276,6 +1205,71 @@ function guardarNombre() {
       cargarControlSueno();
     }
 
+    // --- LÓGICA DEL TUTORIAL INTERACTIVO ---
+    const pasosTutorial = [
+      { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
+      { texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente" },
+      { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
+      { texto: "Aquí se muestran tus exámenes destacados.", btnText: "Siguiente" },
+      { texto: "Por último, aquí tienes el desglose completo de tu horario semanal.", btnText: "¡Entendido, empezar!" }
+    ];
+
+    let pasoActual = 0;
+
+    function iniciarTutorial() {
+      pasoActual = 0;
+      const overlay = document.getElementById('tutorial-overlay');
+      const card = document.getElementById('tutorial-card');
+      
+      if (overlay) overlay.classList.remove('hidden');
+      if (card) card.classList.remove('hidden');
+      
+      mostrarPaso();
+    }
+
+    function mostrarPaso() {
+      const paso = pasosTutorial[pasoActual];
+      
+      document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+      
+      const textEl = document.getElementById('tutorial-text');
+      const btnEl = document.getElementById('tutorial-btn-next');
+      
+      if (textEl) textEl.innerText = paso.texto;
+      if (btnEl) btnEl.innerText = paso.btnText;
+
+      if (pasoActual > 0) {
+        const tarjetas = document.querySelectorAll('.tarjeta-tutorial');
+        const tarjetaObjetivo = tarjetas[pasoActual - 1];
+
+        if (tarjetaObjetivo) {
+          tarjetaObjetivo.classList.add('tutorial-highlight');
+          tarjetaObjetivo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+
+    function siguientePaso() {
+      pasoActual++;
+      if (pasoActual < pasosTutorial.length) {
+        mostrarPaso();
+      } else {
+        cerrarTutorial();
+      }
+    }
+
+    function cerrarTutorial() {
+      const overlay = document.getElementById('tutorial-overlay');
+      const card = document.getElementById('tutorial-card');
+      
+      if (overlay) overlay.classList.add('hidden');
+      if (card) card.classList.add('hidden');
+      
+      document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+      localStorage.setItem('tutorialCompletado', 'true');
+    }
+
+    // INICIALIZACIÓN
     aplicarModoOscuroAuto();
     inicializarUsuario();
     inicializarExamenesYNotas();
@@ -1283,110 +1277,6 @@ function guardarNombre() {
     cargarObjetivos();
     cargarConfigPomodoro();
     actualizarPanel();
-    actualizarPanel();
-aplicarModoOscuroAuto();
-inicializarUsuario();
-inicializarExamenesYNotas();
-cargarHobbies();
-cargarObjetivos();
-cargarConfigPomodoro();
-actualizarPanel();
-
-// --- LÓGICA COMPLETA DEL TUTORIAL INTERACTIVO ---
-const pasosTutorial = [
-  { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
-  { texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente" },
-  { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
-  { texto: "Aquí se muestran tus exámenes destacados.", btnText: "Siguiente" },
-  { texto: "Por último, aquí tienes el desglose completo de tu horario semanal.", btnText: "¡Entendido, empezar!" }
-];
-
-let pasoActual = 0;
-
-function guardarNombre() {
-  const input = document.getElementById('username-input');
-  const nombre = input ? input.value.trim() : '';
-  
-  if (nombre !== '') {
-    localStorage.setItem('nombreUsuario', nombre);
-    
-    // Ocultar pantalla de bienvenida
-    const welcome = document.getElementById('welcome-screen');
-    if (welcome) welcome.classList.add('hidden');
-
-    // Forzar el inicio del tutorial
-    localStorage.removeItem('tutorialCompletado');
-    setTimeout(() => {
-      iniciarTutorial();
-    }, 200);
-  }
-}
-
-function iniciarTutorial() {
-  pasoActual = 0;
-  const overlay = document.getElementById('tutorial-overlay');
-  const card = document.getElementById('tutorial-card');
-  
-  if (overlay) overlay.classList.remove('hidden');
-  if (card) card.classList.remove('hidden');
-  
-  mostrarPaso();
-}
-
-function mostrarPaso() {
-  const paso = pasosTutorial[pasoActual];
-  
-  // Limpiar resplandor de pasos anteriores
-  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-  
-  const textEl = document.getElementById('tutorial-text');
-  const btnEl = document.getElementById('tutorial-btn-next');
-  
-  if (textEl) textEl.innerText = paso.texto;
-  if (btnEl) btnEl.innerText = paso.btnText;
-
-  // Si no estamos en la bienvenida (Paso > 0), ilumina la tarjeta correspondiente
-  if (pasoActual > 0) {
-    const tarjetas = document.querySelectorAll('.tarjeta-tutorial');
-    const tarjetaObjetivo = tarjetas[pasoActual - 1];
-
-    if (tarjetaObjetivo) {
-      tarjetaObjetivo.classList.add('tutorial-highlight');
-      tarjetaObjetivo.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }
-}
-
-function siguientePaso() {
-  pasoActual++;
-  if (pasoActual < pasosTutorial.length) {
-    mostrarPaso();
-  } else {
-    cerrarTutorial();
-  }
-}
-
-function cerrarTutorial() {
-  const overlay = document.getElementById('tutorial-overlay');
-  const card = document.getElementById('tutorial-card');
-  
-  if (overlay) overlay.classList.add('hidden');
-  if (card) card.classList.add('hidden');
-  
-  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-  localStorage.setItem('tutorialCompletado', 'true');
-}
-
-// Escuchar el clic en el botón de bienvenida
-document.addEventListener('click', function (e) {
-  if (e.target && e.target.textContent.trim().includes('Comenzar mi Organización')) {
-    if (!localStorage.getItem('tutorialCompletado')) {
-      setTimeout(() => {
-        iniciarTutorial();
-      }, 400);
-    }
-  }
-});
   </script>
 </body>
 </html>
