@@ -168,11 +168,10 @@
 
 .tutorial-highlight {
   position: relative !important;
-  z-index: 99999 !important; /* Eleva la tarjeta por encima de TODO */
-  box-shadow: 0 0 0 5px #6c5ce7, 0 0 35px rgba(108, 92, 231, 0.9) !important; /* Borde y resplandor neón violeta */
+  z-index: 99999 !important;
+  box-shadow: 0 0 0 4px #6c5ce7, 0 0 25px rgba(108, 92, 231, 0.8) !important;
   background-color: #ffffff !important;
-  border-radius: 16px !important;
-  transition: all 0.3s ease !important;
+  border-radius: 12px !important;
 }
 .hidden {
   display: none !important;
@@ -1314,25 +1313,23 @@ function iniciarTutorial() {
 function mostrarPaso() {
   const paso = pasosTutorial[pasoActual];
   
-  // Limpiar resaltados previos
-  document.querySelectorAll('.tutorial-highlight').forEach(el => {
-    el.classList.remove('tutorial-highlight');
-  });
+  // Limpiar resplandor previo
+  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
   
-  // Actualizar textos del cuadro flotante
   const textEl = document.getElementById('tutorial-text');
   const btnEl = document.getElementById('tutorial-btn-next');
   if (textEl) textEl.innerText = paso.texto;
   if (btnEl) btnEl.innerText = paso.btnText;
 
-  // Iluminar la tarjeta correspondiente al paso actual
+  // Si no estamos en la bienvenida (Paso 0)
   if (pasoActual > 0) {
-    const listaTarjetas = document.querySelectorAll('.tarjeta-tutorial');
-    const tarjetaActual = listaTarjetas[pasoActual - 1];
+    // Seleccionar directamente por la clase 'tarjeta-tutorial' que se ve en tu foto
+    const tarjetas = document.querySelectorAll('.tarjeta-tutorial');
+    const tarjetaObjetivo = tarjetas[pasoActual - 1]; // Paso 1 -> Tarjeta 0 ("Próxima Clase")
 
-    if (tarjetaActual) {
-      tarjetaActual.classList.add('tutorial-highlight');
-      tarjetaActual.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (tarjetaObjetivo) {
+      tarjetaObjetivo.classList.add('tutorial-highlight');
+      tarjetaObjetivo.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 }
