@@ -269,14 +269,14 @@
   <!-- ESTADÍSTICAS Y GRÁFICOS -->
   <div id="page-estadisticas" class="section-page">
     <div class="card">
-      <h2>📈 Evolución de Promedios por Asignatura (Ejes X / Y)</h2>
+      <h2>📈 Evolución de Promedios por Asignatura</h2>
       <div class="canvas-container">
         <canvas id="canvas-lineas-notas" width="500" height="250"></canvas>
       </div>
     </div>
 
     <div class="card">
-      <h2>⏱️ Estudio Diario en los Últimos 7 Días (Ejes X / Y)</h2>
+      <h2>⏱️ Estudio Diario en los Últimos 7 Días</h2>
       <div class="canvas-container">
         <canvas id="canvas-lineas-estudio" width="500" height="250"></canvas>
       </div>
