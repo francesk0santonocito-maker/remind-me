@@ -140,8 +140,22 @@
     canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; max-width: 100%; box-shadow: var(--shadow); }
     
     .tutorial-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); z-index: 9998; }
-    .tutorial-card { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; background: #ffffff; padding: 20px; border-radius: 12px; max-width: 90%; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-
+    .tutorial-card { 
+  position: fixed; 
+  bottom: 20px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  z-index: 10000; 
+  background: var(--card-bg); 
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  padding: 20px; 
+  border-radius: 12px; 
+  max-width: 90%; 
+  width: 400px; 
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+  transition: var(--transition);
+}
     .welcome-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #a8c0ff, #3f2b96); z-index: 10001 !important; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
     .hidden { display: none !important; }
 
