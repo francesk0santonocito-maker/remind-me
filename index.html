@@ -6,6 +6,7 @@
   <title>RemindEd - Organización Inteligente</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+
     :root {
       --bg-color: #f7f9fc;
       --card-bg: #ffffff;
@@ -141,6 +142,49 @@
 
     .canvas-container { text-align: center; overflow-x: auto; padding: 10px 0; }
     canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; max-width: 100%; box-shadow: var(--shadow); }
+  .tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9998;
+}
+
+.tutorial-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1e1e2e;
+  color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #ff007f;
+  z-index: 10000;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.tutorial-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tutorial-highlight {
+  position: relative !important;
+  z-index: 9999 !important;
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.8) !important;
+  border-radius: 8px;
+}
+
+.hidden {
+  display: none !important;
+}
   </style>
 </head>
 <body>
@@ -402,7 +446,15 @@
       <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos</button>
     </div>
   </div>
-
+<!-- Cuadro del Tutorial -->
+<div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
+<div id="tutorial-card" class="tutorial-card hidden">
+  <p id="tutorial-text"></p>
+  <div class="tutorial-buttons">
+    <button id="tutorial-btn-skip" class="btn-secondary" onclick="cerrarTutorial()">Omitir</button>
+    <button id="tutorial-btn-next" class="btn-primary" onclick="siguientePaso()">Iniciar recorrido</button>
+  </div>
+</div>
   <script>
     const asignaturasBase = ["Biología y Geología (BG)", "Física y Química (FQ)", "Matemáticas (MAT)", "Filosofía (FIL)", "Portugués (PORT)", "Inglés (ING)", "Educación Física (EF)"];
 
@@ -1198,6 +1250,61 @@
     cargarObjetivos();
     cargarConfigPomodoro();
     actualizarPanel();
+    // --- LÓGICA DEL TUTORIAL INTERACTIVO ---
+const pasosTutorial = [
+  { target: null, texto: "¡Bienvenido a tu panel de control! Vamos a hacer un recorrido rápido para enseñarte dónde está cada herramienta.", btnText: "Iniciar recorrido" },
+  { target: "#sidebar", texto: "Aquí encuentras los accesos directos principales: tu perfil, tus asignaturas/proyectos y las configuraciones de tu cuenta.", btnText: "Siguiente" },
+  { target: "#metrics-panel", texto: "En este bloque ves un resumen rápido del día: tus tareas pendientes, avisos importantes y recordatorios inmediatos.", btnText: "Siguiente" },
+  { target: "#tasks-module", texto: "Desde aquí puedes agregar, editar o marcar como completadas tus actividades diarias de forma rápida.", btnText: "Siguiente" },
+  { target: "#weekly-schedule", texto: "Llegamos a la parte clave: tu horario semanal. Aquí puedes visualizar y organizar toda tu rutina de lunes a domingo de un solo vistazo.", btnText: "¡Entendido, empezar a usar!" }
+];
+
+let pasoActual = 0;
+
+function iniciarTutorial() {
+  pasoActual = 0;
+  document.getElementById('tutorial-overlay').classList.remove('hidden');
+  document.getElementById('tutorial-card').classList.remove('hidden');
+  mostrarPaso();
+}
+
+function mostrarPaso() {
+  const paso = pasosTutorial[pasoActual];
+  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+  document.getElementById('tutorial-text').innerText = paso.texto;
+  document.getElementById('tutorial-btn-next').innerText = paso.btnText;
+
+  if (paso.target) {
+    const el = document.querySelector(paso.target);
+    if (el) {
+      el.classList.add('tutorial-highlight');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+function siguientePaso() {
+  pasoActual++;
+  if (pasoActual < pasosTutorial.length) {
+    mostrarPaso();
+  } else {
+    cerrarTutorial();
+  }
+}
+
+function cerrarTutorial() {
+  document.getElementById('tutorial-overlay').classList.add('hidden');
+  document.getElementById('tutorial-card').classList.add('hidden');
+  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+  
+  // Guardamos en el navegador que ya lo hizo
+  localStorage.setItem('tutorialCompletado', 'true');
+}
+
+// Comprobación de localStorage: activa el tutorial solo la primera vez
+if (!localStorage.getItem('tutorialCompletado')) {
+  iniciarTutorial();
+}
   </script>
 </body>
 </html>
