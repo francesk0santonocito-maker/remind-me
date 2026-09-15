@@ -178,17 +178,48 @@
 .hidden {
   display: none !important;
 }
+    
+    /* Pantalla de bienvenida en pantalla completa */
+    .welcome-overlay {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #a8c0ff, #3f2b96);
+      z-index: 10001 !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Ocultar elementos */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Efecto Neón para iluminar las tarjetas */
+    .tutorial-highlight {
+      position: relative !important;
+      z-index: 9999 !important;
+      box-shadow: 0 0 0 4px #6c5ce7, 0 0 25px rgba(108, 92, 231, 0.8) !important;
+      background-color: #ffffff !important;
+      border-radius: 12px !important;
+      transition: all 0.3s ease !important;
+    }
   </style>
 </head>
 <body>
 
-  id="welcome-screen"><div 
-    <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
-    <div id="form-registro">
-      <input type="text" id="username-input" placeholder="Tu nombre..." />
-      <button onclick="guardarNombre()">Comenzar mi Organización</button>
-    </div>
+  <div id="welcome-screen" class="welcome-overlay">
+  <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
+  <div id="form-registro">
+    <input type="text" id="username-input" placeholder="Tu nombre..." />
+    <button onclick="guardarNombre()">Comenzar mi Organización</button>
   </div>
+</div>
 
   <div class="top-bar">
     <button class="hamburger" onclick="toggleMenu()">☰</button>
@@ -501,15 +532,25 @@
         setTimeout(() => { document.getElementById("welcome-screen").style.display = "none"; }, 1200);
       }
     }
+function guardarNombre() {
+  const input = document.getElementById('username-input');
+  const nombre = input ? input.value.trim() : '';
+  
+  if (nombre !== '') {
+    localStorage.setItem('nombreUsuario', nombre);
+    
+    // Ocultar pantalla de bienvenida
+    const welcome = document.getElementById('welcome-screen');
+    if (welcome) welcome.classList.add('hidden');
 
-    function guardarNombre() {
-      const nombre = document.getElementById("username-input").value.trim();
-      if (nombre !== "") {
-        localStorage.setItem("userName", nombre);
-        document.getElementById("greeting-header").innerHTML = `Remind<span>Ed</span> — ${nombre}`;
-        document.getElementById("welcome-screen").style.display = "none";
-      }
+    // Iniciar tutorial
+    if (!localStorage.getItem('tutorialCompletado')) {
+      setTimeout(() => {
+        iniciarTutorial();
+      }, 300);
     }
+  }
+}
 
     // OBJETIVOS CON LUZ NEÓN DINÁMICA
     function cargarObjetivos() {
