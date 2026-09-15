@@ -148,7 +148,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.45); /* Mantiene visible el fondo sin ponerlo totalmente negro */
   z-index: 9998;
 }
 
@@ -1250,61 +1250,60 @@
     cargarObjetivos();
     cargarConfigPomodoro();
     actualizarPanel();
-    // --- LÓGICA DEL TUTORIAL INTERACTIVO ---
-const pasosTutorial = [
-  { target: null, texto: "¡Bienvenido a tu panel de control! Vamos a hacer un recorrido rápido para enseñarte dónde está cada herramienta.", btnText: "Iniciar recorrido" },
-  { target: "#sidebar", texto: "Aquí encuentras los accesos directos principales: tu perfil, tus asignaturas/proyectos y las configuraciones de tu cuenta.", btnText: "Siguiente" },
-  { target: "#metrics-panel", texto: "En este bloque ves un resumen rápido del día: tus tareas pendientes, avisos importantes y recordatorios inmediatos.", btnText: "Siguiente" },
-  { target: "#tasks-module", texto: "Desde aquí puedes agregar, editar o marcar como completadas tus actividades diarias de forma rápida.", btnText: "Siguiente" },
-  { target: "#weekly-schedule", texto: "Llegamos a la parte clave: tu horario semanal. Aquí puedes visualizar y organizar toda tu rutina de lunes a domingo de un solo vistazo.", btnText: "¡Entendido, empezar a usar!" }
-];
+    actualizarPanel();
 
-let pasoActual = 0;
+  // --- LÓGICA DEL TUTORIAL INTERACTIVO CORREGIDA ---
+  const pasosTutorial = [
+    { target: null, texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
+    { target: "Próxima Clase", texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente" },
+    { target: "Objetivos / Tareas Diarias", texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
+    { target: "Horario Semanal Completo", texto: "Por último, aquí tienes el desglose completo de tu horario de lunes a domingo.", btnText: "¡Entendido, empezar!" }
+  ];
 
-function iniciarTutorial() {
-  pasoActual = 0;
-  document.getElementById('tutorial-overlay').classList.remove('hidden');
-  document.getElementById('tutorial-card').classList.remove('hidden');
-  mostrarPaso();
-}
+  let pasoActual = 0;
 
-function mostrarPaso() {
-  const paso = pasosTutorial[pasoActual];
-  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-  document.getElementById('tutorial-text').innerText = paso.texto;
-  document.getElementById('tutorial-btn-next').innerText = paso.btnText;
+  function iniciarTutorial() {
+    pasoActual = 0;
+    document.getElementById('tutorial-overlay').classList.remove('hidden');
+    document.getElementById('tutorial-card').classList.remove('hidden');
+    mostrarPaso();
+  }
 
-  if (paso.target) {
-    const el = document.querySelector(paso.target);
-    if (el) {
-      el.classList.add('tutorial-highlight');
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  function mostrarPaso() {
+    const paso = pasosTutorial[pasoActual];
+    document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+    
+    document.getElementById('tutorial-text').innerText = paso.texto;
+    document.getElementById('tutorial-btn-next').innerText = paso.btnText;
+
+    if (paso.target) {
+      const elementos = Array.from(document.querySelectorAll('h3, h2, div, span'));
+      const coincidencia = elementos.find(el => el.textContent.trim().includes(paso.target));
+      const contenedorTarjeta = coincidencia ? coincidencia.closest('.card') || coincidencia.parentElement : null;
+
+      if (contenedorTarjeta) {
+        contenedorTarjeta.classList.add('tutorial-highlight');
+        contenedorTarjeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   }
-}
 
-function siguientePaso() {
-  pasoActual++;
-  if (pasoActual < pasosTutorial.length) {
-    mostrarPaso();
-  } else {
-    cerrarTutorial();
+  function siguientePaso() {
+    pasoActual++;
+    if (pasoActual < pasosTutorial.length) {
+      mostrarPaso();
+    } else {
+      cerrarTutorial();
+    }
   }
-}
 
-function cerrarTutorial() {
-  document.getElementById('tutorial-overlay').classList.add('hidden');
-  document.getElementById('tutorial-card').classList.add('hidden');
-  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-  
-  // Guardamos en el navegador que ya lo hizo
-  localStorage.setItem('tutorialCompletado', 'true');
-}
-
-// Comprobación de localStorage: activa el tutorial solo la primera vez
-if (!localStorage.getItem('tutorialCompletado')) {
-  iniciarTutorial();
-}
+  function cerrarTutorial() {
+    document.getElementById('tutorial-overlay').classList.add('hidden');
+    document.getElementById('tutorial-card').classList.add('hidden');
+    document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+    localStorage.setItem('tutorialCompletado', 'true');
+  }
+</script>
   </script>
 </body>
 </html>
