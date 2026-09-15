@@ -265,6 +265,14 @@
   <!-- EXÁMENES Y NOTAS -->
   <div id="page-examenes" class="section-page">
     <div class="card">
+  <h2>📚 Gestor de Asignaturas</h2>
+  <div class="form-group">
+    <input type="text" id="nueva-asignatura-nombre" class="input-form" placeholder="Nombre de la materia (ej. Historia)" style="flex:1;" />
+    <button onclick="agregarNuevaAsignatura()" class="btn-action">Añadir Materia</button>
+  </div>
+  <div id="lista-gestion-asignaturas" style="margin-top:10px;"></div>
+</div>
+    <div class="card">
       <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
       <div class="form-group">
         <select id="examen-materia-select" class="input-form"></select>
@@ -431,7 +439,125 @@
   </div>
 
   <script>
-    const asignaturasBase = ["Biología y Geología (BG)", "Física y Química (FQ)", "Matemáticas (MAT)", "Filosofía (FIL)", "Portugués (PORT)", "Inglés (ING)", "Educación Física (EF)"];
+    function inicializarExamenesYNotas() {
+  const select = document.getElementById("examen-materia-select");
+  const notaSel = document.getElementById("nota-asig-select");
+  const filtroSel = document.getElementById("filtro-asig");
+  
+  if (select) select.innerHTML = ""; 
+  if (notaSel) notaSel.innerHTML = "";
+  if (filtroSel) filtroSel.innerHTML = `<option value="TODAS">Todas las asignaturas</option>`;
+
+  obtenerAsignaturas().forEach(asig => {
+    if (select) select.add(new Option(asig, asig));
+    if (notaSel) notaSel.add(new Option(asig, asig));
+    if (filtroSel) filtroSel.add(new Option(asig, asig));
+  });
+
+  renderizarGestorAsignaturas();
+  cargarExamenes();
+  cargarAsignaturasYNotas();
+  cargarApuntes();
+}
+
+function cargarAsignaturasYNotas() {
+  const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+  const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+  const contenedor = document.getElementById("contenedor-asignaturas");
+  if (!contenedor) return;
+  contenedor.innerHTML = "";
+
+  obtenerAsignaturas().forEach((asig) => {
+    const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
+    const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
+    const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
+
+    const suma = listaNotas.reduce((a, b) => a + b, 0);
+    const promedioNum = listaNotas.length > 0 ? (suma / listaNotas.length) : null;
+    const promedioStr = promedioNum !== null ? promedioNum.toFixed(1) : "-";
+
+    let notasItemsHTML = "";
+    listaNotas.forEach((n, idx) => {
+      notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
+    });
+
+    let glowClass = "";
+    const metaNum = parseFloat(metaFinalVal);
+    if (promedioNum !== null && !isNaN(metaNum)) {
+      if (promedioNum >= metaNum) glowClass = "glow-border-green";
+      else glowClass = "glow-border-red";
+    }
+
+    const div = document.createElement("div");
+    div.className = `materia-card ${glowClass}`;
+    div.innerHTML = `
+      <div>
+        <strong>${asig}</strong>
+        <span class="promedio-tag">Promedio: ${promedioStr}</span>
+      </div>
+      <div style="margin-top: 10px;" class="form-group">
+        <input type="number" step="0.1" min="0" max="20" placeholder="Nueva nota" id="input-nota-${asig}" class="input-form" style="width: 100px;" />
+        <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
+        <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+          <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
+          <input type="text" placeholder="Ej. 18 / 9.5" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 100px;" onchange="guardarMetaAsignatura('${asig}')" />
+        </div>
+      </div>
+      <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
+        <strong>Notas guardadas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Ninguna nota registrada"}
+      </div>
+    `;
+    contenedor.appendChild(div);
+  });
+}
+    function agregarNuevaAsignatura() {
+  const input = document.getElementById("nueva-asignatura-nombre");
+  const nombre = input.value.trim();
+  if (nombre !== "") {
+    const lista = obtenerAsignaturas();
+    if (!lista.includes(nombre)) {
+      lista.push(nombre);
+      guardarAsignaturasLista(lista);
+      input.value = "";
+      inicializarExamenesYNotas();
+    } else {
+      alert("Esta asignatura ya existe.");
+    }
+  }
+}
+
+function borrarAsignatura(nombre) {
+  let lista = obtenerAsignaturas();
+  lista = lista.filter(a => a !== nombre);
+  guardarAsignaturasLista(lista);
+  inicializarExamenesYNotas();
+}
+
+function renderizarGestorAsignaturas() {
+  const lista = obtenerAsignaturas();
+  const cont = document.getElementById("lista-gestion-asignaturas");
+  if (!cont) return;
+  cont.innerHTML = "";
+  
+  if (lista.length === 0) {
+    cont.innerHTML = "<p style='color:#64748b;'>No hay asignaturas registradas. ¡Añade la primera!</p>";
+    return;
+  }
+
+  lista.forEach(asig => {
+    const div = document.createElement("div");
+    div.className = "item-list";
+    div.innerHTML = `<span>📖 <strong>${asig}</strong></span> <button class="btn-del" onclick="borrarAsignatura('${asig}')">Eliminar Materia</button>`;
+    cont.appendChild(div);
+  });
+}
+    function obtenerAsignaturas() {
+  return JSON.parse(localStorage.getItem("misAsignaturasPersonalizadas")) || [];
+}
+
+function guardarAsignaturasLista(lista) {
+  localStorage.setItem("misAsignaturasPersonalizadas", JSON.stringify(lista));
+}
 
     const horarioEscolar = {
       1: [{ inicio: "08:00", asignatura: "BG", sala: "E10" }, { inicio: "09:55", asignatura: "FQ-A", sala: "E10" }, { inicio: "11:50", asignatura: "MAT-A", sala: "E10" }],
@@ -597,7 +723,7 @@
       const contenedor = document.getElementById("contenedor-asignaturas");
       contenedor.innerHTML = "";
 
-      asignaturasBase.forEach((asig) => {
+      obtenerAsignaturas.forEach((asig) => {
         const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
         const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
         const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
@@ -732,24 +858,7 @@
     }
 
     let countdownInterval = null;
-    function inicializarExamenesYNotas() {
-      const select = document.getElementById("examen-materia-select");
-      const notaSel = document.getElementById("nota-asig-select");
-      const filtroSel = document.getElementById("filtro-asig");
-      
-      select.innerHTML = ""; notaSel.innerHTML = "";
-      filtroSel.innerHTML = `<option value="TODAS">Todas las asignaturas</option>`;
-
-      asignaturasBase.forEach(asig => {
-        select.add(new Option(asig, asig));
-        notaSel.add(new Option(asig, asig));
-        filtroSel.add(new Option(asig, asig));
-      });
-
-      cargarExamenes();
-      cargarAsignaturasYNotas();
-      cargarApuntes();
-    }
+    
 
     function cargarExamenes() {
       const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
