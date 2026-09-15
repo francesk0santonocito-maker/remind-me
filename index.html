@@ -168,10 +168,11 @@
 
 .tutorial-highlight {
   position: relative !important;
-  z-index: 9999 !important;
-  box-shadow: 0 0 0 4px #6c5ce7, 0 0 20px rgba(108, 92, 231, 0.5) !important;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  z-index: 9999 !important; /* Eleva la tarjeta por encima del fondo oscuro */
+  box-shadow: 0 0 0 4px #6c5ce7, 0 0 25px rgba(108, 92, 231, 0.8) !important; /* Borde y resplandor neón */
+  background-color: #ffffff !important; /* Mantiene la tarjeta brillante */
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
 }
 
 .hidden {
@@ -1267,22 +1268,26 @@ function iniciarTutorial() {
   document.getElementById('tutorial-card').classList.remove('hidden');
   mostrarPaso();
 }
-
 function mostrarPaso() {
   const paso = pasosTutorial[pasoActual];
+  
+  // Quita el brillo del paso anterior
   document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
   
   document.getElementById('tutorial-text').innerText = paso.texto;
   document.getElementById('tutorial-btn-next').innerText = paso.btnText;
 
   if (paso.titulo) {
+    // Busca el texto de la sección
     const elementos = Array.from(document.querySelectorAll('h1, h2, h3, h4, div, span'));
     const coincidencia = elementos.find(el => el.textContent.trim().includes(paso.titulo));
-    const contenedor = coincidencia ? (coincidencia.closest('.card') || coincidencia.parentElement) : null;
+    
+    // Sube hasta encontrar la tarjeta completa (.card o contenedor)
+    const tarjeta = coincidencia ? (coincidencia.closest('.card') || coincidencia.closest('div[class*="card"]') || coincidencia.parentElement) : null;
 
-    if (contenedor) {
-      contenedor.classList.add('tutorial-highlight');
-      contenedor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (tarjeta) {
+      tarjeta.classList.add('tutorial-highlight');
+      tarjeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 }
