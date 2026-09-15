@@ -245,29 +245,29 @@
       <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
     </div>
 
-    <div class="card">
+    <div class="card tarjeta-tutorial">
       <h2>📌 Próxima Clase</h2>
       <p id="info-clase">Cargando...</p>
     </div>
 
     <!-- TARJETA CON LUZ LUMINOSA DINÁMICA DE TAREAS -->
-    <div class="card" id="card-objetivos-contenedor">
+  <div class="card tarjeta-tutorial">
       <h2>🎯 Objetivos / Tareas Diarias</h2>
       <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde resplandeciente cuando completas tus tareas del día.</p>
       <div id="lista-objetivos-diarios"></div>
     </div>
 
-    <div class="card">
+    <div class="card tarjeta-tutorial">
       <h2>📅 Próximos Exámenes Destacados</h2>
       <div id="lista-examenes-resumen"></div>
     </div>
 
-    <div class="card">
+    <div class="card tarjeta-tutorial">
       <h2>🌙 Estado del Sueño</h2>
       <p id="info-sueno">Cargando hábitos de descanso...</p>
     </div>
 
-    <div class="card">
+    <div class="card tarjeta-tutorial">
       <h2>🗓️ Horario Semanal Completo</h2>
       <div style="overflow-x:auto;">
         <table>
@@ -1294,10 +1294,12 @@ actualizarPanel();
 
 // --- LÓGICA DEL TUTORIAL INTERACTIVO ---
 const pasosTutorial = [
-  { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido", titulo: null },
-  { texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente", titulo: "Próxima Clase" },
-  { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente", titulo: "Objetivos / Tareas Diarias" },
-  { texto: "Por último, aquí tienes el desglose completo de tu horario de lunes a domingo.", btnText: "¡Entendido, empezar!", titulo: "Horario Semanal Completo" }
+  { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
+  { texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente" },
+  { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
+  { texto: "Aquí se mostrarán tus exámenes más próximos para que no se te pase ninguno.", btnText: "Siguiente" },
+  { texto: "Monitorea tu meta diaria de descanso y tus horarios de sueño en esta tarjeta.", btnText: "Siguiente" },
+  { texto: "Por último, aquí tienes el desglose completo de tu horario de lunes a domingo.", btnText: "¡Entendido, empezar!" }
 ];
 
 let pasoActual = 0;
@@ -1308,30 +1310,32 @@ function iniciarTutorial() {
   document.getElementById('tutorial-card').classList.remove('hidden');
   mostrarPaso();
 }
+
 function mostrarPaso() {
   const paso = pasosTutorial[pasoActual];
   
-  // Quita el brillo del paso anterior
-  document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+  // Limpiar resaltados previos
+  document.querySelectorAll('.tutorial-highlight').forEach(el => {
+    el.classList.remove('tutorial-highlight');
+  });
   
-  document.getElementById('tutorial-text').innerText = paso.texto;
-  document.getElementById('tutorial-btn-next').innerText = paso.btnText;
+  // Actualizar textos del cuadro flotante
+  const textEl = document.getElementById('tutorial-text');
+  const btnEl = document.getElementById('tutorial-btn-next');
+  if (textEl) textEl.innerText = paso.texto;
+  if (btnEl) btnEl.innerText = paso.btnText;
 
-  if (paso.titulo) {
-    // Busca el texto de la sección
-    const elementos = Array.from(document.querySelectorAll('h1, h2, h3, h4, div, span'));
-    const coincidencia = elementos.find(el => el.textContent.trim().includes(paso.titulo));
-    
-    // Sube hasta encontrar la tarjeta completa (.card o contenedor)
-    const tarjeta = coincidencia ? (coincidencia.closest('.card') || coincidencia.closest('div[class*="card"]') || coincidencia.parentElement) : null;
+  // Iluminar la tarjeta correspondiente al paso actual
+  if (pasoActual > 0) {
+    const listaTarjetas = document.querySelectorAll('.tarjeta-tutorial');
+    const tarjetaActual = listaTarjetas[pasoActual - 1];
 
-    if (tarjeta) {
-      tarjeta.classList.add('tutorial-highlight');
-      tarjeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (tarjetaActual) {
+      tarjetaActual.classList.add('tutorial-highlight');
+      tarjetaActual.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 }
-
 function siguientePaso() {
   pasoActual++;
   if (pasoActual < pasosTutorial.length) {
