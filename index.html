@@ -86,7 +86,7 @@
     #welcome-screen button { background: white; color: var(--primary); }
     #welcome-screen button:hover { background: #f1f5f9; }
     
-    .input-form { padding: 10px 14px; font-size: 0.95rem; border: 2px solid var(--border-color); border-radius: 12px; margin-right: 8px; background: var(--card-bg); color: var(--text-color); outline: none; font-family: 'Poppins', sans-serif; transition: var(--transition); }
+    .input-form { padding: 10px 14px; font-size: 0.95rem; border: 2px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-color); outline: none; font-family: 'Poppins', sans-serif; transition: var(--transition); }
     .input-form:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
 
     .item-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: var(--item-bg); padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border-color); transition: var(--transition); }
@@ -231,7 +231,13 @@
             <option value="6">Sábado</option>
             <option value="0">Domingo</option>
           </select>
-          <input type="text" id="horario-hora-input" class="input-form" placeholder="Hora (ej. 08:00-08:50)" style="width: 140px;" />
+          
+          <!-- Seleccionador de Hora con botón/cuadrado gráfico -->
+          <label style="font-size: 0.85rem; font-weight:600;">Desde:</label>
+          <input type="time" id="horario-inicio-time" class="input-form" value="08:00" />
+          <label style="font-size: 0.85rem; font-weight:600;">Hasta:</label>
+          <input type="time" id="horario-fin-time" class="input-form" value="09:00" />
+
           <select id="horario-materia-select" class="input-form"></select>
           <input type="text" id="horario-aula-input" class="input-form" placeholder="Aula (opcional)" style="width: 110px;" />
           <button onclick="agregarHorarioBloque()" class="btn-action">Guardar Bloque</button>
@@ -325,7 +331,7 @@
       <h2>🎨 Gestionar Mis Hobbies (Multidía)</h2>
       <div class="form-group">
         <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" style="flex:1;" />
-        <input type="time" id="hobby-hora-libre" class="input-form" value="23:00" />
+        <input type="time" id="hobby-hora-libre" class="input-form" value="18:00" />
       </div>
       <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;">Días de repetición:</label>
       <div class="days-checkboxes">
@@ -450,8 +456,16 @@
   </div>
 
   <script>
+    // Materias por defecto solicitadas
+    const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
+
     function obtenerAsignaturas() {
-      return JSON.parse(localStorage.getItem("misAsignaturasPersonalizadas")) || [];
+      const asignaturas = localStorage.getItem("misAsignaturasPersonalizadas");
+      if (!asignaturas) {
+        localStorage.setItem("misAsignaturasPersonalizadas", JSON.stringify(MATERIAS_PREDETERMINADAS));
+        return MATERIAS_PREDETERMINADAS;
+      }
+      return JSON.parse(asignaturas);
     }
 
     function guardarAsignaturasLista(lista) {
@@ -585,24 +599,34 @@
 
     function agregarHorarioBloque() {
       const dia = document.getElementById("horario-dia-select").value;
-      const hora = document.getElementById("horario-hora-input").value.trim();
+      const hInicio = document.getElementById("horario-inicio-time").value;
+      const hFin = document.getElementById("horario-fin-time").value;
       const materia = document.getElementById("horario-materia-select").value;
       const aula = document.getElementById("horario-aula-input").value.trim();
 
-      if (hora !== "" && materia !== "") {
+      if (hInicio && hFin && materia) {
+        const horaTexto = `${hInicio}-${hFin}`;
         const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: [] };
         if (!horario[dia]) horario[dia] = [];
         
-        horario[dia].push({ inicio: hora, asignatura: materia, sala: aula });
+        horario[dia].push({ inicio: horaTexto, asignatura: materia, sala: aula, horaSola: hInicio });
         localStorage.setItem("horarioPersonalizado", JSON.stringify(horario));
         
-        document.getElementById("horario-hora-input").value = "";
         document.getElementById("horario-aula-input").value = "";
         renderizarHorarioTabla();
         actualizarPanel();
       } else {
-        alert("Escribe la hora y selecciona la materia.");
+        alert("Por favor completa las horas e selecciona una asignatura.");
       }
+    }
+
+    function normalizarHoraParaOrdenar(horaStr) {
+      if (!horaStr) return "00:00";
+      let baseHora = horaStr.split("-")[0].trim();
+      if (baseHora.length === 4 && baseHora.includes(":")) {
+        baseHora = "0" + baseHora;
+      }
+      return baseHora;
     }
 
     function renderizarHorarioTabla() {
@@ -624,7 +648,11 @@
         horarioCombinado[d].forEach(item => horasSet.add(item.inicio));
       });
 
-      const horasOrdenadas = Array.from(horasSet).sort();
+      // Ordenar horas cronológicamente (Estructura de menor a mayor)
+      const horasOrdenadas = Array.from(horasSet).sort((a, b) => {
+        return normalizarHoraParaOrdenar(a).localeCompare(normalizarHoraParaOrdenar(b));
+      });
+
       if (horasOrdenadas.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay clases ni hobbies programados. Registra actividades arriba.</td></tr>`;
         return;
