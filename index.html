@@ -537,16 +537,17 @@ function guardarNombre() {
   if (nombre !== '') {
     localStorage.setItem('nombreUsuario', nombre);
     
-    // Ocultar pantalla de bienvenida
+    // 1. Ocultar la pantalla de bienvenida
     const welcome = document.getElementById('welcome-screen');
     if (welcome) welcome.classList.add('hidden');
 
-    // Iniciar tutorial
-    if (!localStorage.getItem('tutorialCompletado')) {
-      setTimeout(() => {
-        iniciarTutorial();
-      }, 300);
-    }
+    // 2. Limpiar cualquier registro previo para que SIEMPRE salte
+    localStorage.removeItem('tutorialCompletado');
+
+    // 3. Arrancar el tutorial inmediatamente
+    setTimeout(() => {
+      iniciarTutorial();
+    }, 200);
   }
 }
 
@@ -1291,41 +1292,63 @@ cargarObjetivos();
 cargarConfigPomodoro();
 actualizarPanel();
 
-// --- LÓGICA DEL TUTORIAL INTERACTIVO ---
+// --- LÓGICA COMPLETA DEL TUTORIAL INTERACTIVO ---
 const pasosTutorial = [
   { texto: "¡Bienvenido a RemindEd! Hagamos un recorrido rápido por tus herramientas principales.", btnText: "Iniciar recorrido" },
   { texto: "Aquí verás la información sobre tu siguiente clase programada del día.", btnText: "Siguiente" },
   { texto: "En esta sección puedes ver y gestionar tus tareas pendientes del día.", btnText: "Siguiente" },
-  { texto: "Aquí se mostrarán tus exámenes más próximos para que no se te pase ninguno.", btnText: "Siguiente" },
-  { texto: "Monitorea tu meta diaria de descanso y tus horarios de sueño en esta tarjeta.", btnText: "Siguiente" },
-  { texto: "Por último, aquí tienes el desglose completo de tu horario de lunes a domingo.", btnText: "¡Entendido, empezar!" }
+  { texto: "Aquí se muestran tus exámenes destacados.", btnText: "Siguiente" },
+  { texto: "Por último, aquí tienes el desglose completo de tu horario semanal.", btnText: "¡Entendido, empezar!" }
 ];
 
 let pasoActual = 0;
 
+function guardarNombre() {
+  const input = document.getElementById('username-input');
+  const nombre = input ? input.value.trim() : '';
+  
+  if (nombre !== '') {
+    localStorage.setItem('nombreUsuario', nombre);
+    
+    // Ocultar pantalla de bienvenida
+    const welcome = document.getElementById('welcome-screen');
+    if (welcome) welcome.classList.add('hidden');
+
+    // Forzar el inicio del tutorial
+    localStorage.removeItem('tutorialCompletado');
+    setTimeout(() => {
+      iniciarTutorial();
+    }, 200);
+  }
+}
+
 function iniciarTutorial() {
   pasoActual = 0;
-  document.getElementById('tutorial-overlay').classList.remove('hidden');
-  document.getElementById('tutorial-card').classList.remove('hidden');
+  const overlay = document.getElementById('tutorial-overlay');
+  const card = document.getElementById('tutorial-card');
+  
+  if (overlay) overlay.classList.remove('hidden');
+  if (card) card.classList.remove('hidden');
+  
   mostrarPaso();
 }
 
 function mostrarPaso() {
   const paso = pasosTutorial[pasoActual];
   
-  // Limpiar resplandor previo
+  // Limpiar resplandor de pasos anteriores
   document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
   
   const textEl = document.getElementById('tutorial-text');
   const btnEl = document.getElementById('tutorial-btn-next');
+  
   if (textEl) textEl.innerText = paso.texto;
   if (btnEl) btnEl.innerText = paso.btnText;
 
-  // Si no estamos en la bienvenida (Paso 0)
+  // Si no estamos en la bienvenida (Paso > 0), ilumina la tarjeta correspondiente
   if (pasoActual > 0) {
-    // Seleccionar directamente por la clase 'tarjeta-tutorial' que se ve en tu foto
     const tarjetas = document.querySelectorAll('.tarjeta-tutorial');
-    const tarjetaObjetivo = tarjetas[pasoActual - 1]; // Paso 1 -> Tarjeta 0 ("Próxima Clase")
+    const tarjetaObjetivo = tarjetas[pasoActual - 1];
 
     if (tarjetaObjetivo) {
       tarjetaObjetivo.classList.add('tutorial-highlight');
@@ -1333,6 +1356,7 @@ function mostrarPaso() {
     }
   }
 }
+
 function siguientePaso() {
   pasoActual++;
   if (pasoActual < pasosTutorial.length) {
@@ -1343,8 +1367,12 @@ function siguientePaso() {
 }
 
 function cerrarTutorial() {
-  document.getElementById('tutorial-overlay').classList.add('hidden');
-  document.getElementById('tutorial-card').classList.add('hidden');
+  const overlay = document.getElementById('tutorial-overlay');
+  const card = document.getElementById('tutorial-card');
+  
+  if (overlay) overlay.classList.add('hidden');
+  if (card) card.classList.add('hidden');
+  
   document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
   localStorage.setItem('tutorialCompletado', 'true');
 }
