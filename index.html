@@ -168,9 +168,43 @@
       border-radius: 12px !important; 
       transition: all 0.3s ease !important; 
     }
+
+    /* Pop-up de Desbloqueo de Trofeos */
+    .trophy-popup {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 20000;
+      background: var(--card-bg);
+      border: 2px solid var(--warning);
+      box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .trophy-popup-icon { font-size: 2.2rem; }
+    .trophy-popup-title { font-weight: 700; font-size: 1rem; color: var(--text-color); margin: 0; }
+    .trophy-popup-desc { font-size: 0.85rem; color: #64748b; margin: 2px 0 0 0; }
+
+    @keyframes popIn {
+      from { transform: translateY(-50px) scale(0.8); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Pop-Up de Notificación de Trofeo -->
+  <div id="trophy-popup" class="trophy-popup hidden">
+    <div class="trophy-popup-icon">🏆</div>
+    <div>
+      <div class="trophy-popup-title" id="trophy-popup-title">¡Logro Desbloqueado!</div>
+      <div class="trophy-popup-desc" id="trophy-popup-desc">Nombre del Trofeo</div>
+    </div>
+  </div>
 
   <div id="welcome-screen" class="welcome-overlay">
     <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
@@ -297,7 +331,7 @@
       <div id="lista-gestion-asignaturas" style="margin-top:10px;"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="card-nuevo-examen">
       <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
       <div class="form-group">
         <select id="examen-materia-select" class="input-form"></select>
@@ -468,6 +502,52 @@
   <script>
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
 
+    // SISTEMA DE SONIDOS SINTETIZADOS (Web Audio API)
+    function reproducirEfectoSonido(tipo = 'trofeo') {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const audioCtx = new AudioContext();
+
+        if (tipo === 'trofeo') {
+          // Arpegio retro estilo logro
+          const notas = [523.25, 659.25, 783.99, 1046.50]; // Do - Mi - Sol - Do
+          notas.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            const tiempo = audioCtx.currentTime + (i * 0.08);
+            gain.gain.setValueAtTime(0.15, tiempo);
+            gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.25);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(tiempo);
+            osc.stop(tiempo + 0.25);
+          });
+        }
+      } catch (e) {
+        console.log("Audio no soportado o bloqueado por interacción de usuario.");
+      }
+    }
+
+    // MOSTRAR POP-UP DE TROFEO
+    function mostrarNotificacionTrofeo(nombre) {
+      const popup = document.getElementById("trophy-popup");
+      const desc = document.getElementById("trophy-popup-desc");
+      if (!popup || !desc) return;
+
+      desc.innerText = nombre;
+      popup.classList.remove("hidden");
+      reproducirEfectoSonido('trofeo');
+
+      setTimeout(() => {
+        popup.classList.add("hidden");
+      }, 3500);
+    }
+
     function obtenerAsignaturas() {
       const asignaturas = localStorage.getItem("misAsignaturasPersonalizadas");
       if (!asignaturas) {
@@ -491,6 +571,7 @@
           guardarAsignaturasLista(lista);
           input.value = "";
           inicializarExamenesYNotas();
+          evaluarTrofeos();
         } else {
           alert("Esta asignatura ya existe.");
         }
@@ -709,6 +790,7 @@
       ],
       examenes: [
         { target: "#page-examenes .card:nth-of-type(1)", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas o añade nuevas clases al sistema." },
+        { target: "#card-nuevo-examen", texto: "📅 <strong>Próximo Examen y Nota Objetivo</strong>: Aquí puedes agendar las fechas clave de tus evaluaciones junto con la calificación deseada." },
         { target: "#contenedor-asignaturas", texto: "Ingresa tus notas y metas. La tarjeta se iluminará en <strong>Verde Neón</strong> o <strong>Rojo Neón</strong> según tu promedio." }
       ],
       hobbies: [
@@ -928,6 +1010,7 @@
       estados[fechaHoy][index] = !estados[fechaHoy][index];
       localStorage.setItem("estadosObjetivos", JSON.stringify(estados));
       cargarObjetivos();
+      evaluarTrofeos();
     }
 
     function agregarObjetivo() {
@@ -939,6 +1022,7 @@
         localStorage.setItem("misObjetivos", JSON.stringify(guardados));
         input.value = "";
         cargarObjetivos();
+        evaluarTrofeos();
       }
     }
 
@@ -962,6 +1046,7 @@
         localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
         input.value = "";
         cargarAsignaturasYNotas();
+        evaluarTrofeos();
       }
     }
 
@@ -993,6 +1078,7 @@
       metas[asignatura] = metaInput;
       localStorage.setItem("metasAsignaturas", JSON.stringify(metas));
       cargarAsignaturasYNotas();
+      evaluarTrofeos();
     }
 
     function cargarHobbies() {
@@ -1025,6 +1111,7 @@
         checkboxes.forEach(chk => chk.checked = false);
         cargarHobbies();
         actualizarPanel();
+        evaluarTrofeos();
       } else alert("Introduce el nombre del hobby y selecciona al menos un día.");
     }
 
@@ -1110,6 +1197,7 @@
         document.getElementById("examen-fecha").value = "";
         document.getElementById("examen-objetivo-nota").value = "";
         cargarExamenes();
+        evaluarTrofeos();
       } else alert("Selecciona asignatura y fecha.");
     }
 
@@ -1402,6 +1490,7 @@
       logEstudio[fechaHoy] = (logEstudio[fechaHoy] || 0) + minutos;
       localStorage.setItem("logEstudioDiario", JSON.stringify(logEstudio));
       actualizarTiempoEstudiadoHoy();
+      evaluarTrofeos();
     }
 
     function actualizarTiempoEstudiadoHoy() {
@@ -1441,19 +1530,65 @@
     function evaluarTrofeos() {
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
       let totalMinutos = Object.values(logEstudio).reduce((a, b) => a + b, 0);
-      const minutosHoy = logEstudio[new Date().toISOString().split('T')[0]] || 0;
-      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const examenes = JSON.parse(localStorage.getItem("misExamenes")) || [];
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+      const objetosDiarios = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+
+      // Evaluaciones específicas para las condiciones requeridas
+      let tieneMinuto90 = false;
+      const ahora = new Date();
+      examenes.forEach(ex => {
+        const fechaEx = new Date(ex.fecha);
+        const diffHoras = (fechaEx - ahora) / (1000 * 60 * 60);
+        if (diffHoras > 0 && diffHoras <= 24) tieneMinuto90 = true;
+      });
+
+      let tieneProfeta = false;
+      let tieneOptimista = false;
+      let tieneFenix = false;
+
+      Object.keys(notasGuardadas).forEach(asig => {
+        const datos = notasGuardadas[asig];
+        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista : []);
+        const meta = parseFloat(!Array.isArray(datos) && datos.metaFinal ? datos.metaFinal : metasGuardadas[asig]);
+
+        if (lista.length > 0) {
+          const suma = lista.reduce((a, b) => a + b, 0);
+          const prom = suma / lista.length;
+
+          if (!isNaN(meta)) {
+            if (prom === meta) tieneProfeta = true;
+            if (meta >= 18 && prom < meta) tieneOptimista = true;
+          }
+
+          if (lista.includes(4.9)) tieneFenix = true;
+        }
+      });
 
       const listaLogros = [
-        { nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Añade al menos 1 objetivo diario.', desbloqueado: (JSON.parse(localStorage.getItem("misObjetivos")) || []).length >= 1 },
-        { nivel: 'plata', nombre: '🗂️ Organización Impecable', desc: 'Añade 3 hobbies y 2 exámenes.', desbloqueado: hobbies.length >= 3 && examenes.length >= 2 },
-        { nivel: 'plata', nombre: '⏱️ Maestro del Tiempo', desc: 'Acumula 300 min de estudio Pomodoro.', desbloqueado: totalMinutos >= 300 },
-        { nivel: 'oro', nombre: '🔥 Maratón de Estudio', desc: 'Estudia 180 min en un solo día.', desbloqueado: minutosHoy >= 180 },
-        { nivel: 'diamante', nombre: '💎 Leyenda RemindEd', desc: 'Acumula 1200 min de estudio totales.', desbloqueado: totalMinutos >= 1200 }
+        { id: 't_min90', nivel: 'bronce', nombre: '⏱️ Estrategia del Minuto 90', desc: 'Registra un examen programado para las próximas 24 horas.', desbloqueado: tieneMinuto90 },
+        { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Ilusiones', desc: 'Añade tu primer objetivo o meta diaria.', desbloqueado: objetosDiarios.length >= 1 },
+        { id: 't_profeta', nivel: 'oro', nombre: '🔮 Profeta del Aprobado', desc: 'Consigue que el promedio de una asignatura sea idéntico a tu nota meta.', desbloqueado: tieneProfeta },
+        { id: 't_optimista', nivel: 'bronce', nombre: '✨ Optimista Incorregible', desc: 'Configura una nota objetivo exigente (18+) en alguna materia.', desbloqueado: tieneOptimista },
+        { id: 't_simulacros', nivel: 'oro', nombre: '🎓 Doctorado en Simulacros', desc: 'Registra al menos 5 exámenes programados en el sistema.', desbloqueado: examenes.length >= 5 },
+        { id: 't_calculadora', nivel: 'diamante', nombre: '🧮 Calculadora Humana', desc: 'Acumula más de 10 notas registradas entre tus materias.', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
+        { id: 't_fenix', nivel: 'diamante', nombre: '🔥 El Fénix del 4.9', desc: 'Registra una nota de 4.9 y demuestra tu capacidad de superación.', desbloqueado: tieneFenix }
       ];
 
+      const prevDesbloqueados = JSON.parse(localStorage.getItem("trofeosDesbloqueadosNotificados")) || {};
+
+      listaLogros.forEach(tr => {
+        if (tr.desbloqueado && !prevDesbloqueados[tr.id]) {
+          mostrarNotificacionTrofeo(tr.nombre);
+          prevDesbloqueados[tr.id] = true;
+        }
+      });
+
+      localStorage.setItem("trofeosDesbloqueadosNotificados", JSON.stringify(prevDesbloqueados));
+
       const grid = document.getElementById("grid-trofeos");
+      if (!grid) return;
       grid.innerHTML = "";
       listaLogros.forEach(tr => {
         const card = document.createElement("div");
