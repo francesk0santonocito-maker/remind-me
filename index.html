@@ -1355,7 +1355,6 @@
         document.getElementById("nota-titulo").value = "";
         document.getElementById("nota-contenido").value = "";
         cargarApuntes();
-        evaluarTrofeos();
       }
     }
 
@@ -1535,10 +1534,8 @@
       const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
       const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
       const objetosDiarios = JSON.parse(localStorage.getItem("misObjetivos")) || [];
-      const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
-      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
 
-      // Evaluaciones específicas para las condiciones
+      // Evaluaciones específicas para las condiciones requeridas
       let tieneMinuto90 = false;
       const ahora = new Date();
       examenes.forEach(ex => {
@@ -1570,14 +1567,6 @@
       });
 
       const listaLogros = [
-        // --- 5 TROFEOS BÁSICOS ORIGINALES RESTAURADOS ---
-        { id: 't_primer_paso', nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Inicia tu camino de organización guardando tu primera nota o examen.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
-        { id: 't_foco_estudio', nivel: 'bronce', nombre: '⏱️ Foco Inquebrantable', desc: 'Completa tu primera sesión de estudio en el modo Pomodoro.', desbloqueado: totalMinutos > 0 },
-        { id: 't_archivista', nivel: 'plata', nombre: '📝 El Archivista', desc: 'Escribe y guarda tu primer apunte o nota personal.', desbloqueado: apuntes.length >= 1 },
-        { id: 't_equilibrio', nivel: 'plata', nombre: '🎨 Vida Equilibrada', desc: 'Añade al menos un hobby a tu rutina semanal.', desbloqueado: hobbies.length >= 1 },
-        { id: 't_maestro_rutina', nivel: 'oro', nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos (2 horas) de estudio total.', desbloqueado: totalMinutos >= 120 },
-
-        // --- TROFEOS ADICIONALES ---
         { id: 't_min90', nivel: 'bronce', nombre: '⏱️ Estrategia del Minuto 90', desc: 'Registra un examen programado para las próximas 24 horas.', desbloqueado: tieneMinuto90 },
         { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Ilusiones', desc: 'Añade tu primer objetivo o meta diaria.', desbloqueado: objetosDiarios.length >= 1 },
         { id: 't_profeta', nivel: 'oro', nombre: '🔮 Profeta del Aprobado', desc: 'Consigue que el promedio de una asignatura sea idéntico a tu nota meta.', desbloqueado: tieneProfeta },
