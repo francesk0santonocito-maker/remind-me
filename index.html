@@ -210,18 +210,42 @@
     </div>
   </div>
 
-  <!-- PANTALLA DE BIENVENIDA -->
-  <div id="pantalla-bienvenida" class="card" style="max-width: 450px; margin: 40px auto; text-align: center;">
-    <h2>¡Hola! Bienvenid@</h2>
-    <p>¿Cómo te llamas?</p>
-    <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí...">
+<!-- PANTALLA DE BIENVENIDA / ONBOARDING -->
+<div id="pantalla-bienvenida" class="card" style="max-width: 480px; margin: 40px auto; text-align: center;">
+  <h2>¡Bienvenido a RemindEd! 👋</h2>
+  <p style="font-size: 0.9rem; color: #64748b;">Configura tu perfil para adaptar el sistema a tu país.</p>
 
-    <p>¿A qué te dedicas principalmente?</p>
-    <div style="display: flex; gap: 10px; justify-content: center;">
-      <button onclick="registrarUsuario('estudiante')">🎓 Estudiante</button>
-      <button onclick="registrarUsuario('trabajador')">💼 Trabajador</button>
+  <form id="form-onboarding" onsubmit="guardarPerfilInicial(event)">
+    <div style="text-align: left; margin-bottom: 12px;">
+      <label style="font-weight: 600; font-size: 0.85rem;">Nombre completo *</label>
+      <input type="text" id="onboarding-nombre" class="input-form" style="width:100%; box-sizing:border-box;" placeholder="Ej. Ana María Silva" required>
     </div>
-  </div>
+
+    <div style="text-align: left; margin-bottom: 12px;">
+      <label style="font-weight: 600; font-size: 0.85rem;">Oficio / Profesión / Ocupación *</label>
+      <input type="text" id="onboarding-profesion" class="input-form" style="width:100%; box-sizing:border-box;" placeholder="Ej. Estudiante de Ingeniería / Diseñador" required>
+    </div>
+
+    <div style="text-align: left; margin-bottom: 20px;">
+      <label style="font-weight: 600; font-size: 0.85rem;">País de residencia *</label>
+      <select id="onboarding-pais" class="input-form" style="width:100%; box-sizing:border-box;" required>
+        <option value="" disabled selected>Selecciona tu país...</option>
+        <option value="PT">Portugal (Escala 1–20)</option>
+        <option value="ES">España (Escala 1–10)</option>
+        <option value="MX">México (Escala 1–10)</option>
+        <option value="US">Estados Unidos (GPA 4.0 / Letras)</option>
+        <option value="CL">Chile (Escala 1–7)</option>
+        <option value="OTHER">Otro (Porcentaje Global %)</option>
+      </select>
+    </div>
+
+    <p style="font-size: 0.85rem; font-weight:600; margin-bottom:8px;">Selecciona tu rol en la plataforma:</p>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button type="submit" onclick="window.rolSeleccionado='estudiante'" class="btn">🎓 Estudiante</button>
+      <button type="submit" onclick="window.rolSeleccionado='trabajador'" class="btn btn-secondary">💼 Trabajador</button>
+    </div>
+  </form>
+</div>
 
   <!-- APP PRINCIPAL -->
   <div id="app-principal" style="display: none;">
@@ -564,6 +588,143 @@
   </div>
 
   <script>
+    const ESCALAS_PAIS = {
+  PT: { min: 1, max: 20, paso: 0.1, label: "Nota (1-20)", aprobado: 10 },
+  ES: { min: 1, max: 10, paso: 0.1, label: "Nota (1-10)", aprobado: 5 },
+  MX: { min: 1, max: 10, paso: 0.1, label: "Calificación (1-10)", aprobado: 6 },
+  US: { min: 0, max: 4.0, paso: 0.01, label: "GPA (0-4.0)", aprobado: 2.0 },
+  CL: { min: 1, max: 7.0, paso: 0.1, label: "Nota (1-7)", aprobado: 4.0 },
+  OTHER: { min: 0, max: 100, paso: 1, label: "Porcentaje (%)", aprobado: 60 }
+};
+
+function obtenerEscalaActual() {
+  const perfil = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
+  return ESCALAS_PAIS[perfil.pais] || ESCALAS_PAIS.OTHER;
+}
+
+function guardarPerfilInicial(event) {
+  event.preventDefault();
+  const nombre = document.getElementById("onboarding-nombre").value.trim();
+  const profesion = document.getElementById("onboarding-profesion").value.trim();
+  const pais = document.getElementById("onboarding-pais").value;
+  const rol = window.rolSeleccionado || 'estudiante';
+
+  if (!nombre || !pais) {
+    alert("Por favor completa los campos requeridos.");
+    return;
+  }
+
+  const perfil = { nombre, profesion, pais, rol };
+  localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
+  localStorage.removeItem("misAsignaturasPersonalizadas");
+  
+  cargarInterfazSegunRol();
+}
+
+function cargarAsignaturasYNotas() {
+  const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+  const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+  const contenedor = document.getElementById("contenedor-asignaturas");
+  if (!contenedor) return;
+  contenedor.innerHTML = "";
+
+  const escala = obtenerEscalaActual();
+
+  obtenerAsignaturas().forEach((asig) => {
+    const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
+    const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
+    const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
+
+    const suma = listaNotas.reduce((a, b) => a + b, 0);
+    const promedioNum = listaNotas.length > 0 ? (suma / listaNotas.length) : null;
+    const promedioStr = promedioNum !== null ? promedioNum.toFixed(1) : "-";
+
+    let notasItemsHTML = "";
+    listaNotas.forEach((n, idx) => {
+      notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
+    });
+
+    let glowClass = "";
+    const metaNum = parseFloat(metaFinalVal);
+    if (promedioNum !== null && !isNaN(metaNum)) {
+      if (promedioNum >= metaNum) glowClass = "glow-border-green";
+      else glowClass = "glow-border-red";
+    }
+
+    const div = document.createElement("div");
+    div.className = `materia-card ${glowClass}`;
+    div.innerHTML = `
+      <div>
+        <strong>${asig}</strong>
+        <span class="promedio-tag">Promedio: ${promedioStr} / ${escala.max}</span>
+      </div>
+      <div style="margin-top: 10px;" class="form-group">
+        <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="${escala.label}" id="input-nota-${asig}" class="input-form" style="width: 130px;" />
+        <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Registro</button>
+        <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+          <span style="font-size:0.85rem; font-weight:600;">🎯 Meta:</span>
+          <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="Ej. ${escala.max}" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
+        </div>
+      </div>
+      <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
+        <strong>Registros guardados:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin datos guardados"}
+      </div>
+    `;
+    contenedor.appendChild(div);
+  });
+
+  renderizarGraficoNotas();
+}
+
+function renderizarGraficoNotas() {
+  const ctx = document.getElementById("chart-notas");
+  if (!ctx) return;
+
+  const asignaturas = obtenerAsignaturas();
+  const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+  const escala = obtenerEscalaActual();
+
+  const labels = asignaturas;
+  const dataPromedios = asignaturas.map(asig => {
+    const datos = notasGuardadas[asig];
+    const lista = Array.isArray(datos) ? datos : (datos ? datos.lista || [] : []);
+    if (lista.length === 0) return 0;
+    const suma = lista.reduce((a, b) => a + b, 0);
+    return parseFloat((suma / lista.length).toFixed(1));
+  });
+
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#6c5ce7';
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: `Promedio Actual (${escala.label})`,
+        data: dataPromedios,
+        backgroundColor: primaryColor + 'a6',
+        borderColor: primaryColor,
+        borderWidth: 2,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          min: escala.min === 1 ? 0 : escala.min,
+          max: escala.max
+        }
+      }
+    }
+  });
+}
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
     const PROYECTOS_PREDETERMINADOS = ["Proyecto A", "Reuniones", "Administración", "Capacitación"];
 
@@ -946,6 +1107,7 @@
           examenes: [
             { target: "#card-gestion-materias", texto: "💼 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." },
             { target: "#card-nuevo-examen", texto: "📅 <strong>Agendar Eventos</strong>: Registra tus fechas límite, entregas de proyectos o reuniones." },
+            
             { target: "#card-metricas-notas", texto: "📊 <strong>Métricas y Objetivos</strong>: Registra el avance de tus metas para calcular tu rendimiento laboral." },
             { target: "#card-grafico-notas", texto: "📈 <strong>Gráfico de Evolución</strong>: Analiza de forma visual tu desempeño en cada proyecto." }
           ],
