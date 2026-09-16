@@ -211,39 +211,24 @@
   </div>
 
 <!-- PANTALLA DE BIENVENIDA / ONBOARDING -->
-<div id="pantalla-bienvenida" class="card" style="max-width: 480px; margin: 40px auto; text-align: center;">
+<div id="pantalla-bienvenida" class="card" style="max-width: 440px; margin: 40px auto; text-align: center;">
   <h2>¡Bienvenido a RemindEd! 👋</h2>
-  <p style="font-size: 0.9rem; color: #64748b;">Configura tu perfil para adaptar el sistema a tu país.</p>
+  <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Configura tu escala de evaluación para comenzar.</p>
 
   <form id="form-onboarding" onsubmit="guardarPerfilInicial(event)">
-    <div style="text-align: left; margin-bottom: 12px;">
-      <label style="font-weight: 600; font-size: 0.85rem;">Nombre completo *</label>
-      <input type="text" id="onboarding-nombre" class="input-form" style="width:100%; box-sizing:border-box;" placeholder="Ej. Ana María Silva" required>
+    <p style="font-size: 0.85rem; font-weight:600; margin-bottom:10px; text-align: left;">1. Selecciona tu rol:</p>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+      <button type="button" id="btn-rol-estudiante" onclick="seleccionarRol('estudiante')" class="btn" style="flex: 1;">🎓 Estudiante</button>
+      <button type="button" id="btn-rol-trabajador" onclick="seleccionarRol('trabajador')" class="btn btn-secondary" style="flex: 1;">💼 Trabajador</button>
     </div>
 
-    <div style="text-align: left; margin-bottom: 12px;">
-      <label style="font-weight: 600; font-size: 0.85rem;">Oficio / Profesión / Ocupación *</label>
-      <input type="text" id="onboarding-profesion" class="input-form" style="width:100%; box-sizing:border-box;" placeholder="Ej. Estudiante de Ingeniería / Diseñador" required>
+    <!-- Campo dinámico para estudiantes -->
+    <div id="seccion-nota-maxima" style="text-align: left; margin-bottom: 20px;">
+      <label style="font-weight: 600; font-size: 0.85rem;">¿Cuál es la nota máxima en tu país? *</label>
+      <input type="number" id="onboarding-nota-max" class="input-form" style="width:100%; box-sizing:border-box; margin-top: 6px;" placeholder="Ej. 7, 10, 20..." min="1" step="0.1" value="7">
     </div>
 
-    <div style="text-align: left; margin-bottom: 20px;">
-      <label style="font-weight: 600; font-size: 0.85rem;">País de residencia *</label>
-      <select id="onboarding-pais" class="input-form" style="width:100%; box-sizing:border-box;" required>
-        <option value="" disabled selected>Selecciona tu país...</option>
-        <option value="PT">Portugal (Escala 1–20)</option>
-        <option value="ES">España (Escala 1–10)</option>
-        <option value="MX">México (Escala 1–10)</option>
-        <option value="US">Estados Unidos (GPA 4.0 / Letras)</option>
-        <option value="CL">Chile (Escala 1–7)</option>
-        <option value="OTHER">Otro (Porcentaje Global %)</option>
-      </select>
-    </div>
-
-    <p style="font-size: 0.85rem; font-weight:600; margin-bottom:8px;">Selecciona tu rol en la plataforma:</p>
-    <div style="display: flex; gap: 10px; justify-content: center;">
-      <button type="submit" onclick="window.rolSeleccionado='estudiante'" class="btn">🎓 Estudiante</button>
-      <button type="submit" onclick="window.rolSeleccionado='trabajador'" class="btn btn-secondary">💼 Trabajador</button>
-    </div>
+    <button type="submit" class="btn" style="width: 100%;">Comenzar 🚀</button>
   </form>
 </div>
 
