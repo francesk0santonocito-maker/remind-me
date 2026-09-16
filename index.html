@@ -66,7 +66,7 @@
     .glow-border-yellow { border-color: var(--warning) !important; box-shadow: var(--glow-yellow) !important; }
     .glow-border-green { border-color: var(--success) !important; box-shadow: var(--glow-green) !important; }
 
-    h2 { margin-top: 0; color: var(--primary); font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    h2, h3 { margin-top: 0; color: var(--primary); font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     p, li { font-size: 1rem; line-height: 1.6; }
     
     .dot { height: 16px; width: 16px; border-radius: 50%; display: inline-block; margin-right: 10px; cursor: pointer; transition: var(--transition); }
@@ -81,9 +81,12 @@
     th { background: var(--primary); color: white; font-weight: 600; }
     
     #pantalla-bienvenida input { padding: 14px 20px; font-size: 1.1rem; border-radius: 12px; border: 1px solid var(--border-color); margin: 15px 0; text-align: center; outline: none; width: 100%; max-width: 280px; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    #pantalla-bienvenida button, .btn-action { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
-    #pantalla-bienvenida button:hover, .btn-action:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
+    #pantalla-bienvenida button, .btn-action, .btn { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+    #pantalla-bienvenida button:hover, .btn-action:hover, .btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
     
+    .btn-secondary { background: var(--accent) !important; }
+    .btn-small { padding: 6px 12px !important; font-size: 0.85rem !important; }
+
     .input-form { padding: 10px 14px; font-size: 0.95rem; border: 2px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-color); outline: none; font-family: 'Poppins', sans-serif; transition: var(--transition); }
     .input-form:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
 
@@ -97,6 +100,11 @@
 
     .section-page { display: none; animation: fadeIn 0.3s ease; }
     .section-active { display: block; }
+
+    /* Estilos para el Grid del Dashboard */
+    .dashboard-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
+    .row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .row > .card { flex: 1; min-width: 280px; margin-bottom: 0; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
@@ -193,83 +201,6 @@
 </head>
 <body>
 
-  <div class="dashboard-container">
-  
-  <!-- FILA SUPERIOR -->
-  <section class="row top-row">
-    <!-- Bloque 1: Actividad Actual -->
-    <div class="card widget-activity">
-      <h3>Actividad Actual</h3>
-      <div class="activity-info">
-        <p class="activity-title" id="current-activity">Sin actividad programada</p>
-        <span class="timer" id="activity-timer">00:00:00</span>
-      </div>
-      <div class="card-actions">
-        <button class="btn btn-primary" onclick="startActivity()">Iniciar</button>
-        <button class="btn btn-secondary" onclick="completeActivity()">Completar</button>
-      </div>
-    </div>
-
-    <!-- Bloque 2: Próximo Evento Destacado -->
-    <div class="card widget-next-event">
-      <h3>Próximo Evento Destacado</h3>
-      <div class="event-info" id="next-event-container">
-        <p class="event-title" id="event-title">No hay eventos próximos</p>
-        <p class="event-time" id="event-time">--:--</p>
-      </div>
-      <button class="btn btn-small" onclick="addEvent()">+ Añadir Evento</button>
-    </div>
-  </section>
-
-  <!-- FILA CENTRAL -->
-  <section class="row middle-row">
-    <!-- Bloque 3: Objetivos Diarios -->
-    <div class="card widget-goals">
-      <h3>Objetivos Diarios</h3>
-      <div class="progress-bar-container">
-        <div class="progress-bar" id="goals-progress" style="width: 0%;"></div>
-      </div>
-      <p class="progress-text" id="goals-text">0 de 0 completados (0%)</p>
-
-      <ul class="task-list" id="task-list">
-        <!-- Las tareas creadas por el usuario se insertarán aquí dinámicamente -->
-      </ul>
-
-      <div class="add-task-form">
-        <input type="text" id="new-task-input" placeholder="Nuevo objetivo...">
-        <button class="btn btn-small" onclick="addTask()">Agregar</button>
-      </div>
-    </div>
-
-    <!-- Bloque 4: Estado del Sueño -->
-    <div class="card widget-sleep">
-      <h3>Estado del Sueño</h3>
-      <div class="sleep-metrics" id="sleep-container">
-        <div class="metric">
-          <span class="metric-value" id="sleep-hours">-- h</span>
-          <span class="metric-label">Tiempo descansado</span>
-        </div>
-      </div>
-      <button class="btn btn-small" onclick="logSleep()">Registrar Sueño de Anoche</button>
-    </div>
-  </section>
-
-  <!-- FILA INFERIOR -->
-  <section class="row bottom-row">
-    <!-- Bloque 5: Calendario Semanal -->
-    <div class="card widget-calendar">
-      <div class="calendar-header">
-        <h3>Calendario Semanal</h3>
-        <button class="btn btn-small" onclick="configureRoutine()">+ Configurar Horario Fijo</button>
-      </div>
-      <div class="weekly-grid" id="weekly-grid">
-        <!-- Se genera según el horario ingresado por el usuario -->
-      </div>
-    </div>
-  </section>
-
-</div>
-
   <!-- Pop-Up de Notificación de Trofeo -->
   <div id="trophy-popup" class="trophy-popup hidden">
     <div class="trophy-popup-icon">🏆</div>
@@ -314,6 +245,69 @@
 
     <!-- PANEL DE CONTROL -->
     <div id="page-panel" class="section-page section-active">
+
+      <!-- DASHBOARD TRABAJADOR / GENERAL -->
+      <div class="dashboard-container">
+        <!-- FILA SUPERIOR -->
+        <section class="row top-row">
+          <!-- Bloque 1: Actividad Actual -->
+          <div class="card widget-activity">
+            <h3>Actividad Actual</h3>
+            <div class="activity-info">
+              <p class="activity-title" id="current-activity">Sin actividad programada</p>
+              <span class="timer" id="activity-timer">00:00:00</span>
+            </div>
+            <div class="card-actions" style="margin-top: 10px;">
+              <button class="btn btn-primary" onclick="startActivity()">Iniciar</button>
+              <button class="btn btn-secondary" onclick="completeActivity()">Completar</button>
+            </div>
+          </div>
+
+          <!-- Bloque 2: Próximo Evento Destacado -->
+          <div class="card widget-next-event">
+            <h3>Próximo Evento Destacado</h3>
+            <div class="event-info" id="next-event-container">
+              <p class="event-title" id="event-title">No hay eventos próximos</p>
+              <p class="event-time" id="event-time">--:--</p>
+            </div>
+            <button class="btn btn-small" onclick="addEvent()">+ Añadir Evento</button>
+          </div>
+        </section>
+
+        <!-- FILA CENTRAL -->
+        <section class="row middle-row">
+          <!-- Bloque 3: Objetivos Diarios -->
+          <div class="card widget-goals">
+            <h3>Objetivos Diarios</h3>
+            <div class="progress-bar-container">
+              <div class="progress-bar" id="goals-progress" style="width: 0%;"></div>
+            </div>
+            <p class="progress-text" id="goals-text">0 de 0 completados (0%)</p>
+
+            <ul class="task-list" id="task-list" style="padding-left: 20px;">
+              <!-- Las tareas creadas por el usuario se insertarán aquí dinámicamente -->
+            </ul>
+
+            <div class="add-task-form form-group">
+              <input type="text" id="new-task-input" class="input-form" placeholder="Nuevo objetivo...">
+              <button class="btn btn-small" onclick="addTask()">Agregar</button>
+            </div>
+          </div>
+
+          <!-- Bloque 4: Estado del Sueño -->
+          <div class="card widget-sleep">
+            <h3>Estado del Sueño</h3>
+            <div class="sleep-metrics" id="sleep-container">
+              <div class="metric">
+                <span class="metric-value" id="sleep-hours">-- h</span>
+                <span class="metric-label">Tiempo descansado</span>
+              </div>
+            </div>
+            <button class="btn btn-small" style="margin-top: 10px;" onclick="logSleep()">Registrar Sueño de Anoche</button>
+          </div>
+        </section>
+      </div>
+
       <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
         <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
         <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
@@ -1806,60 +1800,79 @@
     });
 
     // Arreglo global para guardar las tareas del usuario
-let userTasks = [];
+    let userTasks = [];
 
-// Función para agregar un objetivo escrito por el usuario
-function addTask() {
-  const input = document.getElementById('new-task-input');
-  const taskText = input.value.trim();
+    // Función para agregar un objetivo escrito por el usuario
+    function addTask() {
+      const input = document.getElementById('new-task-input');
+      const taskText = input.value.trim();
 
-  if (taskText === "") return;
+      if (taskText === "") return;
 
-  userTasks.push({ text: taskText, completed: false });
-  input.value = ""; // Limpiar el campo de texto
+      userTasks.push({ text: taskText, completed: false });
+      input.value = ""; // Limpiar el campo de texto
 
-  renderTasks();
-}
+      renderTasks();
+    }
 
-// Dibujar las tareas en pantalla
-function renderTasks() {
-  const listContainer = document.getElementById('task-list');
-  listContainer.innerHTML = "";
+    // Dibujar las tareas en pantalla
+    function renderTasks() {
+      const listContainer = document.getElementById('task-list');
+      listContainer.innerHTML = "";
 
-  let completedCount = 0;
+      let completedCount = 0;
 
-  userTasks.forEach((task, index) => {
-    if (task.completed) completedCount++;
+      userTasks.forEach((task, index) => {
+        if (task.completed) completedCount++;
 
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">
-      <label for="task-${index}">${task.text}</label>
-    `;
-    listContainer.appendChild(li);
-  });
+        const li = document.createElement('li');
+        li.style.listStyle = "none";
+        li.innerHTML = `
+          <input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">
+          <label for="task-${index}" style="${task.completed ? 'text-decoration: line-through;' : ''}">${task.text}</label>
+        `;
+        listContainer.appendChild(li);
+      });
 
-  // Actualizar métricas de progreso
-  const total = userTasks.length;
-  const percentage = total === 0 ? 0 : Math.round((completedCount / total) * 100);
+      // Actualizar métricas de progreso
+      const total = userTasks.length;
+      const percentage = total === 0 ? 0 : Math.round((completedCount / total) * 100);
 
-  document.getElementById('goals-progress').style.width = percentage + '%';
-  document.getElementById('goals-text').innerText = `${completedCount} de ${total} completados (${percentage}%)`;
-}
+      document.getElementById('goals-progress').style.width = percentage + '%';
+      document.getElementById('goals-text').innerText = `${completedCount} de ${total} completados (${percentage}%)`;
+    }
 
-// Cambiar estado de la tarea
-function toggleTask(index) {
-  userTasks[index].completed = !userTasks[index].completed;
-  renderTasks();
-}
+    // Cambiar estado de la tarea
+    function toggleTask(index) {
+      userTasks[index].completed = !userTasks[index].completed;
+      renderTasks();
+    }
 
-// Función para registrar datos de descanso
-function logSleep() {
-  const hours = prompt("¿Cuántas horas dormiste anoche?:");
-  if (hours) {
-    document.getElementById('sleep-hours').innerText = hours + " h";
-  }
-}
+    // Función para registrar datos de descanso
+    function logSleep() {
+      const hours = prompt("¿Cuántas horas dormiste anoche?:");
+      if (hours) {
+        document.getElementById('sleep-hours').innerText = hours + " h";
+      }
+    }
+
+    // Funciones dummy para los botones de las tarjetas si no estaban implementadas
+    function startActivity() {
+      alert("¡Actividad iniciada!");
+    }
+
+    function completeActivity() {
+      alert("¡Actividad completada!");
+    }
+
+    function addEvent() {
+      const evento = prompt("Nombre del evento:");
+      const hora = prompt("Hora del evento (ej. 14:00):");
+      if (evento && hora) {
+        document.getElementById("event-title").innerText = evento;
+        document.getElementById("event-time").innerText = hora;
+      }
+    }
   </script>
 </body>
 </html>
