@@ -142,8 +142,8 @@
     .note-item:hover { border-color: var(--primary); }
     .note-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 6px; font-weight: 500; }
 
-    .canvas-container { text-align: center; overflow-x: auto; padding: 10px 0; }
-    canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; max-width: 100%; box-shadow: var(--shadow); }
+    .canvas-container { text-align: center; overflow-x: auto; padding: 10px 0; position: relative; height: 260px; }
+    canvas { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; width: 100% !important; height: 100% !important; box-shadow: var(--shadow); }
     
     .tutorial-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); z-index: 9998; }
     .tutorial-card { 
@@ -231,6 +231,7 @@
       <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
       <div id="nav-menu" class="nav-menu">
         <button onclick="navegarA('panel')">📌 Panel de Control</button>
+        <button onclick="navegarA('estudio')">⏱️ Modo Concentración</button>
         <button id="menu-eventos" onclick="navegarA('examenes')">📅 Eventos y Reuniones</button>
         <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
         <button onclick="navegarA('sueno')">💤 Control del Sueño</button>
@@ -264,7 +265,7 @@
               <p class="event-title" id="event-title">No hay eventos ni reuniones próximas</p>
               <p class="event-time" id="event-time" style="font-weight:600; color:var(--accent);">--:--</p>
             </div>
-            <button class="btn btn-small" onclick="navegarA('examenes')">+ Agendar Evento</button>
+            <button class="btn btn-small" onclick="navegarA('examenes')" style="margin-top: 10px;">+ Agendar Evento</button>
           </div>
         </section>
       </div>
@@ -406,7 +407,7 @@
       <div class="card" id="card-grafico-notas">
         <h2 id="titulo-grafico-desempeno">📈 Gráfico de Evolución Académica</h2>
         <div class="canvas-container">
-          <canvas id="chart-notas" height="220"></canvas>
+          <canvas id="chart-notas"></canvas>
         </div>
       </div>
     </div>
@@ -570,7 +571,7 @@
     let workerTimerInterval = null;
     let chartInstance = null;
 
-    // --- FUNCIONES AGREGADAS PARA PERSONALIZACIÓN DE COLOR ---
+    // --- PERSONALIZACIÓN DE COLOR ---
     function cambiarColorTema(primaryColor, accentColor) {
       document.documentElement.style.setProperty('--primary', primaryColor);
       if (accentColor) {
@@ -600,7 +601,6 @@
         document.documentElement.style.setProperty('--accent', accentGuardado);
       }
     }
-    // ---------------------------------------------------------
 
     function reproducirEfectoSonido(tipo = 'trofeo') {
       try {
