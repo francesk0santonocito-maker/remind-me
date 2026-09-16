@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RemindEd - Organización Inteligente</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --bg-color: #f7f9fc;
@@ -249,12 +250,11 @@
           <div class="card widget-activity" id="card-actividad-actual">
             <h3>⚡ Actividad Actual</h3>
             <div class="activity-info">
-              <p class="activity-title" id="current-activity">Sin actividad laboral programada</p>
-              <span class="timer" id="activity-timer" style="font-size: 1.5rem; font-weight:700; color:var(--primary);">00:00:00</span>
-            </div>
-            <div class="card-actions" style="margin-top: 10px;">
-              <button class="btn btn-primary" onclick="startActivity()">Iniciar</button>
-              <button class="btn btn-secondary" onclick="completeActivity()">Completar</button>
+              <p class="activity-title" id="current-activity" style="font-weight:600; font-size:1.1rem; color:var(--primary); margin-bottom:5px;">Cargando horario...</p>
+              <div id="worker-timer-container">
+                <p style="margin: 4px 0; font-size:0.95rem;">Llevas transcurrido: <span id="worker-time-elapsed" style="font-weight:700; color:var(--accent);">00:00:00</span></p>
+                <p style="margin: 4px 0; font-size:0.95rem;" id="worker-next-info">Próxima actividad en: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">00:00:00</span></p>
+              </div>
             </div>
           </div>
 
@@ -264,7 +264,7 @@
               <p class="event-title" id="event-title">No hay eventos ni reuniones próximas</p>
               <p class="event-time" id="event-time" style="font-weight:600; color:var(--accent);">--:--</p>
             </div>
-            <button class="btn btn-small" onclick="addEvent()">+ Añadir Evento</button>
+            <button class="btn btn-small" onclick="navegarA('examenes')">+ Agendar Evento</button>
           </div>
         </section>
       </div>
@@ -397,8 +397,17 @@
       </div>
 
       <div class="card" id="card-metricas-notas">
-        <h2>📊 Objetivos y Rendimiento</h2>
+        <h2 id="titulo-rendimiento-notas">📊 Registro de Notas y Calificaciones</h2>
+        <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;">Registra tus calificaciones para calcular tus promedios automáticamente y graficar tu evolución.</p>
         <div id="contenedor-asignaturas"></div>
+      </div>
+
+      <!-- GRÁFICO DE EVOLUCIÓN DE NOTAS (Estudiantes) -->
+      <div class="card" id="card-grafico-notas">
+        <h2>📈 Gráfico de Evolución Académica</h2>
+        <div class="canvas-container">
+          <canvas id="chart-notas" height="220"></canvas>
+        </div>
       </div>
     </div>
 
@@ -541,6 +550,8 @@
     const PROYECTOS_PREDETERMINADOS = ["Proyecto A", "Reuniones", "Administración", "Capacitación"];
 
     let userTasks = [];
+    let workerTimerInterval = null;
+    let chartInstance = null;
 
     function reproducirEfectoSonido(tipo = 'trofeo') {
       try {
@@ -713,18 +724,66 @@
             <span class="promedio-tag">Promedio / Puntaje: ${promedioStr}</span>
           </div>
           <div style="margin-top: 10px;" class="form-group">
-            <input type="number" step="0.1" min="0" max="20" placeholder="Puntaje" id="input-nota-${asig}" class="input-form" style="width: 100px;" />
-            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar</button>
+            <input type="number" step="0.1" min="0" max="20" placeholder="Calificación" id="input-nota-${asig}" class="input-form" style="width: 110px;" />
+            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
             <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
               <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
-              <input type="text" placeholder="Ej. 18 / 100%" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 100px;" onchange="guardarMetaAsignatura('${asig}')" />
+              <input type="text" placeholder="Ej. 18" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
             </div>
           </div>
           <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
-            <strong>Registros:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin registros cargados"}
+            <strong>Notas Registradas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin notas registradas"}
           </div>
         `;
         contenedor.appendChild(div);
+      });
+
+      renderizarGraficoNotas();
+    }
+
+    function renderizarGraficoNotas() {
+      const ctx = document.getElementById("chart-notas");
+      if (!ctx) return;
+
+      const asignaturas = obtenerAsignaturas();
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+
+      const labels = asignaturas;
+      const dataPromedios = asignaturas.map(asig => {
+        const datos = notasGuardadas[asig];
+        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista || [] : []);
+        if (lista.length === 0) return 0;
+        const suma = lista.reduce((a, b) => a + b, 0);
+        return parseFloat((suma / lista.length).toFixed(1));
+      });
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Promedio Actual',
+            data: dataPromedios,
+            backgroundColor: 'rgba(108, 92, 231, 0.65)',
+            borderColor: '#6c5ce7',
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 20
+            }
+          }
+        }
       });
     }
 
@@ -740,7 +799,7 @@
         const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: [] };
         if (!horario[dia]) horario[dia] = [];
         
-        horario[dia].push({ inicio: horaTexto, asignatura: materia, sala: aula, horaSola: hInicio });
+        horario[dia].push({ inicio: horaTexto, hInicio: hInicio, hFin: hFin, asignatura: materia, sala: aula, horaSola: hInicio });
         localStorage.setItem("horarioPersonalizado", JSON.stringify(horario));
         
         document.getElementById("horario-aula-input").value = "";
@@ -816,7 +875,6 @@
       menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
 
-    // Configuración de tutoriales contextualmente diferenciados según el Rol
     function obtenerTutorialesConfig() {
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
       const esTrabajador = perfil && perfil.rol === 'trabajador';
@@ -825,7 +883,7 @@
         return {
           panel: [
             { target: null, texto: "¡Bienvenido a tu Panel de Trabajo en RemindEd! Te guiaremos por tus herramientas activas." },
-            { target: "#card-actividad-actual", texto: "⚡ <strong>Actividad Actual</strong>: Sigue en tiempo real las tareas o reuniones que estás ejecutando." },
+            { target: "#card-actividad-actual", texto: "⚡ <strong>Actividad Actual</strong>: Sigue en tiempo real las tareas o reuniones que estás ejecutando según tu horario semanal." },
             { target: "#card-proximo-evento", texto: "📌 <strong>Eventos y Reuniones</strong>: Mantén visibilidad completa de tus compromisos de trabajo próximos." },
             { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diarios</strong>: Marca tus hitos clave diarios para visualizar el porcentaje de avance." },
             { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
@@ -858,7 +916,9 @@
           ],
           examenes: [
             { target: "#card-gestion-materias", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas." },
-            { target: "#card-nuevo-examen", texto: "📅 <strong>Exámenes</strong>: Programa evaluaciones y establece la nota meta." }
+            { target: "#card-nuevo-examen", texto: "📅 <strong>Exámenes</strong>: Programa evaluaciones y establece la nota meta." },
+            { target: "#card-metricas-notas", texto: "📊 <strong>Notas y Calificaciones</strong>: Registra tus calificaciones y evalúa tu promedio acumulado." },
+            { target: "#card-grafico-notas", texto: "📈 <strong>Gráfico de Evolución</strong>: Analiza visualmente tus avances en cada materia." }
           ],
           hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Añade actividades extracurriculares a tu agenda." }],
           sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Define tus hábitos de descanso diario." }],
@@ -892,6 +952,7 @@
       
       if (pagina === 'trofeos') evaluarTrofeos();
       if (pagina === 'sueno') cargarControlSueno();
+      if (pagina === 'examenes') renderizarGraficoNotas();
       
       const menu = document.getElementById("nav-menu");
       if (menu) menu.style.display = "none";
@@ -988,7 +1049,7 @@
 
       const perfil = { nombre: nombre, rol: rolElegido };
       localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
-      localStorage.removeItem("misAsignaturasPersonalizadas"); // Reset por rol
+      localStorage.removeItem("misAsignaturasPersonalizadas");
       cargarInterfazSegunRol();
     }
 
@@ -1006,7 +1067,6 @@
 
       const esTrabajador = perfil.rol === 'trabajador';
 
-      // Configuración visibilidad trabajador vs estudiante
       const bTrabajador = document.getElementById("bloques-trabajador");
       const bObjTrabajador = document.getElementById("bloque-objetivos-trabajador");
       const cProximaClase = document.getElementById("card-proxima-clase");
@@ -1014,10 +1074,12 @@
       const cObjetivosEstudiante = document.getElementById("card-objetivos-contenedor");
       const menuEventos = document.getElementById("menu-eventos");
       
+      const cGraficoNotas = document.getElementById("card-grafico-notas");
       const tProxAct = document.getElementById("titulo-proxima-actividad");
       const tBloqEv = document.getElementById("titulo-bloque-eventos");
       const tMatGestor = document.getElementById("titulo-materia-gestor");
       const tAgendarEv = document.getElementById("titulo-agendar-evento");
+      const tRendimientoNotas = document.getElementById("titulo-rendimiento-notas");
 
       if (esTrabajador) {
         if(bTrabajador) bTrabajador.style.display = "flex";
@@ -1025,26 +1087,133 @@
         if(cProximaClase) cProximaClase.style.display = "none";
         if(cExamenes) cExamenes.style.display = "none";
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "none";
+        if(cGraficoNotas) cGraficoNotas.style.display = "none";
 
         if(menuEventos) menuEventos.innerText = "📅 Eventos y Reuniones";
         if(tMatGestor) tMatGestor.innerText = "💼 Gestor de Proyectos / Áreas";
         if(tAgendarEv) tAgendarEv.innerText = "📅 Agendar Evento o Reunión";
+        if(tRendimientoNotas) tRendimientoNotas.innerText = "📊 Métricas y Objetivos del Proyecto";
+
+        iniciarTimerTrabajadorAutomatico();
       } else {
         if(bTrabajador) bTrabajador.style.display = "none";
         if(bObjTrabajador) bObjTrabajador.style.display = "none";
         if(cProximaClase) cProximaClase.style.display = "block";
         if(cExamenes) cExamenes.style.display = "block";
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "block";
+        if(cGraficoNotas) cGraficoNotas.style.display = "block";
 
         if(menuEventos) menuEventos.innerText = "📅 Eventos y Exámenes";
         if(tProxAct) tProxAct.innerText = "🎓 Próxima Clase / Actividad";
         if(tBloqEv) tBloqEv.innerText = "📅 Próximos Exámenes Destacados";
         if(tMatGestor) tMatGestor.innerText = "📚 Gestor de Asignaturas";
         if(tAgendarEv) tAgendarEv.innerText = "📅 Añadir Próximo Examen";
+        if(tRendimientoNotas) tRendimientoNotas.innerText = "📊 Registro de Notas y Calificaciones";
+
+        if (workerTimerInterval) clearInterval(workerTimerInterval);
       }
 
       inicializarExamenesYNotas();
       comprobarTutorialSeccion('panel');
+    }
+
+    function iniciarTimerTrabajadorAutomatico() {
+      if (workerTimerInterval) clearInterval(workerTimerInterval);
+
+      actualizarTiempoTrabajador();
+      workerTimerInterval = setInterval(actualizarTiempoTrabajador, 1000);
+    }
+
+    function actualizarTiempoTrabajador() {
+      const ahora = new Date();
+      const diaSemana = ahora.getDay();
+      const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || {};
+      const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
+      
+      let actividadesHoy = [];
+
+      if (horario[diaSemana]) {
+        horario[diaSemana].forEach(item => {
+          let hI = item.hInicio || item.inicio.split("-")[0];
+          let hF = item.hFin || item.inicio.split("-")[1];
+          if (hI && hF) {
+            actividadesHoy.push({
+              nombre: item.asignatura,
+              inicioStr: hI.trim(),
+              finStr: hF.trim(),
+              lugar: item.sala
+            });
+          }
+        });
+      }
+
+      hobbies.filter(h => h.dia === diaSemana).forEach(h => {
+        let finH = String(parseInt(h.hora.split(":")[0]) + 1).padStart(2, '0') + ":" + h.hora.split(":")[1];
+        actividadesHoy.push({
+          nombre: `🎨 ${h.nombre}`,
+          inicioStr: h.hora,
+          finStr: finH,
+          lugar: "Hobby"
+        });
+      });
+
+      const convertirAFecha = (horaStr) => {
+        const [hh, mm] = horaStr.split(":").map(Number);
+        const f = new Date(ahora);
+        f.setHours(hh, mm, 0, 0);
+        return f;
+      };
+
+      let actividadEnCurso = null;
+      let proximaActividad = null;
+
+      actividadesHoy.sort((a,b) => convertirAFecha(a.inicioStr) - convertirAFecha(b.inicioStr));
+
+      for (let act of actividadesHoy) {
+        const fInicio = convertirAFecha(act.inicioStr);
+        const fFin = convertirAFecha(act.finStr);
+
+        if (ahora >= fInicio && ahora < fFin) {
+          actividadEnCurso = { ...act, fInicio, fFin };
+        } else if (ahora < fInicio && !proximaActividad) {
+          proximaActividad = { ...act, fInicio, fFin };
+        }
+      }
+
+      const elNombreAct = document.getElementById("current-activity");
+      const elElapsed = document.getElementById("worker-time-elapsed");
+      const elRemaining = document.getElementById("worker-time-remaining");
+      const elNextInfo = document.getElementById("worker-next-info");
+
+      const formatDiff = (ms) => {
+        if (ms < 0) ms = 0;
+        const totSec = Math.floor(ms / 1000);
+        const hh = String(Math.floor(totSec / 3600)).padStart(2, '0');
+        const mm = String(Math.floor((totSec % 3600) / 60)).padStart(2, '0');
+        const ss = String(totSec % 60).padStart(2, '0');
+        return `${hh}:${mm}:${ss}`;
+      };
+
+      if (actividadEnCurso) {
+        if (elNombreAct) elNombreAct.innerText = `💼 ${actividadEnCurso.nombre} ${actividadEnCurso.lugar ? '(' + actividadEnCurso.lugar + ')' : ''}`;
+        
+        const transcurrido = ahora - actividadEnCurso.fInicio;
+        const faltante = actividadEnCurso.fFin - ahora;
+
+        if (elElapsed) elElapsed.innerText = formatDiff(transcurrido);
+        if (elRemaining) elRemaining.innerText = formatDiff(faltante);
+        if (elNextInfo) elNextInfo.innerHTML = `Falta para estar libre / terminar: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
+      } else {
+        if (elNombreAct) elNombreAct.innerText = "Sin actividad laboral activa en este momento";
+        if (elElapsed) elElapsed.innerText = "--:--:--";
+
+        if (proximaActividad) {
+          const faltante = proximaActividad.fInicio - ahora;
+          if (elNextInfo) elNextInfo.innerHTML = `Próxima actividad (<strong>${proximaActividad.nombre}</strong>) en: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
+        } else {
+          if (elNextInfo) elNextInfo.innerHTML = `<span style="color:var(--success); font-weight:600;">¡Libre por el resto del día! 🎉</span>`;
+        }
+      }
     }
 
     function cargarObjetivos() {
@@ -1251,6 +1420,7 @@
         if(contCompleto) contCompleto.innerHTML = "<p style='color:#64748b;'>Sin compromisos o exámenes agendados.</p>";
         const box = document.getElementById("box-cuenta-atras");
         if(box) box.style.display = "none";
+        actualizarProximoEventoTrabajador(null);
         return;
       }
 
@@ -1274,6 +1444,22 @@
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
       if (perfil && perfil.rol !== 'trabajador') {
         iniciarCuentaAtras(guardados[0]);
+      } else {
+        actualizarProximoEventoTrabajador(guardados[0]);
+      }
+    }
+
+    function actualizarProximoEventoTrabajador(evento) {
+      const titleEl = document.getElementById("event-title");
+      const timeEl = document.getElementById("event-time");
+      if (!titleEl || !timeEl) return;
+
+      if (evento) {
+        titleEl.innerText = `${evento.asignatura} ${evento.objetivo ? '(' + evento.objetivo + ')' : ''}`;
+        timeEl.innerText = evento.fecha.replace('T', ' ');
+      } else {
+        titleEl.innerText = "No hay eventos ni reuniones próximas";
+        timeEl.innerText = "--:--";
       }
     }
 
@@ -1690,7 +1876,6 @@
       cargarControlSueno();
     }
 
-    // Funciones del bloque de Trabajador
     function addTask() {
       const input = document.getElementById('new-task-input');
       if (!input) return;
@@ -1742,31 +1927,8 @@
     function logSleep() {
       const hours = prompt("¿Cuántas horas descansaste anoche?:");
       if (hours) {
-        const el = document.getElementById('sleep-hours');
-        if (el) el.innerText = hours + " h";
         const infoSueno = document.getElementById("info-sueno");
         if(infoSueno) infoSueno.innerText = `💤 Anoche descansaste: ${hours} horas.`;
-      }
-    }
-
-    function startActivity() {
-      const act = prompt("Escribe el nombre de la actividad/reunión actual:");
-      if (act) {
-        document.getElementById("current-activity").innerText = act;
-      }
-    }
-
-    function completeActivity() {
-      document.getElementById("current-activity").innerText = "Sin actividad en curso";
-      alert("¡Actividad finalizada!");
-    }
-
-    function addEvent() {
-      const evento = prompt("Nombre del evento o reunión:");
-      const hora = prompt("Hora (ej. 14:00):");
-      if (evento && hora) {
-        document.getElementById("event-title").innerText = evento;
-        document.getElementById("event-time").innerText = hora;
       }
     }
 
