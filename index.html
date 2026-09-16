@@ -398,13 +398,13 @@
 
       <div class="card" id="card-metricas-notas">
         <h2 id="titulo-rendimiento-notas">📊 Registro de Notas y Calificaciones</h2>
-        <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;">Registra tus calificaciones para calcular tus promedios automáticamente y graficar tu evolución.</p>
+        <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;">Registra tus calificaciones o avances para calcular tus promedios automáticamente y graficar tu evolución.</p>
         <div id="contenedor-asignaturas"></div>
       </div>
 
-      <!-- GRÁFICO DE EVOLUCIÓN DE NOTAS (Estudiantes) -->
+      <!-- GRÁFICO DE EVOLUCIÓN (Estudiantes y Trabajadores) -->
       <div class="card" id="card-grafico-notas">
-        <h2>📈 Gráfico de Evolución Académica</h2>
+        <h2 id="titulo-grafico-desempeno">📈 Gráfico de Evolución Académica</h2>
         <div class="canvas-container">
           <canvas id="chart-notas" height="220"></canvas>
         </div>
@@ -724,15 +724,15 @@
             <span class="promedio-tag">Promedio / Puntaje: ${promedioStr}</span>
           </div>
           <div style="margin-top: 10px;" class="form-group">
-            <input type="number" step="0.1" min="0" max="20" placeholder="Calificación" id="input-nota-${asig}" class="input-form" style="width: 110px;" />
-            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
+            <input type="number" step="0.1" min="0" max="20" placeholder="Puntaje/Nota" id="input-nota-${asig}" class="input-form" style="width: 110px;" />
+            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Registro</button>
             <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
               <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
               <input type="text" placeholder="Ej. 18" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
             </div>
           </div>
           <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
-            <strong>Notas Registradas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin notas registradas"}
+            <strong>Registros guardados:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin datos guardados"}
           </div>
         `;
         contenedor.appendChild(div);
@@ -766,7 +766,7 @@
         data: {
           labels: labels,
           datasets: [{
-            label: 'Promedio Actual',
+            label: 'Promedio / Rendimiento Actual',
             data: dataPromedios,
             backgroundColor: 'rgba(108, 92, 231, 0.65)',
             borderColor: '#6c5ce7',
@@ -887,14 +887,16 @@
             { target: "#card-proximo-evento", texto: "📌 <strong>Eventos y Reuniones</strong>: Mantén visibilidad completa de tus compromisos de trabajo próximos." },
             { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diarios</strong>: Marca tus hitos clave diarios para visualizar el porcentaje de avance." },
             { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
-            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal</strong>: Planifica tus jornadas de trabajo y bloques libres de la semana." }
+            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal</strong>: Planifica tus jornadas de trabajo y bloques libres de la semana.<br><br>💡 <em>Recuerda que puedes cambiar o añadir tu actividad laboral y reuniones en la sección de <strong>Eventos y Reuniones</strong> del menú.</em>" }
           ],
           estudio: [
             { target: ".timer-display", texto: "⏱️ <strong>Modo Concentración</strong>: Usa el temporizador Pomodoro para gestionar tus bloques de trabajo intensivo." }
           ],
           examenes: [
-            { target: "#card-gestion-materias", texto: "📚 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." },
-            { target: "#card-nuevo-examen", texto: "📅 <strong>Agendar Eventos</strong>: Registra tus fechas límite o entregas de proyectos." }
+            { target: "#card-gestion-materias", texto: "💼 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." },
+            { target: "#card-nuevo-examen", texto: "📅 <strong>Agendar Eventos</strong>: Registra tus fechas límite, entregas de proyectos o reuniones." },
+            { target: "#card-metricas-notas", texto: "📊 <strong>Métricas y Objetivos</strong>: Registra el avance de tus metas para calcular tu rendimiento laboral." },
+            { target: "#card-grafico-notas", texto: "📈 <strong>Gráfico de Evolución</strong>: Analiza de forma visual tu desempeño en cada proyecto." }
           ],
           hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planifica tus hobbies para asegurar una vida balanceada fuera del trabajo." }],
           sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configura tus metas de sueño para un descanso reparador." }],
@@ -1080,6 +1082,7 @@
       const tMatGestor = document.getElementById("titulo-materia-gestor");
       const tAgendarEv = document.getElementById("titulo-agendar-evento");
       const tRendimientoNotas = document.getElementById("titulo-rendimiento-notas");
+      const tGraficoDesempeno = document.getElementById("titulo-grafico-desempeno");
 
       if (esTrabajador) {
         if(bTrabajador) bTrabajador.style.display = "flex";
@@ -1087,12 +1090,13 @@
         if(cProximaClase) cProximaClase.style.display = "none";
         if(cExamenes) cExamenes.style.display = "none";
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "none";
-        if(cGraficoNotas) cGraficoNotas.style.display = "none";
+        if(cGraficoNotas) cGraficoNotas.style.display = "block";
 
         if(menuEventos) menuEventos.innerText = "📅 Eventos y Reuniones";
         if(tMatGestor) tMatGestor.innerText = "💼 Gestor de Proyectos / Áreas";
         if(tAgendarEv) tAgendarEv.innerText = "📅 Agendar Evento o Reunión";
         if(tRendimientoNotas) tRendimientoNotas.innerText = "📊 Métricas y Objetivos del Proyecto";
+        if(tGraficoDesempeno) tGraficoDesempeno.innerText = "📈 Gráfico de Desempeño Laboral";
 
         iniciarTimerTrabajadorAutomatico();
       } else {
@@ -1109,6 +1113,7 @@
         if(tMatGestor) tMatGestor.innerText = "📚 Gestor de Asignaturas";
         if(tAgendarEv) tAgendarEv.innerText = "📅 Añadir Próximo Examen";
         if(tRendimientoNotas) tRendimientoNotas.innerText = "📊 Registro de Notas y Calificaciones";
+        if(tGraficoDesempeno) tGraficoDesempeno.innerText = "📈 Gráfico de Evolución Académica";
 
         if (workerTimerInterval) clearInterval(workerTimerInterval);
       }
