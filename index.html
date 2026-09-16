@@ -206,18 +206,13 @@
     </div>
   </div>
 
-  <!-- PANTALLA DE BIENVENIDA -->
-<div id="pantalla-bienvenida" class="card">
-  <h2>¡Hola! Bienvenid@</h2>
-  <p>¿Cómo te llamas?</p>
-  <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí...">
-
-  <p>¿A qué te dedicas principalmente?</p>
-  <div class="contenedor-botones">
-    <button onclick="registrarUsuario('estudiante')">🎓 Estudiante</button>
-    <button onclick="registrarUsuario('trabajador')">💼 Trabajador</button>
+  <div id="welcome-screen" class="welcome-overlay">
+    <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
+    <div id="form-registro">
+      <input type="text" id="username-input" placeholder="Tu nombre..." />
+      <button onclick="guardarNombre()">Comenzar mi Organización</button>
+    </div>
   </div>
-</div>
 
   <div class="top-bar">
     <button class="hamburger" onclick="toggleMenu()">☰</button>
