@@ -591,7 +591,7 @@
       </div>
     </div>
 
-    <!-- AJUSTES -->
+  
     <!-- AJUSTES -->
     <div id="page-ajustes" class="section-page">
       <div class="card" id="card-panel-colores">
@@ -607,9 +607,12 @@
           <button onclick="alternarTema()" id="btn-cambiar-tema" class="btn-action" style="padding: 8px 16px;">🌓 Cambiar Tema</button>
         </div>
 
+        
+
         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
           <!-- (Tus botones de colores existentes siguen aquí...) -->
         
+
         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
           <button onclick="cambiarColorTema('#6c5ce7', '#00cec9')" class="btn-small" style="background: #6c5ce7; border: none; color: white;">💜 Morado RemindEd</button>
           <button onclick="cambiarColorTema('#0984e3', '#74b9ff')" class="btn-small" style="background: #0984e3; border: none; color: white;">💙 Azul Océano</button>
@@ -623,6 +626,7 @@
           <input type="color" id="picker-color-primary" value="#6c5ce7" onchange="aplicarColorPersonalizado(this.value)" style="border: none; background: none; cursor: pointer; width: 40px; height: 40px;">
         </div>
       </div>
+
       <div class="card">
         <h2>⚙️ Copia de Seguridad y Guías</h2>
         <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
@@ -635,6 +639,20 @@
     </div>
 
   </div>
+
+  <!-- NUEVA TARJETA PARA CAMBIAR PERFIL EN AJUSTES -->
+      <div class="card">
+        <h2>👤 Perfil de Usuario</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Actualiza tu nombre o cambia tu rol actual:</p>
+        <div class="form-group" style="margin-top: 15px;">
+          <input type="text" id="ajustes-input-nombre" class="input-form" placeholder="Nuevo nombre" style="flex:1;" />
+          <select id="ajustes-select-rol" class="input-form">
+            <option value="estudiante">🎓 Estudiante</option>
+            <option value="trabajador">💼 Trabajador</option>
+          </select>
+          <button onclick="guardarPerfilDesdeAjustes()" class="btn-action">Actualizar Perfil</button>
+        </div>
+      </div>
 
   <!-- TUTORIAL INTERACTIVO -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
@@ -2142,6 +2160,21 @@
         if (app) app.style.display = "none";
       }
     });
+
+    function guardarPerfilDesdeAjustes() {
+      const nuevoNombre = document.getElementById("ajustes-input-nombre").value.trim();
+      const nuevoRol = document.getElementById("ajustes-select-rol").value;
+      const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
+      
+      if (nuevoNombre) {
+        perfilActual.nombre = nuevoNombre;
+      }
+      perfilActual.rol = nuevoRol;
+      
+      localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
+      alert("¡Perfil actualizado con éxito!");
+      location.reload();
+    }
   </script>
 </body>
 </html>
