@@ -101,7 +101,6 @@
     .section-page { display: none; animation: fadeIn 0.3s ease; }
     .section-active { display: block; }
 
-    /* Estilos para el Grid del Dashboard */
     .dashboard-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
     .row { display: flex; gap: 20px; flex-wrap: wrap; }
     .row > .card { flex: 1; min-width: 280px; margin-bottom: 0; }
@@ -201,7 +200,7 @@
 </head>
 <body>
 
-  <!-- Pop-Up de Notificación de Trofeo -->
+  <!-- Pop-Up Notificación de Trofeo -->
   <div id="trophy-popup" class="trophy-popup hidden">
     <div class="trophy-popup-icon">🏆</div>
     <div>
@@ -223,7 +222,7 @@
     </div>
   </div>
 
-  <!-- APP PRINCIPAL (Oculta al inicio hasta registrar usuario) -->
+  <!-- APP PRINCIPAL -->
   <div id="app-principal" style="display: none;">
 
     <div class="top-bar">
@@ -231,11 +230,9 @@
       <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
       <div id="nav-menu" class="nav-menu">
         <button onclick="navegarA('panel')">📌 Panel de Control</button>
-        <button onclick="navegarA('estudio')">⏱️ Modo Estudio (Pomodoro)</button>
-        <button onclick="navegarA('examenes')">📅 Exámenes y Notas</button>
-        <button onclick="navegarA('estadisticas')">📈 Estadísticas y Progreso</button>
+        <button id="menu-eventos" onclick="navegarA('examenes')">📅 Eventos y Reuniones</button>
         <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
-        <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
+        <button onclick="navegarA('sueno')">💤 Control del Sueño</button>
         <button onclick="navegarA('objetivos')">🎯 Mis Objetivos</button>
         <button onclick="navegarA('notas')">📝 Notas y Apuntes</button>
         <button onclick="navegarA('trofeos')">🏆 Trofeos y Logros</button>
@@ -246,16 +243,14 @@
     <!-- PANEL DE CONTROL -->
     <div id="page-panel" class="section-page section-active">
 
-      <!-- DASHBOARD TRABAJADOR / GENERAL -->
-      <div class="dashboard-container">
-        <!-- FILA SUPERIOR -->
+      <!-- DASHBOARD EXCLUSIVO TRABAJADOR -->
+      <div id="bloques-trabajador" class="dashboard-container" style="display: none;">
         <section class="row top-row">
-          <!-- Bloque 1: Actividad Actual -->
-          <div class="card widget-activity">
-            <h3>Actividad Actual</h3>
+          <div class="card widget-activity" id="card-actividad-actual">
+            <h3>⚡ Actividad Actual</h3>
             <div class="activity-info">
-              <p class="activity-title" id="current-activity">Sin actividad programada</p>
-              <span class="timer" id="activity-timer">00:00:00</span>
+              <p class="activity-title" id="current-activity">Sin actividad laboral programada</p>
+              <span class="timer" id="activity-timer" style="font-size: 1.5rem; font-weight:700; color:var(--primary);">00:00:00</span>
             </div>
             <div class="card-actions" style="margin-top: 10px;">
               <button class="btn btn-primary" onclick="startActivity()">Iniciar</button>
@@ -263,51 +258,34 @@
             </div>
           </div>
 
-          <!-- Bloque 2: Próximo Evento Destacado -->
-          <div class="card widget-next-event">
-            <h3>Próximo Evento Destacado</h3>
+          <div class="card widget-next-event" id="card-proximo-evento">
+            <h3>📌 Próximo Evento / Reunión Destacada</h3>
             <div class="event-info" id="next-event-container">
-              <p class="event-title" id="event-title">No hay eventos próximos</p>
-              <p class="event-time" id="event-time">--:--</p>
+              <p class="event-title" id="event-title">No hay eventos ni reuniones próximas</p>
+              <p class="event-time" id="event-time" style="font-weight:600; color:var(--accent);">--:--</p>
             </div>
             <button class="btn btn-small" onclick="addEvent()">+ Añadir Evento</button>
           </div>
         </section>
-
-        <!-- FILA CENTRAL -->
-        <section class="row middle-row">
-          <!-- Bloque 3: Objetivos Diarios -->
-          <div class="card widget-goals">
-            <h3>Objetivos Diarios</h3>
-            <div class="progress-bar-container">
-              <div class="progress-bar" id="goals-progress" style="width: 0%;"></div>
-            </div>
-            <p class="progress-text" id="goals-text">0 de 0 completados (0%)</p>
-
-            <ul class="task-list" id="task-list" style="padding-left: 20px;">
-              <!-- Las tareas creadas por el usuario se insertarán aquí dinámicamente -->
-            </ul>
-
-            <div class="add-task-form form-group">
-              <input type="text" id="new-task-input" class="input-form" placeholder="Nuevo objetivo...">
-              <button class="btn btn-small" onclick="addTask()">Agregar</button>
-            </div>
-          </div>
-
-          <!-- Bloque 4: Estado del Sueño -->
-          <div class="card widget-sleep">
-            <h3>Estado del Sueño</h3>
-            <div class="sleep-metrics" id="sleep-container">
-              <div class="metric">
-                <span class="metric-value" id="sleep-hours">-- h</span>
-                <span class="metric-label">Tiempo descansado</span>
-              </div>
-            </div>
-            <button class="btn btn-small" style="margin-top: 10px;" onclick="logSleep()">Registrar Sueño de Anoche</button>
-          </div>
-        </section>
       </div>
 
+      <!-- BLOQUE OBJETIVOS TRABAJADOR -->
+      <div id="bloque-objetivos-trabajador" class="card" style="display: none;">
+        <h3>🎯 Objetivos Diarios de Trabajo</h3>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="goals-progress" style="width: 0%;"></div>
+        </div>
+        <p class="progress-text" id="goals-text" style="font-size:0.9rem; font-weight:600; color:#64748b; margin-top:5px;">0 de 0 completados (0%)</p>
+
+        <ul class="task-list" id="task-list" style="padding-left: 0; list-style:none;"></ul>
+
+        <div class="add-task-form form-group">
+          <input type="text" id="new-task-input" class="input-form" placeholder="Nuevo objetivo laboral..." style="flex:1;">
+          <button class="btn btn-small" onclick="addTask()">Agregar</button>
+        </div>
+      </div>
+
+      <!-- SECCIONES ESTUDIANTE -->
       <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
         <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
         <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
@@ -315,28 +293,29 @@
       </div>
 
       <div class="card tarjeta-tutorial" id="card-proxima-clase">
-        <h2>📌 Próxima Clase / Actividad</h2>
+        <h2 id="titulo-proxima-actividad">🎓 Próxima Clase / Actividad</h2>
         <p id="info-clase">Cargando...</p>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-objetivos-contenedor">
         <h2>🎯 Objetivos / Tareas Diarias</h2>
-        <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde resplandeciente cuando completas tus tareas del día.</p>
+        <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde cuando completas tus tareas diarias.</p>
         <div id="lista-objetivos-diarios"></div>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-examenes-destacados">
-        <h2>📅 Próximos Exámenes Destacados</h2>
+        <h2 id="titulo-bloque-eventos">📅 Próximos Exámenes Destacados</h2>
         <div id="lista-examenes-resumen"></div>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-estado-sueno">
         <h2>🌙 Estado del Sueño</h2>
         <p id="info-sueno">Cargando hábitos de descanso...</p>
+        <button class="btn btn-small" style="margin-top: 10px;" onclick="logSleep()">Registrar Sueño de Anoche</button>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-horario-semanal">
-        <h2>🗓️ Horario Semanal Completo (Clases y Hobbies)</h2>
+        <h2>🗓️ Horario Semanal Completo</h2>
         <div style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
           <h3 style="margin-top:0; font-size:1rem; color:var(--primary);">Añadir Horas al Horario</h3>
           <div class="form-group">
@@ -356,7 +335,7 @@
             <input type="time" id="horario-fin-time" class="input-form" value="09:00" />
 
             <select id="horario-materia-select" class="input-form"></select>
-            <input type="text" id="horario-aula-input" class="input-form" placeholder="Aula (opcional)" style="width: 110px;" />
+            <input type="text" id="horario-aula-input" class="input-form" placeholder="Lugar / Aula" style="width: 120px;" />
             <button onclick="agregarHorarioBloque()" class="btn-action">Guardar Bloque</button>
           </div>
         </div>
@@ -375,9 +354,9 @@
     <!-- MODO ESTUDIO (POMODORO) -->
     <div id="page-estudio" class="section-page">
       <div class="card">
-        <h2>⏱️ Modo Estudio (Pomodoro por Bloques)</h2>
-        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
-        <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
+        <h2>⏱️ Modo Concentración (Pomodoro)</h2>
+        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Tiempo enfocado hoy: 0 min</p>
+        <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Trabajo/Estudio</p>
         <div class="timer-display" id="timer-display">25:00</div>
         <div class="timer-controls">
           <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
@@ -388,66 +367,47 @@
 
         <div class="modal-config" id="modal-config-pomodoro">
           <h3 style="color: var(--primary); margin-top:0;">Personalizar Duración de Bloques</h3>
-          <p style="font-size: 0.9rem; color: #64748b;">Ajusta los minutos de estudio y descanso independientes:</p>
           <div id="contenedor-bloques-config"></div>
           <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;">Guardar Configuración</button>
         </div>
       </div>
     </div>
 
-    <!-- EXÁMENES Y NOTAS -->
+    <!-- EVENTOS Y REUNIONES / EXÁMENES -->
     <div id="page-examenes" class="section-page">
-      <div class="card">
-        <h2>📚 Gestor de Asignaturas</h2>
+      <div class="card" id="card-gestion-materias">
+        <h2 id="titulo-materia-gestor">📚 Gestor de Asignaturas y Proyectos</h2>
         <div class="form-group">
-          <input type="text" id="nueva-asignatura-nombre" class="input-form" placeholder="Nombre de la materia (ej. Historia)" style="flex:1;" />
-          <button onclick="agregarNuevaAsignatura()" class="btn-action">Añadir Materia</button>
+          <input type="text" id="nueva-asignatura-nombre" class="input-form" placeholder="Nombre (ej. Proyecto X / Historia)" style="flex:1;" />
+          <button onclick="agregarNuevaAsignatura()" class="btn-action">Añadir</button>
         </div>
         <div id="lista-gestion-asignaturas" style="margin-top:10px;"></div>
       </div>
 
       <div class="card" id="card-nuevo-examen">
-        <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
+        <h2 id="titulo-agendar-evento">📅 Agendar Próximo Evento / Examen</h2>
         <div class="form-group">
           <select id="examen-materia-select" class="input-form"></select>
           <input type="datetime-local" id="examen-fecha" class="input-form" />
-          <input type="text" id="examen-objetivo-nota" class="input-form" placeholder="Nota objetivo (ej. 18 / 9.5)" style="width:160px;" />
-          <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
+          <input type="text" id="examen-objetivo-nota" class="input-form" placeholder="Nota o Meta clave" style="width:160px;" />
+          <button onclick="agregarExamen()" class="btn-action">Guardar</button>
         </div>
-        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Exámenes Programados</h3>
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Eventos Programados</h3>
         <div id="lista-examenes-completa"></div>
       </div>
 
-      <div class="card">
-        <h2>📊 Calificaciones y Nota Objetivo Final</h2>
-        <p style="font-size: 0.9rem; color: #64748b;">Las materias se iluminarán en <strong>Verde Neón</strong> al alcanzar o superar tu Meta Objetivo, o en <strong>Rojo Neón</strong> si estás por debajo.</p>
+      <div class="card" id="card-metricas-notas">
+        <h2>📊 Objetivos y Rendimiento</h2>
         <div id="contenedor-asignaturas"></div>
       </div>
     </div>
 
-    <!-- ESTADÍSTICAS Y GRÁFICOS -->
-    <div id="page-estadisticas" class="section-page">
-      <div class="card">
-        <h2>📈 Evolución de Promedios por Asignatura (Ejes X / Y)</h2>
-        <div class="canvas-container">
-          <canvas id="canvas-lineas-notas" width="500" height="250"></canvas>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>⏱️ Estudio Diario en los Últimos 7 Días (Ejes X / Y)</h2>
-        <div class="canvas-container">
-          <canvas id="canvas-lineas-estudio" width="500" height="250"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- MIS HOBBIES -->
+    <!-- HOBBIES -->
     <div id="page-hobbies" class="section-page">
       <div class="card">
-        <h2>🎨 Gestionar Mis Hobbies (Multidía)</h2>
+        <h2>🎨 Mis Hobbies y Actividades Libres</h2>
         <div class="form-group">
-          <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" style="flex:1;" />
+          <input type="text" id="hobby-nombre" class="input-form" placeholder="Hobby o Deporte..." style="flex:1;" />
           <input type="time" id="hobby-hora-libre" class="input-form" value="18:00" />
         </div>
         <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;">Días de repetición:</label>
@@ -476,7 +436,7 @@
           <label>Hora de Dormir: <input type="time" id="sueno-acostar" class="input-form" value="23:00" /></label>
           <label>Hora de Despertar: <input type="time" id="sueno-despertar" class="input-form" value="07:00" /></label>
         </div>
-        <button onclick="guardarConfigSueno()" class="btn-action">Guardar Hábitos de Sueño</button>
+        <button onclick="guardarConfigSueno()" class="btn-action">Guardar Hábitos</button>
       </div>
 
       <div class="card">
@@ -520,13 +480,13 @@
     <!-- NOTAS Y APUNTES -->
     <div id="page-notas" class="section-page">
       <div class="card">
-        <h2>📝 Añadir Apunte</h2>
+        <h2>📝 Añadir Apunte / Nota</h2>
         <div class="form-group">
           <select id="nota-asig-select" class="input-form"></select>
-          <input type="text" id="nota-titulo" class="input-form" placeholder="Título del apunte..." style="flex:1;" />
+          <input type="text" id="nota-titulo" class="input-form" placeholder="Título..." style="flex:1;" />
         </div>
         <div class="form-group">
-          <textarea id="nota-contenido" class="input-form" placeholder="Escribe tu apunte aquí..." style="width:100%; height:90px; resize:vertical;"></textarea>
+          <textarea id="nota-contenido" class="input-form" placeholder="Escribe aquí tu apunte o minuta de reunión..." style="width:100%; height:90px; resize:vertical;"></textarea>
         </div>
         <button onclick="guardarApunte()" class="btn-action">Guardar Apunte</button>
       </div>
@@ -536,7 +496,7 @@
         <div class="form-group">
           <input type="text" id="buscador-notas" class="input-form" placeholder="Buscar..." style="flex:1;" oninput="filtrarNotas()" />
           <select id="filtro-asig" class="input-form" onchange="filtrarNotas()">
-            <option value="TODAS">Todas las asignaturas</option>
+            <option value="TODAS">Todas las categorías</option>
           </select>
         </div>
         <div id="contenedor-lista-apuntes" style="margin-top: 15px;"></div>
@@ -564,9 +524,9 @@
       </div>
     </div>
 
-  </div> <!-- FIN APP PRINCIPAL -->
+  </div>
 
-  <!-- TUTORIAL CONTEXTUAL -->
+  <!-- TUTORIAL INTERACTIVO -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
   <div id="tutorial-card" class="tutorial-card hidden">
     <p id="tutorial-text"></p>
@@ -578,6 +538,9 @@
 
   <script>
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
+    const PROYECTOS_PREDETERMINADOS = ["Proyecto A", "Reuniones", "Administración", "Capacitación"];
+
+    let userTasks = [];
 
     function reproducirEfectoSonido(tipo = 'trofeo') {
       try {
@@ -604,7 +567,7 @@
           });
         }
       } catch (e) {
-        console.log("Audio no soportado o bloqueado por interacción de usuario.");
+        console.log("Audio no habilitado.");
       }
     }
 
@@ -623,10 +586,14 @@
     }
 
     function obtenerAsignaturas() {
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
+      const esTrabajador = perfil && perfil.rol === 'trabajador';
+      const defecto = esTrabajador ? PROYECTOS_PREDETERMINADOS : MATERIAS_PREDETERMINADAS;
+      
       const asignaturas = localStorage.getItem("misAsignaturasPersonalizadas");
       if (!asignaturas) {
-        localStorage.setItem("misAsignaturasPersonalizadas", JSON.stringify(MATERIAS_PREDETERMINADAS));
-        return MATERIAS_PREDETERMINADAS;
+        localStorage.setItem("misAsignaturasPersonalizadas", JSON.stringify(defecto));
+        return defecto;
       }
       return JSON.parse(asignaturas);
     }
@@ -647,7 +614,7 @@
           inicializarExamenesYNotas();
           evaluarTrofeos();
         } else {
-          alert("Esta asignatura ya existe.");
+          alert("Ya existe este elemento.");
         }
       }
     }
@@ -673,14 +640,14 @@
       cont.innerHTML = "";
       
       if (lista.length === 0) {
-        cont.innerHTML = "<p style='color:#64748b;'>No hay asignaturas registradas. ¡Añade la primera!</p>";
+        cont.innerHTML = "<p style='color:#64748b;'>No hay registros creados.</p>";
         return;
       }
 
       lista.forEach(asig => {
         const div = document.createElement("div");
         div.className = "item-list";
-        div.innerHTML = `<span>📖 <strong>${asig}</strong></span> <button class="btn-del" onclick="borrarAsignatura('${asig}')">Eliminar Materia</button>`;
+        div.innerHTML = `<span>📖 <strong>${asig}</strong></span> <button class="btn-del" onclick="borrarAsignatura('${asig}')">Eliminar</button>`;
         cont.appendChild(div);
       });
     }
@@ -693,7 +660,7 @@
       
       if (select) select.innerHTML = ""; 
       if (notaSel) notaSel.innerHTML = "";
-      if (filtroSel) filtroSel.innerHTML = `<option value="TODAS">Todas las asignaturas</option>`;
+      if (filtroSel) filtroSel.innerHTML = `<option value="TODAS">Todas las categorías</option>`;
       if (horarioSel) horarioSel.innerHTML = "";
 
       obtenerAsignaturas().forEach(asig => {
@@ -743,18 +710,18 @@
         div.innerHTML = `
           <div>
             <strong>${asig}</strong>
-            <span class="promedio-tag">Promedio: ${promedioStr}</span>
+            <span class="promedio-tag">Promedio / Puntaje: ${promedioStr}</span>
           </div>
           <div style="margin-top: 10px;" class="form-group">
-            <input type="number" step="0.1" min="0" max="20" placeholder="Nueva nota" id="input-nota-${asig}" class="input-form" style="width: 100px;" />
-            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Nota</button>
+            <input type="number" step="0.1" min="0" max="20" placeholder="Puntaje" id="input-nota-${asig}" class="input-form" style="width: 100px;" />
+            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar</button>
             <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
               <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
-              <input type="text" placeholder="Ej. 18 / 9.5" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 100px;" onchange="guardarMetaAsignatura('${asig}')" />
+              <input type="text" placeholder="Ej. 18 / 100%" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 100px;" onchange="guardarMetaAsignatura('${asig}')" />
             </div>
           </div>
           <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
-            <strong>Notas guardadas:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Ninguna nota registrada"}
+            <strong>Registros:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin registros cargados"}
           </div>
         `;
         contenedor.appendChild(div);
@@ -780,7 +747,7 @@
         renderizarHorarioTabla();
         actualizarPanel();
       } else {
-        alert("Por favor completa las horas e selecciona una asignatura.");
+        alert("Por favor completa las horas e indica una categoría.");
       }
     }
 
@@ -817,7 +784,7 @@
       });
 
       if (horasOrdenadas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay clases ni hobbies programados. Registra actividades arriba.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay horarios programados aún.</td></tr>`;
         return;
       }
 
@@ -849,37 +816,57 @@
       menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
 
-    const tutorialesPorSeccion = {
-      panel: [
-        { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel Principal." },
-        { target: "#card-proxima-clase", texto: "Aquí verás la clase o hobby más próximo según tu horario diario." },
-        { target: "#card-objetivos-contenedor", texto: "Revisa y marca tus metas diarias aquí. El borde cambiará de color según tu progreso." },
-        { target: "#card-examenes-destacados", texto: "Consulta tus próximos exámenes y cuentas regresivas activas." },
-        { target: "#card-horario-semanal", texto: "Por último, aquí puedes construir tu horario semanal completo ordenado automáticamente." }
-      ],
-      estudio: [
-        { target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Utiliza este reloj para gestionar tus bloques de concentración sin distracciones." },
-        { target: ".timer-controls", texto: "Puedes iniciar, pausar o configurar la duración independiente de estudio y descanso." }
-      ],
-      examenes: [
-        { target: "#page-examenes .card:nth-of-type(1)", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas o añade nuevas clases al sistema." },
-        { target: "#card-nuevo-examen", texto: "📅 <strong>Próximo Examen y Nota Objetivo</strong>: Aquí puedes agendar las fechas clave de tus evaluaciones junto con la calificación deseada." },
-        { target: "#contenedor-asignaturas", texto: "Ingresa tus notas y metas. La tarjeta se iluminará en <strong>Verde Neón</strong> o <strong>Rojo Neón</strong> según tu promedio." }
-      ],
-      hobbies: [
-        { target: "#page-hobbies .card", texto: "🎨 Registra tus actividades extracurriculares o deportes para que se integren automáticamente a tu Horario Semanal." }
-      ],
-      sueno: [
-        { target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configura tus metas de descanso para mantener tu energía y rendimiento al máximo." }
-      ],
-      objetivos: [
-        { target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Define las rutinas o tareas diarias que deseas cumplir regularmente." }
-      ],
-      notas: [
-        { target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escribe tus apuntes rápidos organizados por asignatura." },
-        { target: "#buscador-notas", texto: "Usa el buscador para filtrar tus temas guardados fácilmente durante tus semanas de repaso." }
-      ]
-    };
+    // Configuración de tutoriales contextualmente diferenciados según el Rol
+    function obtenerTutorialesConfig() {
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
+      const esTrabajador = perfil && perfil.rol === 'trabajador';
+
+      if (esTrabajador) {
+        return {
+          panel: [
+            { target: null, texto: "¡Bienvenido a tu Panel de Trabajo en RemindEd! Te guiaremos por tus herramientas activas." },
+            { target: "#card-actividad-actual", texto: "⚡ <strong>Actividad Actual</strong>: Sigue en tiempo real las tareas o reuniones que estás ejecutando." },
+            { target: "#card-proximo-evento", texto: "📌 <strong>Eventos y Reuniones</strong>: Mantén visibilidad completa de tus compromisos de trabajo próximos." },
+            { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diarios</strong>: Marca tus hitos clave diarios para visualizar el porcentaje de avance." },
+            { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
+            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal</strong>: Planifica tus jornadas de trabajo y bloques libres de la semana." }
+          ],
+          estudio: [
+            { target: ".timer-display", texto: "⏱️ <strong>Modo Concentración</strong>: Usa el temporizador Pomodoro para gestionar tus bloques de trabajo intensivo." }
+          ],
+          examenes: [
+            { target: "#card-gestion-materias", texto: "📚 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." },
+            { target: "#card-nuevo-examen", texto: "📅 <strong>Agendar Eventos</strong>: Registra tus fechas límite o entregas de proyectos." }
+          ],
+          hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planifica tus hobbies para asegurar una vida balanceada fuera del trabajo." }],
+          sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configura tus metas de sueño para un descanso reparador." }],
+          objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Configura y revisa la métrica de tus hábitos del mes." }],
+          notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escribe minutas de reuniones y notas rápidas de trabajo." }]
+        };
+      } else {
+        return {
+          panel: [
+            { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel de Estudiante." },
+            { target: "#card-proxima-clase", texto: "🎓 Aquí verás tu próxima clase o hobby de la jornada." },
+            { target: "#card-objetivos-contenedor", texto: "🎯 Revisa y completa tus metas diarias para cambiar el borde a verde resplandeciente." },
+            { target: "#card-examenes-destacados", texto: "📅 Revisa tus próximos exámenes y cuentas regresivas." },
+            { target: "#card-estado-sueno", texto: "🌙 Registra tu descanso de la noche anterior." },
+            { target: "#card-horario-semanal", texto: "🗓️ Organiza tus materias y horarios de la semana." }
+          ],
+          estudio: [
+            { target: ".timer-display", texto: "⏱️ <strong>Modo Estudio</strong>: Administra tus bloques Pomodoro para mejorar tu retención." }
+          ],
+          examenes: [
+            { target: "#card-gestion-materias", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas." },
+            { target: "#card-nuevo-examen", texto: "📅 <strong>Exámenes</strong>: Programa evaluaciones y establece la nota meta." }
+          ],
+          hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Añade actividades extracurriculares a tu agenda." }],
+          sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Define tus hábitos de descanso diario." }],
+          objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitorea tus hábitos académicos diarios." }],
+          notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Guarda y organiza tus apuntes de clase." }]
+        };
+      }
+    }
 
     let seccionActualTutorial = null;
     let pasoTutorialActual = 0;
@@ -891,7 +878,6 @@
         'panel': 'page-panel',
         'estudio': 'page-estudio',
         'examenes': 'page-examenes',
-        'estadisticas': 'page-estadisticas',
         'hobbies': 'page-hobbies',
         'sueno': 'page-sueno',
         'objetivos': 'page-objetivos',
@@ -900,11 +886,12 @@
         'ajustes': 'page-ajustes'
       };
 
-      document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
+      if (mapaPaginas[pagina]) {
+        document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
+      }
       
       if (pagina === 'trofeos') evaluarTrofeos();
       if (pagina === 'sueno') cargarControlSueno();
-      if (pagina === 'estadisticas') generarGraficosEstadisticas();
       
       const menu = document.getElementById("nav-menu");
       if (menu) menu.style.display = "none";
@@ -914,8 +901,9 @@
 
     function comprobarTutorialSeccion(seccion) {
       const vistos = JSON.parse(localStorage.getItem("tutorialesVistos")) || {};
-      
-      if (!vistos[seccion] && tutorialesPorSeccion[seccion]) {
+      const tuts = obtenerTutorialesConfig();
+
+      if (!vistos[seccion] && tuts[seccion]) {
         seccionActualTutorial = seccion;
         pasoTutorialActual = 0;
         lanzarTutorialModulo();
@@ -933,7 +921,10 @@
     }
 
     function mostrarPasoModulo() {
-      const pasos = tutorialesPorSeccion[seccionActualTutorial];
+      const tuts = obtenerTutorialesConfig();
+      const pasos = tuts[seccionActualTutorial];
+      if (!pasos || !pasos[pasoTutorialActual]) return;
+
       const paso = pasos[pasoTutorialActual];
       
       document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
@@ -956,10 +947,11 @@
     }
 
     function siguientePaso() {
-      const pasos = tutorialesPorSeccion[seccionActualTutorial];
+      const tuts = obtenerTutorialesConfig();
+      const pasos = tuts[seccionActualTutorial];
       pasoTutorialActual++;
       
-      if (pasoTutorialActual < pasos.length) {
+      if (pasos && pasoTutorialActual < pasos.length) {
         mostrarPasoModulo();
       } else {
         cerrarTutorialModulo();
@@ -982,7 +974,7 @@
 
     function reiniciarTutoriales() {
       localStorage.removeItem("tutorialesVistos");
-      alert("¡Guías contextuales reiniciadas! Las explicaciones se activarán la próxima vez que ingreses a cada sección.");
+      alert("¡Guías restablecidas con éxito!");
       navegarA('panel');
     }
 
@@ -996,6 +988,7 @@
 
       const perfil = { nombre: nombre, rol: rolElegido };
       localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
+      localStorage.removeItem("misAsignaturasPersonalizadas"); // Reset por rol
       cargarInterfazSegunRol();
     }
 
@@ -1011,6 +1004,46 @@
         header.innerHTML = `Remind<span>Ed</span> — ${perfil.nombre}`;
       }
 
+      const esTrabajador = perfil.rol === 'trabajador';
+
+      // Configuración visibilidad trabajador vs estudiante
+      const bTrabajador = document.getElementById("bloques-trabajador");
+      const bObjTrabajador = document.getElementById("bloque-objetivos-trabajador");
+      const cProximaClase = document.getElementById("card-proxima-clase");
+      const cExamenes = document.getElementById("card-examenes-destacados");
+      const cObjetivosEstudiante = document.getElementById("card-objetivos-contenedor");
+      const menuEventos = document.getElementById("menu-eventos");
+      
+      const tProxAct = document.getElementById("titulo-proxima-actividad");
+      const tBloqEv = document.getElementById("titulo-bloque-eventos");
+      const tMatGestor = document.getElementById("titulo-materia-gestor");
+      const tAgendarEv = document.getElementById("titulo-agendar-evento");
+
+      if (esTrabajador) {
+        if(bTrabajador) bTrabajador.style.display = "flex";
+        if(bObjTrabajador) bObjTrabajador.style.display = "block";
+        if(cProximaClase) cProximaClase.style.display = "none";
+        if(cExamenes) cExamenes.style.display = "none";
+        if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "none";
+
+        if(menuEventos) menuEventos.innerText = "📅 Eventos y Reuniones";
+        if(tMatGestor) tMatGestor.innerText = "💼 Gestor de Proyectos / Áreas";
+        if(tAgendarEv) tAgendarEv.innerText = "📅 Agendar Evento o Reunión";
+      } else {
+        if(bTrabajador) bTrabajador.style.display = "none";
+        if(bObjTrabajador) bObjTrabajador.style.display = "none";
+        if(cProximaClase) cProximaClase.style.display = "block";
+        if(cExamenes) cExamenes.style.display = "block";
+        if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "block";
+
+        if(menuEventos) menuEventos.innerText = "📅 Eventos y Exámenes";
+        if(tProxAct) tProxAct.innerText = "🎓 Próxima Clase / Actividad";
+        if(tBloqEv) tBloqEv.innerText = "📅 Próximos Exámenes Destacados";
+        if(tMatGestor) tMatGestor.innerText = "📚 Gestor de Asignaturas";
+        if(tAgendarEv) tAgendarEv.innerText = "📅 Añadir Próximo Examen";
+      }
+
+      inicializarExamenesYNotas();
       comprobarTutorialSeccion('panel');
     }
 
@@ -1025,35 +1058,39 @@
       const contAdmin = document.getElementById("lista-objetivos-admin");
       const cardContenedor = document.getElementById("card-objetivos-contenedor");
       
-      contDiario.innerHTML = "";
-      contAdmin.innerHTML = "";
+      if(contDiario) contDiario.innerHTML = "";
+      if(contAdmin) contAdmin.innerHTML = "";
 
       let totalTareas = guardados.length;
       let tareasCompletadas = 0;
 
       if (totalTareas === 0) {
-        contDiario.innerHTML = "<p style='color:#64748b;'>Añade tareas en la sección 'Mis Objetivos'.</p>";
-        contAdmin.innerHTML = "<p style='color:#64748b;'>No has añadido tareas aún.</p>";
+        if(contDiario) contDiario.innerHTML = "<p style='color:#64748b;'>Añade tareas en 'Mis Objetivos'.</p>";
+        if(contAdmin) contAdmin.innerHTML = "<p style='color:#64748b;'>Sin tareas cargadas.</p>";
         if(cardContenedor) cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
       } else {
         guardados.forEach((obj, index) => {
           const cumplido = estados[fechaHoy][index] || false;
           if (cumplido) tareasCompletadas++;
 
-          const divDiario = document.createElement("div");
-          divDiario.className = "item-list";
-          divDiario.innerHTML = `
-            <div>
-              <span class="dot ${cumplido ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${index})"></span>
-              <span style="${cumplido ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${obj}</span>
-            </div>
-          `;
-          contDiario.appendChild(divDiario);
+          if(contDiario) {
+            const divDiario = document.createElement("div");
+            divDiario.className = "item-list";
+            divDiario.innerHTML = `
+              <div>
+                <span class="dot ${cumplido ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${index})"></span>
+                <span style="${cumplido ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${obj}</span>
+              </div>
+            `;
+            contDiario.appendChild(divDiario);
+          }
 
-          const divAdmin = document.createElement("div");
-          divAdmin.className = "item-list";
-          divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
-          contAdmin.appendChild(divAdmin);
+          if(contAdmin) {
+            const divAdmin = document.createElement("div");
+            divAdmin.className = "item-list";
+            divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
+            contAdmin.appendChild(divAdmin);
+          }
         });
 
         if(cardContenedor) {
@@ -1160,6 +1197,7 @@
     function cargarHobbies() {
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const contLista = document.getElementById("lista-hobbies");
+      if(!contLista) return;
       contLista.innerHTML = "";
       const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
@@ -1188,7 +1226,7 @@
         cargarHobbies();
         actualizarPanel();
         evaluarTrofeos();
-      } else alert("Introduce el nombre del hobby y selecciona al menos un día.");
+      } else alert("Introduce el nombre e indica al menos un día.");
     }
 
     function borrarHobby(idx) {
@@ -1205,12 +1243,14 @@
       const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
       const contResumen = document.getElementById("lista-examenes-resumen");
       const contCompleto = document.getElementById("lista-examenes-completa");
-      contResumen.innerHTML = ""; contCompleto.innerHTML = "";
+      if (contResumen) contResumen.innerHTML = ""; 
+      if (contCompleto) contCompleto.innerHTML = "";
 
       if (guardados.length === 0) {
-        contResumen.innerHTML = "<p style='color:#64748b;'>No tienes exámenes pendientes.</p>";
-        contCompleto.innerHTML = "<p style='color:#64748b;'>No tienes exámenes pendientes.</p>";
-        document.getElementById("box-cuenta-atras").style.display = "none";
+        if(contResumen) contResumen.innerHTML = "<p style='color:#64748b;'>Sin compromisos o exámenes agendados.</p>";
+        if(contCompleto) contCompleto.innerHTML = "<p style='color:#64748b;'>Sin compromisos o exámenes agendados.</p>";
+        const box = document.getElementById("box-cuenta-atras");
+        if(box) box.style.display = "none";
         return;
       }
 
@@ -1224,19 +1264,23 @@
         
         const div = document.createElement("div");
         div.className = "item-list";
-        let texto = diff > 0 ? `Faltan <span style='font-weight:600; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `Examen de ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
+        let texto = diff > 0 ? `Faltan <span style='font-weight:600; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
         div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
         
-        contCompleto.appendChild(div.cloneNode(true));
-        contResumen.appendChild(div);
+        if(contCompleto) contCompleto.appendChild(div.cloneNode(true));
+        if(contResumen) contResumen.appendChild(div);
       });
 
-      iniciarCuentaAtras(guardados[0]);
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
+      if (perfil && perfil.rol !== 'trabajador') {
+        iniciarCuentaAtras(guardados[0]);
+      }
     }
 
     function iniciarCuentaAtras(examenCercano) {
       if (!examenCercano) return;
-      document.getElementById("box-cuenta-atras").style.display = "block";
+      const box = document.getElementById("box-cuenta-atras");
+      if(box) box.style.display = "block";
       document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')}) ${examenCercano.objetivo ? '— Meta: ' + examenCercano.objetivo : ''}`;
 
       if (countdownInterval) clearInterval(countdownInterval);
@@ -1248,7 +1292,7 @@
 
         if (distance < 0) {
           clearInterval(countdownInterval);
-          document.getElementById("timer-cuenta-atras").innerText = "¡El examen es ahora o ha finalizado!";
+          document.getElementById("timer-cuenta-atras").innerText = "¡Ha llegado la fecha!";
           return;
         }
 
@@ -1274,7 +1318,7 @@
         document.getElementById("examen-objetivo-nota").value = "";
         cargarExamenes();
         evaluarTrofeos();
-      } else alert("Selecciona asignatura y fecha.");
+      } else alert("Selecciona la categoría y la fecha.");
     }
 
     function borrarExamen(index) {
@@ -1290,133 +1334,29 @@
       const despertar = document.getElementById("sueno-despertar").value;
 
       localStorage.setItem("configSueno", JSON.stringify({ horas, acostar, despertar }));
-      alert("¡Hábitos de sueño guardados!");
+      alert("¡Hábitos guardados!");
       cargarControlSueno();
     }
 
     function cargarControlSueno() {
       const cfg = JSON.parse(localStorage.getItem("configSueno")) || { horas: 8, acostar: "23:00", despertar: "07:00" };
-      document.getElementById("sueno-horas").value = cfg.horas;
-      document.getElementById("sueno-acostar").value = cfg.acostar;
-      document.getElementById("sueno-despertar").value = cfg.despertar;
+      const sh = document.getElementById("sueno-horas");
+      const sa = document.getElementById("sueno-acostar");
+      const sd = document.getElementById("sueno-despertar");
+      if(sh) sh.value = cfg.horas;
+      if(sa) sa.value = cfg.acostar;
+      if(sd) sd.value = cfg.despertar;
 
-      document.getElementById("resumen-sueno-box").innerHTML = `
-        <p>🛌 <strong>Meta:</strong> ${cfg.horas}h diarias.</p>
-        <p>🌙 <strong>Acostarse:</strong> ${cfg.acostar} | ⏰ <strong>Despertar:</strong> ${cfg.despertar}</p>
-      `;
+      const rBox = document.getElementById("resumen-sueno-box");
+      if(rBox) {
+        rBox.innerHTML = `
+          <p>🛌 <strong>Meta:</strong> ${cfg.horas}h diarias.</p>
+          <p>🌙 <strong>Acostarse:</strong> ${cfg.acostar} | ⏰ <strong>Despertar:</strong> ${cfg.despertar}</p>
+        `;
+      }
 
       const infoSuenoPanel = document.getElementById("info-sueno");
       if (infoSuenoPanel) infoSuenoPanel.innerText = `💤 Meta: Dormir ${cfg.horas}h (Ir a la cama a las ${cfg.acostar}).`;
-    }
-
-    function generarGraficosEstadisticas() {
-      generarGraficoNotasCanvas();
-      generarGraficoEstudioCanvas();
-    }
-
-    function generarGraficoNotasCanvas() {
-      const canvas = document.getElementById("canvas-lineas-notas");
-      if (!canvas || !canvas.getContext) return;
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      const puntos = [];
-      const listaMaterias = obtenerAsignaturas();
-
-      if (listaMaterias.length === 0) return;
-
-      listaMaterias.forEach((asig) => {
-        const datos = notasGuardadas[asig];
-        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista : []);
-        const suma = lista.reduce((a, b) => a + b, 0);
-        const prom = lista.length > 0 ? (suma / lista.length) : 0;
-        puntos.push({ label: asig.split(" ")[0], valor: prom });
-      });
-
-      const width = canvas.width, height = canvas.height, padding = 40;
-      const graphWidth = width - padding * 2, graphHeight = height - padding * 2;
-      const isDark = document.body.classList.contains("dark-mode");
-      const textColor = isDark ? "#cbd5e1" : "#475569";
-      const lineColor = isDark ? "#818cf8" : "#6c5ce7";
-      const gridColor = isDark ? "#334155" : "#e2e8f0";
-
-      ctx.strokeStyle = textColor; ctx.lineWidth = 1.5; ctx.beginPath();
-      ctx.moveTo(padding, padding); ctx.lineTo(padding, height - padding); ctx.lineTo(width - padding, height - padding); ctx.stroke();
-
-      for (let i = 0; i <= 4; i++) {
-        const val = (20 / 4) * i;
-        const yCoord = (height - padding) - (graphHeight / 4) * i;
-        ctx.strokeStyle = gridColor; ctx.beginPath(); ctx.moveTo(padding, yCoord); ctx.lineTo(width - padding, yCoord); ctx.stroke();
-        ctx.fillStyle = textColor; ctx.font = "10px Poppins"; ctx.textAlign = "right";
-        ctx.fillText(val.toFixed(0), padding - 8, yCoord + 4);
-      }
-
-      const stepX = graphWidth / (puntos.length - 1 || 1);
-      const coords = puntos.map((p, idx) => ({ x: padding + (idx * stepX), y: (height - padding) - (p.valor / 20) * graphHeight, ...p }));
-
-      ctx.strokeStyle = lineColor; ctx.lineWidth = 3; ctx.beginPath();
-      coords.forEach((c, idx) => { if (idx === 0) ctx.moveTo(c.x, c.y); else ctx.lineTo(c.x, c.y); });
-      ctx.stroke();
-
-      coords.forEach(c => {
-        ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(c.x, c.y, 5, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = textColor; ctx.textAlign = "center";
-        ctx.fillText(c.label, c.x, height - padding + 18);
-        ctx.fillText(c.valor > 0 ? c.valor.toFixed(1) : "-", c.x, c.y - 10);
-      });
-    }
-
-    function generarGraficoEstudioCanvas() {
-      const canvas = document.getElementById("canvas-lineas-estudio");
-      if (!canvas || !canvas.getContext) return;
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-      const diasDatos = [];
-      let maxMinutosY = 60;
-
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const fechaStr = d.toISOString().split('T')[0];
-        const mins = logEstudio[fechaStr] || 0;
-        if (mins > maxMinutosY) maxMinutosY = mins;
-        const partes = fechaStr.split("-");
-        diasDatos.push({ label: `${partes[2]}/${partes[1]}`, valor: mins });
-      }
-
-      const width = canvas.width, height = canvas.height, padding = 45;
-      const graphWidth = width - padding * 2, graphHeight = height - padding * 2;
-      const isDark = document.body.classList.contains("dark-mode");
-      const textColor = isDark ? "#cbd5e1" : "#475569";
-      const lineColor = "#00b894";
-      const gridColor = isDark ? "#334155" : "#e2e8f0";
-
-      ctx.strokeStyle = textColor; ctx.lineWidth = 1.5; ctx.beginPath();
-      ctx.moveTo(padding, padding); ctx.lineTo(padding, height - padding); ctx.lineTo(width - padding, height - padding); ctx.stroke();
-
-      for (let i = 0; i <= 4; i++) {
-        const val = Math.round((maxMinutosY / 4) * i);
-        const yCoord = (height - padding) - (graphHeight / 4) * i;
-        ctx.strokeStyle = gridColor; ctx.beginPath(); ctx.moveTo(padding, yCoord); ctx.lineTo(width - padding, yCoord); ctx.stroke();
-        ctx.fillStyle = textColor; ctx.font = "10px Poppins"; ctx.textAlign = "right";
-        ctx.fillText(`${val}m`, padding - 6, yCoord + 4);
-      }
-
-      const stepX = graphWidth / (diasDatos.length - 1 || 1);
-      const coords = diasDatos.map((d, idx) => ({ x: padding + (idx * stepX), y: (height - padding) - (d.valor / (maxMinutosY || 1)) * graphHeight, ...d }));
-
-      ctx.strokeStyle = lineColor; ctx.lineWidth = 3; ctx.beginPath();
-      coords.forEach((c, idx) => { if (idx === 0) ctx.moveTo(c.x, c.y); else ctx.lineTo(c.x, c.y); });
-      ctx.stroke();
-
-      coords.forEach(c => {
-        ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(c.x, c.y, 5, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = textColor; ctx.textAlign = "center";
-        ctx.fillText(c.label, c.x, height - padding + 18);
-        ctx.fillText(`${c.valor}m`, c.x, c.y - 10);
-      });
     }
 
     function guardarApunte() {
@@ -1438,16 +1378,17 @@
     function cargarApuntes() { filtrarNotas(); }
 
     function filtrarNotas() {
-      const busqueda = document.getElementById("buscador-notas").value.toLowerCase();
-      const filtroAsig = document.getElementById("filtro-asig").value;
+      const busqueda = document.getElementById("buscador-notas") ? document.getElementById("buscador-notas").value.toLowerCase() : "";
+      const filtroAsig = document.getElementById("filtro-asig") ? document.getElementById("filtro-asig").value : "TODAS";
       const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
       const contenedor = document.getElementById("contenedor-lista-apuntes");
+      if(!contenedor) return;
       contenedor.innerHTML = "";
 
       const filtrados = apuntes.filter(ap => (filtroAsig === "TODAS" || ap.asignatura === filtroAsig) && (ap.titulo.toLowerCase().includes(busqueda) || ap.contenido.toLowerCase().includes(busqueda)));
 
       if (filtrados.length === 0) {
-        contenedor.innerHTML = "<p style='color:#64748b;'>No se encontraron apuntes.</p>";
+        contenedor.innerHTML = "<p style='color:#64748b;'>No hay elementos que coincidan.</p>";
         return;
       }
 
@@ -1478,11 +1419,12 @@
       const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       const tabla = document.getElementById("tabla-historico");
+      if(!tabla) return;
       tabla.innerHTML = "";
 
       if (guardados.length === 0) {
-        document.getElementById("porcentaje-exito").innerText = "0% de Éxito";
-        document.getElementById("progress-bar").style.width = "0%";
+        if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = "0% de Éxito";
+        if(document.getElementById("progress-bar")) document.getElementById("progress-bar").style.width = "0%";
         return;
       }
 
@@ -1503,8 +1445,8 @@
       }
 
       const porcentaje = Math.round((puntosVerdes / totalPuntos) * 100);
-      document.getElementById("porcentaje-exito").innerText = `${porcentaje}% de Éxito y Constancia`;
-      document.getElementById("progress-bar").style.width = `${porcentaje}%`;
+      if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `${porcentaje}% de Éxito y Constancia`;
+      if(document.getElementById("progress-bar")) document.getElementById("progress-bar").style.width = `${porcentaje}%`;
     }
 
     let timerInterval = null;
@@ -1521,6 +1463,7 @@
 
     function renderizarConfigBloquesUI() {
       const contenedor = document.getElementById("contenedor-bloques-config");
+      if(!contenedor) return;
       contenedor.innerHTML = "";
       bloquesConfig.forEach((b, idx) => {
         const row = document.createElement("div");
@@ -1528,7 +1471,7 @@
         row.innerHTML = `
           <span><strong>Bloque ${idx + 1}</strong></span>
           <div>
-            <label style="font-size:0.85rem;">Estudio (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
+            <label style="font-size:0.85rem;">Mente (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
             <label style="font-size:0.85rem; margin-left:8px;">Descanso (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label>
           </div>
         `;
@@ -1557,8 +1500,8 @@
       const min = Math.floor(tiempoRestante / 60).toString().padStart(2, '0');
       const sec = (tiempoRestante % 60).toString().padStart(2, '0');
       const bObj = bloquesConfig[indiceBloqueActual];
-      document.getElementById("timer-display").innerText = `${min}:${sec}`;
-      document.getElementById("timer-mode").innerText = `Bloque ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Estudio (${bObj.estudio} min)` : `Descanso (${bObj.descanso} min)`}`;
+      if(document.getElementById("timer-display")) document.getElementById("timer-display").innerText = `${min}:${sec}`;
+      if(document.getElementById("timer-mode")) document.getElementById("timer-mode").innerText = `Bloque ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Enfoque (${bObj.estudio} min)` : `Descanso (${bObj.descanso} min)`}`;
     }
 
     function registrarTiempoEstudio(minutos) {
@@ -1573,7 +1516,8 @@
     function actualizarTiempoEstudiadoHoy() {
       const fechaHoy = new Date().toISOString().split('T')[0];
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-      document.getElementById("tiempo-estudiado-hoy").innerText = `Estudiado hoy: ${logEstudio[fechaHoy] || 0} min`;
+      const el = document.getElementById("tiempo-estudiado-hoy");
+      if(el) el.innerText = `Tiempo enfocado hoy: ${logEstudio[fechaHoy] || 0} min`;
     }
 
     function iniciarTimer() {
@@ -1589,7 +1533,7 @@
             registrarTiempoEstudio(bObj.estudio);
             modoEstudio = false;
             tiempoRestante = bObj.descanso * 60;
-            alert(`¡Bloque ${indiceBloqueActual + 1} completado! Descanso de ${bObj.descanso} min.`);
+            alert(`¡Bloque completado! Descanso de ${bObj.descanso} min.`);
           } else {
             modoEstudio = true;
             if (indiceBloqueActual < bloquesConfig.length - 1) indiceBloqueActual++;
@@ -1645,18 +1589,18 @@
       });
 
       const listaLogros = [
-        { id: 't_primer_paso', nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Inicia tu camino de organización guardando tu primera nota o examen.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
-        { id: 't_foco_estudio', nivel: 'bronce', nombre: '⏱️ Foco Inquebrantable', desc: 'Completa tu primera sesión de estudio en el modo Pomodoro.', desbloqueado: totalMinutos > 0 },
-        { id: 't_archivista', nivel: 'plata', nombre: '📝 El Archivista', desc: 'Escribe y guarda tu primer apunte o nota personal.', desbloqueado: apuntes.length >= 1 },
-        { id: 't_equilibrio', nivel: 'plata', nombre: '🎨 Vida Equilibrada', desc: 'Añade al menos un hobby a tu rutina semanal.', desbloqueado: hobbies.length >= 1 },
-        { id: 't_maestro_rutina', nivel: 'oro', nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos (2 horas) de estudio total.', desbloqueado: totalMinutos >= 120 },
-        { id: 't_min90', nivel: 'bronce', nombre: '⏱️ Estrategia del Minuto 90', desc: 'Registra un examen programado para las próximas 24 horas.', desbloqueado: tieneMinuto90 },
-        { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Ilusiones', desc: 'Añade tu primer objetivo o meta diaria.', desbloqueado: objetosDiarios.length >= 1 },
-        { id: 't_profeta', nivel: 'oro', nombre: '🔮 Profeta del Aprobado', desc: 'Consigue que el promedio de una asignatura sea idéntico a tu nota meta.', desbloqueado: tieneProfeta },
-        { id: 't_optimista', nivel: 'bronce', nombre: '✨ Optimista Incorregible', desc: 'Configura una nota objetivo exigente (18+) en alguna materia.', desbloqueado: tieneOptimista },
-        { id: 't_simulacros', nivel: 'oro', nombre: '🎓 Doctorado en Simulacros', desc: 'Registra al menos 5 exámenes programados en el sistema.', desbloqueado: examenes.length >= 5 },
-        { id: 't_calculadora', nivel: 'diamante', nombre: '🧮 Calculadora Humana', desc: 'Acumula más de 10 notas registradas entre tus materias.', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
-        { id: 't_fenix', nivel: 'diamante', nombre: '🔥 El Fénix del 4.9', desc: 'Registra una nota de 4.9 y demuestra tu capacidad de superación.', desbloqueado: tieneFenix }
+        { id: 't_primer_paso', nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Guarda tu primer proyecto, apunte o evento.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
+        { id: 't_foco_estudio', nivel: 'bronce', nombre: '⏱️ Foco Inquebrantable', desc: 'Completa tu primera sesión en el temporizador.', desbloqueado: totalMinutos > 0 },
+        { id: 't_archivista', nivel: 'plata', nombre: '📝 El Archivista', desc: 'Guarda tu primera nota personal o minuta.', desbloqueado: apuntes.length >= 1 },
+        { id: 't_equilibrio', nivel: 'plata', nombre: '🎨 Vida Equilibrada', desc: 'Añade un hobby a tu semana.', desbloqueado: hobbies.length >= 1 },
+        { id: 't_maestro_rutina', nivel: 'oro', nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos enfocados.', desbloqueado: totalMinutos >= 120 },
+        { id: 't_min90', nivel: 'bronce', nombre: '⏱️ Minuto 90', desc: 'Registra un evento dentro de las próximas 24 horas.', desbloqueado: tieneMinuto90 },
+        { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Metas', desc: 'Añade tu primer objetivo diario.', desbloqueado: objetosDiarios.length >= 1 },
+        { id: 't_profeta', nivel: 'oro', nombre: '🔮 Profeta del Éxito', desc: 'Logra que tu promedio coincida con tu meta.', desbloqueado: tieneProfeta },
+        { id: 't_optimista', nivel: 'bronce', nombre: '✨ Optimista Incorregible', desc: 'Configura una meta exigente (18+).', desbloqueado: tieneOptimista },
+        { id: 't_simulacros', nivel: 'oro', nombre: '🎓 Planificador Experto', desc: 'Registra al menos 5 eventos/exámenes.', desbloqueado: examenes.length >= 5 },
+        { id: 't_calculadora', nivel: 'diamante', nombre: '🧮 Control Total', desc: 'Acumula más de 10 registros.', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
+        { id: 't_fenix', nivel: 'diamante', nombre: '🔥 El Fénix', desc: 'Supera una calificación complicada.', desbloqueado: tieneFenix }
       ];
 
       const prevDesbloqueados = JSON.parse(localStorage.getItem("trofeosDesbloqueadosNotificados")) || {};
@@ -1705,9 +1649,9 @@
         try {
           const datos = JSON.parse(e.target.result);
           Object.keys(datos).forEach(k => localStorage.setItem(k, datos[k]));
-          alert("¡Datos restaurados en RemindEd!");
+          alert("¡Datos restaurados con éxito!");
           location.reload();
-        } catch (err) { alert("Error al importar los datos."); }
+        } catch (err) { alert("Error al importar el archivo."); }
       };
       reader.readAsText(event.target.files[0]);
     }
@@ -1731,93 +1675,37 @@
 
       actividadesHoy.sort((a, b) => a.inicio.localeCompare(b.inicio));
 
-      if (actividadesHoy.length === 0) {
-        elClase.innerHTML = "¡Sin actividades programadas para hoy! 📖 Día libre.";
-      } else {
-        const proxima = actividadesHoy.find(a => a.inicio > horaStr);
-        if (proxima) {
-          elClase.innerHTML = `Próxima actividad: <strong>${proxima.nombre}</strong> a las ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.`;
+      if (elClase) {
+        if (actividadesHoy.length === 0) {
+          elClase.innerHTML = "¡Sin actividades programadas para hoy!";
         } else {
-          elClase.innerHTML = "Terminaste todas tus actividades programadas por hoy. 📚";
+          const proxima = actividadesHoy.find(a => a.inicio > horaStr);
+          if (proxima) {
+            elClase.innerHTML = `Próxima actividad: <strong>${proxima.nombre}</strong> a las ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.`;
+          } else {
+            elClase.innerHTML = "Has completado todas tus actividades de hoy. 📖";
+          }
         }
       }
       cargarControlSueno();
     }
 
-    function solicitarPermisoNotificaciones() {
-      if ("Notification" in window) {
-        Notification.requestPermission();
-      }
-    }
-
-    function enviarNotificacion(titulo, cuerpo) {
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(titulo, {
-          body: cuerpo,
-          icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-        });
-      }
-    }
-
-    function verificarRecordatoriosProgramados() {
-      const ahora = new Date();
-      const horas = ahora.getHours();
-      const minutos = ahora.getMinutes();
-      const fechaHoy = ahora.toISOString().split('T')[0];
-
-      const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-      const minutosEstudiadosHoy = logEstudio[fechaHoy] || 0;
-
-      if (minutosEstudiadosHoy === 0 && horas === 17 && minutos === 0) {
-        enviarNotificacion("⏱️ Recordatorio de Estudio", "¿Ya completaste tus sesiones de estudio de hoy? ¡Usa el modo Pomodoro!");
-      }
-
-      const cfgSueno = JSON.parse(localStorage.getItem("configSueno")) || { acostar: "23:00" };
-      if (cfgSueno.acostar) {
-        const [horaDormir, minDormir] = cfgSueno.acostar.split(":").map(Number);
-        const minutosActuales = horas * 60 + minutos;
-        const minutosParaDormir = horaDormir * 60 + minDormir;
-        if (minutosParaDormir - minutosActuales === 30) {
-          enviarNotificacion("🌙 Hora de desconectar", "Faltan 30 minutos para tu hora de dormir configurada.");
-        }
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      aplicarModoOscuroAuto();
-      inicializarExamenesYNotas();
-      cargarHobbies();
-      cargarObjetivos();
-      cargarConfigPomodoro();
-      actualizarPanel();
-
-      if (localStorage.getItem("perfilUsuario")) {
-        cargarInterfazSegunRol();
-      }
-
-      solicitarPermisoNotificaciones();
-      setInterval(verificarRecordatoriosProgramados, 60000);
-    });
-
-    // Arreglo global para guardar las tareas del usuario
-    let userTasks = [];
-
-    // Función para agregar un objetivo escrito por el usuario
+    // Funciones del bloque de Trabajador
     function addTask() {
       const input = document.getElementById('new-task-input');
+      if (!input) return;
       const taskText = input.value.trim();
 
       if (taskText === "") return;
 
       userTasks.push({ text: taskText, completed: false });
-      input.value = ""; // Limpiar el campo de texto
-
+      input.value = "";
       renderTasks();
     }
 
-    // Dibujar las tareas en pantalla
     function renderTasks() {
       const listContainer = document.getElementById('task-list');
+      if (!listContainer) return;
       listContainer.innerHTML = "";
 
       let completedCount = 0;
@@ -1827,52 +1715,72 @@
 
         const li = document.createElement('li');
         li.style.listStyle = "none";
+        li.style.marginBottom = "8px";
         li.innerHTML = `
           <input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">
-          <label for="task-${index}" style="${task.completed ? 'text-decoration: line-through;' : ''}">${task.text}</label>
+          <label for="task-${index}" style="${task.completed ? 'text-decoration: line-through; opacity: 0.7;' : ''} font-weight: 500;"> ${task.text}</label>
         `;
         listContainer.appendChild(li);
       });
 
-      // Actualizar métricas de progreso
       const total = userTasks.length;
       const percentage = total === 0 ? 0 : Math.round((completedCount / total) * 100);
 
-      document.getElementById('goals-progress').style.width = percentage + '%';
-      document.getElementById('goals-text').innerText = `${completedCount} de ${total} completados (${percentage}%)`;
+      const pb = document.getElementById('goals-progress');
+      const gt = document.getElementById('goals-text');
+      if (pb) pb.style.width = percentage + '%';
+      if (gt) gt.innerText = `${completedCount} de ${total} completados (${percentage}%)`;
     }
 
-    // Cambiar estado de la tarea
     function toggleTask(index) {
-      userTasks[index].completed = !userTasks[index].completed;
-      renderTasks();
-    }
-
-    // Función para registrar datos de descanso
-    function logSleep() {
-      const hours = prompt("¿Cuántas horas dormiste anoche?:");
-      if (hours) {
-        document.getElementById('sleep-hours').innerText = hours + " h";
+      if (userTasks[index]) {
+        userTasks[index].completed = !userTasks[index].completed;
+        renderTasks();
       }
     }
 
-    // Funciones dummy para los botones de las tarjetas si no estaban implementadas
+    function logSleep() {
+      const hours = prompt("¿Cuántas horas descansaste anoche?:");
+      if (hours) {
+        const el = document.getElementById('sleep-hours');
+        if (el) el.innerText = hours + " h";
+        const infoSueno = document.getElementById("info-sueno");
+        if(infoSueno) infoSueno.innerText = `💤 Anoche descansaste: ${hours} horas.`;
+      }
+    }
+
     function startActivity() {
-      alert("¡Actividad iniciada!");
+      const act = prompt("Escribe el nombre de la actividad/reunión actual:");
+      if (act) {
+        document.getElementById("current-activity").innerText = act;
+      }
     }
 
     function completeActivity() {
-      alert("¡Actividad completada!");
+      document.getElementById("current-activity").innerText = "Sin actividad en curso";
+      alert("¡Actividad finalizada!");
     }
 
     function addEvent() {
-      const evento = prompt("Nombre del evento:");
-      const hora = prompt("Hora del evento (ej. 14:00):");
+      const evento = prompt("Nombre del evento o reunión:");
+      const hora = prompt("Hora (ej. 14:00):");
       if (evento && hora) {
         document.getElementById("event-title").innerText = evento;
         document.getElementById("event-time").innerText = hora;
       }
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      aplicarModoOscuroAuto();
+      cargarHobbies();
+      cargarObjetivos();
+      cargarConfigPomodoro();
+      actualizarPanel();
+
+      if (localStorage.getItem("perfilUsuario")) {
+        cargarInterfazSegunRol();
+      }
+    });
   </script>
 </body>
 </html>
