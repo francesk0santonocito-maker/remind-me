@@ -1178,15 +1178,15 @@ function renderizarGraficoNotas() {
             { target: "#card-proximo-evento", texto: "📌 <strong>Eventos y Reuniones</strong>: Mantén visibilidad completa de tus compromisos de trabajo próximos." },
             { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diarios</strong>: Marca tus hitos clave diarios para visualizar el porcentaje de avance." },
             { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
-            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal</strong>: Planifica tus jornadas de trabajo y bloques libres de la semana.<br><br>💡 <em>Recuerda que puedes cambiar o añadir tu actividad laboral y reuniones en la sección de <strong>Eventos y Reuniones</strong> del menú.</em>" }
+            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus jornadas de trabajo y bloques libres de la semana.</strong><br><br>💡 <em>Recuerda que puedes cambiar o añadir tu actividad laboral y reuniones en la sección de <strong>Eventos y Reuniones</strong> del menú.</em>" }
           ],
           estudio: [
-            { target: ".timer-display", texto: "⏱️ <strong>Modo Concentración</strong>: Usa el temporizador Pomodoro para gestionar tus bloques de trabajo intensivo." }
+            { target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Usa el temporizador para gestionar tus bloques de trabajo intensivo." },
+            { target: "button[onclick='toggleConfigPomodoro()']", texto: "⚙️ <strong>Configurar Bloques</strong>: Haz clic aquí para personalizar los minutos exactos de enfoque y descanso de tus bloques." }
           ],
           examenes: [
             { target: "#card-gestion-materias", texto: "💼 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." },
             { target: "#card-nuevo-examen", texto: "📅 <strong>Agendar Eventos</strong>: Registra tus fechas límite, entregas de proyectos o reuniones." },
-            
             { target: "#card-metricas-notas", texto: "📊 <strong>Métricas y Objetivos</strong>: Registra el avance de tus metas para calcular tu rendimiento laboral." },
             { target: "#card-grafico-notas", texto: "📈 <strong>Gráfico de Evolución</strong>: Analiza de forma visual tu desempeño en cada proyecto." }
           ],
@@ -1203,10 +1203,11 @@ function renderizarGraficoNotas() {
             { target: "#card-objetivos-contenedor", texto: "🎯 Revisa y completa tus metas diarias para cambiar el borde a verde resplandeciente." },
             { target: "#card-examenes-destacados", texto: "📅 Revisa tus próximos exámenes y cuentas regresivas." },
             { target: "#card-estado-sueno", texto: "🌙 Registra tu descanso de la noche anterior." },
-            { target: "#card-horario-semanal", texto: "🗓️ Organiza tus materias y horarios de la semana." }
+            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus clases y bloques libres de la semana.</strong><br><br>💡 <em>Recuerda que puedes cambiar o añadir tus actividades y clases en la sección de <strong>Eventos y Exámenes</strong> del menú.</em>" }
           ],
           estudio: [
-            { target: ".timer-display", texto: "⏱️ <strong>Modo Estudio</strong>: Administra tus bloques Pomodoro para mejorar tu retención." }
+            { target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Administra tus bloques de estudio para mejorar tu retención." },
+            { target: "button[onclick='toggleConfigPomodoro()']", texto: "⚙️ <strong>Configurar Bloques</strong>: Personaliza la duración de tus tiempos de estudio y descanso según prefieras." }
           ],
           examenes: [
             { target: "#card-gestion-materias", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas." },
