@@ -206,13 +206,18 @@
     </div>
   </div>
 
-  <div id="welcome-screen" class="welcome-overlay">
-    <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
-    <div id="form-registro">
-      <input type="text" id="username-input" placeholder="Tu nombre..." />
-      <button onclick="guardarNombre()">Comenzar mi Organización</button>
-    </div>
+  <!-- PANTALLA DE BIENVENIDA -->
+<div id="pantalla-bienvenida" class="card">
+  <h2>¡Hola! Bienvenid@</h2>
+  <p>¿Cómo te llamas?</p>
+  <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí...">
+
+  <p>¿A qué te dedicas principalmente?</p>
+  <div class="contenedor-botones">
+    <button onclick="registrarUsuario('estudiante')">🎓 Estudiante</button>
+    <button onclick="registrarUsuario('trabajador')">💼 Trabajador</button>
   </div>
+</div>
 
   <div class="top-bar">
     <button class="hamburger" onclick="toggleMenu()">☰</button>
@@ -1735,6 +1740,59 @@ function iniciarBucleNotificaciones() {
   verificarRecordatoriosProgramados();
   setInterval(verificarRecordatoriosProgramados, 60000);
 }
+
+// Guardar el nombre y el rol elegido
+function registrarUsuario(rolElegido) {
+  const nombre = document.getElementById("input-nombre").value.trim();
+  
+  if (!nombre) {
+    alert("Por favor, escribe tu nombre antes de continuar.");
+    return;
+  }
+
+  const perfil = {
+    nombre: nombre,
+    rol: rolElegido
+  };
+
+  // Guardar en la memoria del navegador
+  localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
+  
+  // Cargar el panel correspondiente
+  cargarInterfazSegunRol();
+}
+
+// Ocultar o mostrar las secciones según el rol
+function cargarInterfazSegunRol() {
+  const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
+  if (!perfil) return; // Si no hay usuario, se queda en la bienvenida
+
+  // Ocultar pantalla de bienvenida y mostrar la app principal
+  document.getElementById("pantalla-bienvenida").style.display = "none";
+  document.getElementById("app-principal").style.display = "block";
+
+  // Mostrar u ocultar módulos según sea Estudiante o Trabajador
+  const seccionEstudios = document.getElementById("seccion-estudios");
+  const seccionTrabajo = document.getElementById("seccion-trabajo");
+
+  if (perfil.rol === "trabajador") {
+    if (seccionEstudios) seccionEstudios.style.display = "none";
+    if (seccionTrabajo) seccionTrabajo.style.display = "block";
+  } else {
+    if (seccionEstudios) seccionEstudios.style.display = "block";
+    if (seccionTrabajo) seccionTrabajo.style.display = "none";
+  }
+
+  // Personalizar el saludo
+  document.getElementById("saludo-usuario").textContent = `¡Hola, ${perfil.nombre}!`;
+}
+
+// Comprobar si ya existe un usuario guardado al abrir la página
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("perfilUsuario")) {
+    cargarInterfazSegunRol();
+  }
+});
 
 // Llamar la función al inicializar la aplicación
 iniciarBucleNotificaciones();
