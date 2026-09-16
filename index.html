@@ -313,6 +313,17 @@
       </div>
     </div>
 
+    <!-- Opción de Tema en Ajustes -->
+<div class="card" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+  <div>
+    <h3 style="margin: 0; font-size: 1.1rem;">🎨 Apariencia de la Aplicación</h3>
+    <p style="margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.8;">Alterna entre el modo oscuro nocturno y el modo claro.</p>
+  </div>
+  <button onclick="alternarTema()" id="btn-cambiar-tema" style="padding: 8px 16px; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 500;">
+    🌓 Cambiar Tema
+  </button>
+</div>
+
     <!-- PANEL DE CONTROL -->
     <div id="page-panel" class="section-page section-active">
 
@@ -2253,6 +2264,37 @@ function renderizarGraficoNotas() {
         if (app) app.style.display = "none";
       }
     });
+
+    function alternarTema() {
+  document.body.classList.toggle('light-mode');
+  
+  const esClaro = document.body.classList.contains('light-mode');
+  
+  if (esClaro) {
+    localStorage.setItem('temaRemindEd', 'claro');
+  } else {
+    localStorage.setItem('temaRemindEd', 'oscuro');
+  }
+  
+  actualizarTextoBotonTema();
+}
+
+function actualizarTextoBotonTema() {
+  const btn = document.getElementById('btn-cambiar-tema');
+  if (btn) {
+    const esClaro = document.body.classList.contains('light-mode');
+    btn.textContent = esClaro ? '🌙 Cambiar a Oscuro' : '☀️ Cambiar a Claro';
+  }
+}
+
+// Cargar el tema guardado automáticamente al iniciar la app
+window.addEventListener('DOMContentLoaded', () => {
+  const temaGuardado = localStorage.getItem('temaRemindEd');
+  if (temaGuardado === 'claro') {
+    document.body.classList.add('light-mode');
+  }
+  actualizarTextoBotonTema();
+});
   </script>
 </body>
 </html>
