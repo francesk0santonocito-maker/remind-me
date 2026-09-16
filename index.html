@@ -206,13 +206,18 @@
     </div>
   </div>
 
-  <div id="welcome-screen" class="welcome-overlay">
-    <h2 id="welcome-title" style="color:white; font-size: 2.2rem; font-weight: 700;">¡Bienvenido a RemindEd!</h2>
-    <div id="form-registro">
-      <input type="text" id="username-input" placeholder="Tu nombre..." />
-      <button onclick="guardarNombre()">Comenzar mi Organización</button>
-    </div>
+  <!-- PANTALLA DE BIENVENIDA -->
+<div id="pantalla-bienvenida" class="card">
+  <h2>¡Hola! Bienvenid@</h2>
+  <p>¿Cómo te llamas?</p>
+  <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí...">
+
+  <p>¿A qué te dedicas principalmente?</p>
+  <div class="contenedor-botones">
+    <button onclick="registrarUsuario('estudiante')">🎓 Estudiante</button>
+    <button onclick="registrarUsuario('trabajador')">💼 Trabajador</button>
   </div>
+</div>
 
   <div class="top-bar">
     <button class="hamburger" onclick="toggleMenu()">☰</button>
@@ -1671,7 +1676,73 @@
       }
       cargarControlSueno();
     }
+// 1. Solicitar permisos al usuario
+function solicitarPermisoNotificaciones() {
+  if ("Notification" in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        console.log("Notificaciones permitidas.");
+      }
+    });
+  }
+}
 
+// 2. Función helper para enviar la notificación nativa
+function enviarNotificacion(titulo, cuerpo) {
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification(titulo, {
+      body: cuerpo,
+      icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" // Ícono opcional
+    });
+  }
+}
+
+// 3. Verificación de Recordatorios (Estudio y Sueño)
+function verificarRecordatoriosProgramados() {
+  const ahora = new Date();
+  const horas = ahora.getHours();
+  const minutos = ahora.getMinutes();
+  const fechaHoy = ahora.toISOString().split('T')[0];
+
+  // A) Recordatorio de Estudio (Ejemplo: Evalúa a las 16:00 y 20:00 si has estudiado hoy)
+  const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
+  const minutosEstudiadosHoy = logEstudio[fechaHoy] || 0;
+
+  if (minutosEstudiadosHoy === 0) {
+    // Alerta a las 17:00
+    if (horas === 17 && minutos === 0) {
+      enviarNotificacion("⏱️ Recordatorio de Estudio", "¿Ya completaste tus sesiones de estudio de hoy? ¡Usa el modo Pomodoro!");
+    }
+  }
+
+  // B) Recordatorio para Prepararse para Dormir
+  const cfgSueno = JSON.parse(localStorage.getItem("configSueno")) || { acostar: "23:00" };
+  if (cfgSueno.acostar) {
+    const [horaDormir, minDormir] = cfgSueno.acostar.split(":").map(Number);
+    
+    // Calcular tiempo actual vs hora de dormir en minutos
+    const minutosActuales = horas * 60 + minutos;
+    const minutosParaDormir = horaDormir * 60 + minDormir;
+    
+    // Notificar 30 minutos antes de la hora fijada
+    const tiempoDiferencia = minutosParaDormir - minutosActuales;
+
+    if (tiempoDiferencia === 30) {
+      enviarNotificacion("🌙 Hora de desconectar", "Faltan 30 minutos para tu hora de dormir configurada. Ve preparando tu descanso.");
+    }
+  }
+}
+
+// 4. Iniciar el verificador en segundo plano (Revisa cada minuto)
+function iniciarBucleNotificaciones() {
+  solicitarPermisoNotificaciones();
+  // Ejecutar inmediatamente y luego verificar cada 60 segundos (60000 ms)
+  verificarRecordatoriosProgramados();
+  setInterval(verificarRecordatoriosProgramados, 60000);
+}
+
+// Llamar la función al inicializar la aplicación
+iniciarBucleNotificaciones();
     // INICIALIZACIÓN
     aplicarModoOscuroAuto();
     inicializarUsuario();
