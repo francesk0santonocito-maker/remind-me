@@ -197,6 +197,105 @@
       from { transform: translateY(-50px) scale(0.8); opacity: 0; }
       to { transform: translateY(0) scale(1); opacity: 1; }
     }
+
+    /* ================= ONBOARDING REMINDED ================= */
+    .welcome-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: var(--background, #f8fafc);
+    }
+
+    .welcome-card {
+      width: min(460px, 100%);
+      padding: 40px;
+      text-align: center;
+      background: var(--card-bg, #ffffff);
+      color: var(--text-color, #0f172a);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    .welcome-icon { font-size: 48px; margin-bottom: 10px; }
+    .welcome-card h1 { margin: 0 0 10px; font-size: 2rem; }
+    .welcome-subtitle { margin-bottom: 30px; color: #64748b; }
+
+    .onboarding-step { animation: onboardingFade 0.25s ease; }
+
+    @keyframes onboardingFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .onboarding-step label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .onboarding-step input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border-color, #cbd5e1);
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      background: var(--input-bg, #ffffff);
+      color: var(--text-color, #0f172a);
+    }
+
+    .onboarding-step input:focus {
+      border-color: var(--primary, #6c5ce7);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.12);
+    }
+
+    .onboarding-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .role-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 20px 12px;
+      background: var(--card-bg, #ffffff);
+      color: var(--text-color, #0f172a);
+      border: 2px solid var(--border-color, #e2e8f0);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .role-option:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary, #6c5ce7);
+    }
+
+    .role-option.selected {
+      border-color: var(--primary, #6c5ce7);
+      background: rgba(108, 92, 231, 0.08);
+    }
+
+    .role-icon { font-size: 32px; margin-bottom: 5px; }
+    .role-option small { color: #64748b; }
+    .onboarding-help { margin: -3px 0 18px; font-size: 0.9rem; line-height: 1.5; color: #64748b; }
+
+    @media (max-width: 500px) {
+      .welcome-card { padding: 28px 20px; }
+      .onboarding-options { grid-template-columns: 1fr; }
+    }
+
   </style>
 </head>
 <body>
@@ -210,21 +309,71 @@
     </div>
   </div>
 
-  <!-- pantalla de bienvenida -->
-<div id="pantalla-bienvenida" class="card" style="max-width: 440px; margin: 40px auto; text-align: center;">
-  <h2>¡Bienvenido a RemindEd! 👋</h2>
-  <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Dinos quién eres para comenzar.</p>
+  <!-- PANTALLA DE BIENVENIDA / ONBOARDING -->
+  <div id="pantalla-bienvenida" class="welcome-screen">
+    <div class="welcome-card">
 
-  <form id="form-onboarding" onsubmit="guardarPerfilInicial(event)">
-    <div style="text-align: left; margin-bottom: 15px;">
-      <label style="font-weight: 600; font-size: 0.85rem;">¿Cómo te llamas? *</label>
-      <input type="text" id="onboarding-nombre" class="input-form" placeholder="Tu nombre..." required style="margin-top: 6px; width: 100%; box-sizing: border-box; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color);">
+      <div class="welcome-icon">✨</div>
+      <h1>Bienvenido a RemindEd</h1>
+      <p class="welcome-subtitle">Vamos a personalizar tu experiencia.</p>
+
+      <!-- PASO 1: NOMBRE -->
+      <div id="onboarding-paso-1" class="onboarding-step">
+        <label for="onboarding-nombre">¿Cómo te llamas?</label>
+        <input
+          type="text"
+          id="onboarding-nombre"
+          placeholder="Escribe tu nombre"
+          autocomplete="name"
+        >
+        <button type="button" class="btn" onclick="onboardingContinuarNombre()">
+          Continuar →
+        </button>
+      </div>
+
+      <!-- PASO 2: ESTUDIAR O TRABAJAR -->
+      <div id="onboarding-paso-2" class="onboarding-step" style="display:none;">
+        <label>¿Qué haces actualmente?</label>
+
+        <div class="onboarding-options">
+          <button type="button" id="btn-rol-estudiante" class="role-option" onclick="seleccionarRol('estudiante')">
+            <span class="role-icon">🎓</span>
+            <strong>Estudio</strong>
+            <small>Estoy estudiando</small>
+          </button>
+
+          <button type="button" id="btn-rol-trabajador" class="role-option" onclick="seleccionarRol('trabajador')">
+            <span class="role-icon">💼</span>
+            <strong>Trabajo</strong>
+            <small>Estoy trabajando</small>
+          </button>
+        </div>
+
+        <button type="button" class="btn" onclick="onboardingContinuarRol()">
+          Continuar →
+        </button>
+      </div>
+
+      <!-- PASO 3: NOTA MÁXIMA -->
+      <div id="onboarding-paso-3" class="onboarding-step" style="display:none;">
+        <label for="onboarding-nota-max">¿Cuál es la nota máxima de tu sistema educativo?</label>
+        <p class="onboarding-help">RemindEd utilizará esta escala para adaptar tus gráficos y estadísticas.</p>
+
+        <input
+          type="number"
+          id="onboarding-nota-max"
+          min="1"
+          step="0.1"
+          placeholder="Ej.: 20"
+        >
+
+        <button type="button" class="btn" onclick="guardarPerfilInicial()">
+          Empezar con RemindEd 🚀
+        </button>
+      </div>
+
     </div>
-    
-    <!-- Resto de tus botones de rol y nota máxima -->
-    <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Comenzar 🚀</button>
-  </form>
-</div>
+  </div>
 
   <!-- APP PRINCIPAL -->
   <div id="app-principal" style="display: none;">
@@ -566,31 +715,52 @@
     </div>
   </div>
 
-  <script>
-    window.rolSeleccionado = 'estudiante';
+  <script>    // ================= ONBOARDING =================
+    window.rolSeleccionado = null;
 
-function seleccionarRol(rol) {
-  window.rolSeleccionado = rol;
-  const secNotaMax = document.getElementById("seccion-nota-maxima");
-  const btnEst = document.getElementById("btn-rol-estudiante");
-  const btnTrab = document.getElementById("btn-rol-trabajador");
+    function onboardingContinuarNombre() {
+      const input = document.getElementById("onboarding-nombre");
+      if (!input) return;
 
-  if (rol === 'trabajador') {
-    secNotaMax.style.display = "none";
-    btnTrab.classList.remove("btn-secondary");
-    btnTrab.classList.add("btn");
-    btnEst.classList.remove("btn");
-    btnEst.classList.add("btn-secondary");
-  } else {
-    secNotaMax.style.display = "block";
-    btnEst.classList.remove("btn-secondary");
-    btnEst.classList.add("btn");
-    btnTrab.classList.remove("btn");
-    btnTrab.classList.add("btn-secondary");
-  }
-}
+      const nombre = input.value.trim();
+      if (!nombre) {
+        alert("Por favor, escribe tu nombre antes de continuar.");
+        input.focus();
+        return;
+      }
 
-function obtenerConfigEscala() {
+      window.nombreOnboarding = nombre;
+      document.getElementById("onboarding-paso-1").style.display = "none";
+      document.getElementById("onboarding-paso-2").style.display = "block";
+    }
+
+    function seleccionarRol(rol) {
+      window.rolSeleccionado = rol;
+
+      const btnEstudiante = document.getElementById("btn-rol-estudiante");
+      const btnTrabajador = document.getElementById("btn-rol-trabajador");
+
+      if (btnEstudiante) btnEstudiante.classList.toggle("selected", rol === "estudiante");
+      if (btnTrabajador) btnTrabajador.classList.toggle("selected", rol === "trabajador");
+    }
+
+    function onboardingContinuarRol() {
+      if (!window.rolSeleccionado) {
+        alert("Selecciona si estudias o trabajas.");
+        return;
+      }
+
+      if (window.rolSeleccionado === "trabajador") {
+        guardarPerfilInicial();
+        return;
+      }
+
+      document.getElementById("onboarding-paso-2").style.display = "none";
+      document.getElementById("onboarding-paso-3").style.display = "block";
+      document.getElementById("onboarding-nota-max").focus();
+    }
+
+    function obtenerConfigEscala() {
   const perfil = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
   
   if (perfil.rol === 'trabajador') {
@@ -605,69 +775,52 @@ function obtenerConfigEscala() {
     label: `Nota (1-${maxima})`,
     metaEjemplo: (maxima * 0.9).toFixed(1)
   };
-}
+}    function guardarPerfilInicial() {
+      const nombre = (window.nombreOnboarding || document.getElementById("onboarding-nombre")?.value || "").trim();
+      const rol = window.rolSeleccionado;
 
-function guardarPerfilInicial(event) {
-  event.preventDefault();
-  const rol = window.rolSeleccionado || 'estudiante';
-  let notaMaxima = 100;
+      if (!nombre) {
+        alert("Por favor, escribe tu nombre.");
+        return;
+      }
 
-  if (rol === 'estudiante') {
-    const inputVal = parseFloat(document.getElementById("onboarding-nota-max").value);
-    if (!inputVal || inputVal <= 0) {
-      alert("Por favor ingresa una nota máxima válida.");
-      return;
+      if (!rol) {
+        alert("Selecciona si estudias o trabajas.");
+        return;
+      }
+
+      let notaMaxima = 100;
+
+      if (rol === "estudiante") {
+        const input = document.getElementById("onboarding-nota-max");
+        const valor = parseFloat(input?.value);
+
+        if (!valor || valor <= 0) {
+          alert("Introduce una nota máxima válida.");
+          if (input) input.focus();
+          return;
+        }
+
+        notaMaxima = valor;
+      }
+
+      const perfil = {
+        nombre: nombre,
+        rol: rol,
+        notaMaxima: notaMaxima
+      };
+
+      localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
+
+      const pantalla = document.getElementById("pantalla-bienvenida");
+      if (pantalla) pantalla.style.display = "none";
+
+      if (typeof cargarInterfazSegunRol === "function") {
+        cargarInterfazSegunRol();
+      }
     }
-    notaMaxima = inputVal;
-  }
 
-  const perfil = { rol, notaMaxima };
-  localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
-  
-  document.getElementById("pantalla-bienvenida").style.display = "none";
-  cargarInterfazSegunRol();
-}
-
-function guardarPerfilInicial(event) {
-  event.preventDefault();
-  
-  // Capturamos el nombre del usuario (asegúrate de que tu input en el HTML tenga id="input-nombre" o "onboarding-nombre")
-  const nombreInput = document.getElementById("onboarding-nombre") || document.getElementById("input-nombre");
-  const nombre = nombreInput ? nombreInput.value.trim() : "";
-
-  if (!nombre) {
-    alert("Por favor, escribe tu nombre antes de continuar.");
-    return;
-  }
-
-  const rol = window.rolSeleccionado || 'estudiante';
-  let notaMaxima = 10;
-
-  if (rol === 'estudiante') {
-    const inputVal = parseFloat(document.getElementById("onboarding-nota-max").value);
-    if (!inputVal || inputVal <= 0) {
-      alert("Por favor ingresa una nota máxima válida.");
-      return;
-    }
-    notaMaxima = inputVal;
-  }
-
-  // Guardamos el perfil completo con nombre, rol y nota máxima
-  const perfil = { nombre, rol, notaMaxima };
-  localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
-
-  // Ocultamos bienvenida y cargamos la app
-  const pantallaBienvenida = document.getElementById("pantalla-bienvenida");
-  if (pantallaBienvenida) pantallaBienvenida.style.display = "none";
-  
-  if (typeof cargarInterfazSegunRol === "function") {
-    cargarInterfazSegunRol();
-  } else {
-    location.reload();
-  }
-}
-
-function cargarAsignaturasYNotas() {
+    function cargarAsignaturasYNotas() {
   const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
   const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
   const contenedor = document.getElementById("contenedor-asignaturas");
