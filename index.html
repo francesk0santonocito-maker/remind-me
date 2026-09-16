@@ -522,6 +522,24 @@
 
     <!-- AJUSTES -->
     <div id="page-ajustes" class="section-page">
+      <!-- AGREGAR DENTRO DE #page-ajustes -->
+<div class="card" id="card-panel-colores">
+  <h2>🎨 Personalizar Colores del Tema</h2>
+  <p style="font-size: 0.85rem; color: #64748b;">Elige el color principal que prefieras para personalizar la interfaz:</p>
+  
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
+    <button onclick="cambiarColorTema('#6c5ce7', '#00cec9')" class="btn-small" style="background: #6c5ce7; border: none; color: white;">💜 Morado RemindEd</button>
+    <button onclick="cambiarColorTema('#0984e3', '#74b9ff')" class="btn-small" style="background: #0984e3; border: none; color: white;">💙 Azul Océano</button>
+    <button onclick="cambiarColorTema('#00b894', '#55efc4')" class="btn-small" style="background: #00b894; border: none; color: white;">💚 Verde Esmeralda</button>
+    <button onclick="cambiarColorTema('#e17055', '#ffeaa7')" class="btn-small" style="background: #e17055; border: none; color: white;">🧡 Terracota / Cálido</button>
+    <button onclick="cambiarColorTema('#d63031', '#ff7675')" class="btn-small" style="background: #d63031; border: none; color: white;">🔴 Rojo Carmín</button>
+  </div>
+
+  <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+    <label style="font-size: 0.9rem; font-weight: 600;">O elige un color personalizado:</label>
+    <input type="color" id="picker-color-primary" value="#6c5ce7" onchange="aplicarColorPersonalizado(this.value)" style="border: none; background: none; cursor: pointer; width: 40px; height: 40px;">
+  </div>
+</div>
       <div class="card">
         <h2>⚙️ Copia de Seguridad y Guías</h2>
         <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
