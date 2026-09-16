@@ -196,11 +196,12 @@
     }
     .role-option:hover { transform:translateY(-2px); border-color:var(--primary,#6c5ce7); }
     .role-option.selected {
-      border-color:var(--primary,#6c5ce7);
-      background:rgba(108,92,231,.10);
-      box-shadow:0 0 0 3px rgba(108,92,231,.16), 0 8px 22px rgba(108,92,231,.18);
-      transform:translateY(-2px);
+      border-color:var(--primary,#6c5ce7) !important;
+      background:rgba(108,92,231,.14) !important;
+      box-shadow:0 0 0 4px rgba(108,92,231,.18), 0 8px 26px rgba(108,92,231,.24) !important;
+      transform:translateY(-2px) scale(1.01);
     }
+    .role-option.selected strong { color:var(--primary,#6c5ce7); }
     .role-option.selected .role-icon { transform:scale(1.08); }
     .role-icon { font-size:32px; margin-bottom:5px; transition:transform .2s ease; }
     .role-option small { color:#64748b; }
@@ -659,8 +660,16 @@
 
       const btnEst = document.getElementById("btn-rol-estudiante");
       const btnTrab = document.getElementById("btn-rol-trabajador");
-      if (btnEst) btnEst.classList.toggle("selected", rol === "estudiante");
-      if (btnTrab) btnTrab.classList.toggle("selected", rol === "trabajador");
+
+      if (btnEst) {
+        btnEst.classList.toggle("selected", rol === "estudiante");
+        btnEst.setAttribute("aria-pressed", rol === "estudiante" ? "true" : "false");
+      }
+
+      if (btnTrab) {
+        btnTrab.classList.toggle("selected", rol === "trabajador");
+        btnTrab.setAttribute("aria-pressed", rol === "trabajador" ? "true" : "false");
+      }
     }
 
     function onboardingContinuarRol() {
@@ -780,7 +789,7 @@ function cargarAsignaturasYNotas() {
 
 function renderizarGraficoNotas() {
   const ctx = document.getElementById("chart-notas");
-  if (!ctx) return;
+  if (!ctx || typeof Chart === "undefined") return;
 
   const asignaturas = obtenerAsignaturas();
   const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
@@ -791,7 +800,7 @@ function renderizarGraficoNotas() {
     const datos = notasGuardadas[asig];
     const lista = Array.isArray(datos) ? datos : (datos ? datos.lista || [] : []);
     if (lista.length === 0) return 0;
-    const suma = lista.reduce((a, b) => a + b, 0);
+    const suma = lista.reduce((a, b) => a + Number(b), 0);
     return parseFloat((suma / lista.length).toFixed(1));
   });
 
@@ -821,12 +830,16 @@ function renderizarGraficoNotas() {
         y: {
           beginAtZero: true,
           min: 0,
-          max: escala.max // El límite vertical del gráfico ahora coincide con la nota máxima guardada
+          max: escala.max,
+          ticks: {
+            stepSize: escala.max <= 10 ? 1 : (escala.max <= 20 ? 2 : 10)
+          }
         }
       }
     }
   });
 }
+
 
 
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
@@ -1055,53 +1068,8 @@ function renderizarGraficoNotas() {
       renderizarGraficoNotas();
     }
 
-    function renderizarGraficoNotas() {
-      const ctx = document.getElementById("chart-notas");
-      if (!ctx) return;
+    // La función renderizarGraficoNotas principal está definida arriba.
 
-      const asignaturas = obtenerAsignaturas();
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-
-      const labels = asignaturas;
-      const dataPromedios = asignaturas.map(asig => {
-        const datos = notasGuardadas[asig];
-        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista || [] : []);
-        if (lista.length === 0) return 0;
-        const suma = lista.reduce((a, b) => a + b, 0);
-        return parseFloat((suma / lista.length).toFixed(1));
-      });
-
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-
-      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#6c5ce7';
-
-      chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Promedio / Rendimiento Actual',
-            data: dataPromedios,
-            backgroundColor: primaryColor + 'a6',
-            borderColor: primaryColor,
-            borderWidth: 2,
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 20
-            }
-          }
-        }
-      });
-    }
 
     function agregarHorarioBloque() {
       const dia = document.getElementById("horario-dia-select").value;
@@ -1188,7 +1156,16 @@ function renderizarGraficoNotas() {
 
     function toggleMenu() {
       const menu = document.getElementById("nav-menu");
-      menu.style.display = menu.style.display === "block" ? "none" : "block";
+      if (!menu) return;
+
+      const isOpen = getComputedStyle(menu).display !== "none";
+      if (isOpen) {
+        menu.style.setProperty("display", "none", "important");
+        menu.setAttribute("aria-hidden", "true");
+      } else {
+        menu.style.setProperty("display", "block", "important");
+        menu.setAttribute("aria-hidden", "false");
+      }
     }
 
     function obtenerTutorialesConfig() {
@@ -1274,7 +1251,10 @@ function renderizarGraficoNotas() {
       if (pagina === 'examenes') renderizarGraficoNotas();
       
       const menu = document.getElementById("nav-menu");
-      if (menu) menu.style.display = "none";
+      if (menu) {
+        menu.style.setProperty("display", "none", "important");
+        menu.setAttribute("aria-hidden", "true");
+      }
 
       comprobarTutorialSeccion(pagina);
     }
