@@ -731,24 +731,14 @@ function renderizarGraficoNotas() {
     }
   });
 }
-function guardarPerfilInicial(event) {
-  event.preventDefault();
-  const nombre = document.getElementById("onboarding-nombre").value.trim();
-  const profesion = document.getElementById("onboarding-profesion").value.trim();
-  const pais = document.getElementById("onboarding-pais").value;
-  const rol = window.rolSeleccionado || 'estudiante';
 
-  if (!nombre || !pais) {
-    alert("Por favor completa los campos requeridos.");
-    return;
-  }
 
   const perfil = { nombre, profesion, pais, rol };
   localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
   localStorage.removeItem("misAsignaturasPersonalizadas");
   
   cargarInterfazSegunRol();
-}
+
 
 
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
