@@ -80,11 +80,9 @@
     tr:last-child td { border-bottom: none; }
     th { background: var(--primary); color: white; font-weight: 600; }
     
-    #welcome-screen input { padding: 14px 20px; font-size: 1.1rem; border-radius: 12px; border: none; margin: 15px; text-align: center; outline: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 280px; font-family: 'Poppins', sans-serif; }
-    #welcome-screen button, .btn-action { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
-    #welcome-screen button:hover, .btn-action:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
-    #welcome-screen button { background: white; color: var(--primary); }
-    #welcome-screen button:hover { background: #f1f5f9; }
+    #pantalla-bienvenida input { padding: 14px 20px; font-size: 1.1rem; border-radius: 12px; border: 1px solid var(--border-color); margin: 15px 0; text-align: center; outline: none; width: 100%; max-width: 280px; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    #pantalla-bienvenida button, .btn-action { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+    #pantalla-bienvenida button:hover, .btn-action:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
     
     .input-form { padding: 10px 14px; font-size: 0.95rem; border: 2px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-color); outline: none; font-family: 'Poppins', sans-serif; transition: var(--transition); }
     .input-form:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
@@ -156,7 +154,6 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
-    .welcome-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #a8c0ff, #3f2b96); z-index: 10001 !important; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
     .hidden { display: none !important; }
     .tutorial-highlight { 
       position: relative !important; 
@@ -169,7 +166,6 @@
       transition: all 0.3s ease !important; 
     }
 
-    /* Pop-up de Desbloqueo de Trofeos */
     .trophy-popup {
       position: fixed;
       top: 30px;
@@ -207,292 +203,297 @@
   </div>
 
   <!-- PANTALLA DE BIENVENIDA -->
-<div id="pantalla-bienvenida" class="card">
-  <h2>¡Hola! Bienvenid@</h2>
-  <p>¿Cómo te llamas?</p>
-  <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí...">
+  <div id="pantalla-bienvenida" class="card" style="max-width: 450px; margin: 40px auto; text-align: center;">
+    <h2>¡Hola! Bienvenid@</h2>
+    <p>¿Cómo te llamas?</p>
+    <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí...">
 
-  <p>¿A qué te dedicas principalmente?</p>
-  <div class="contenedor-botones">
-    <button onclick="registrarUsuario('estudiante')">🎓 Estudiante</button>
-    <button onclick="registrarUsuario('trabajador')">💼 Trabajador</button>
-  </div>
-</div>
-
-  <div class="top-bar">
-    <button class="hamburger" onclick="toggleMenu()">☰</button>
-    <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
-    <div id="nav-menu" class="nav-menu">
-      <button onclick="navegarA('panel')">📌 Panel de Control</button>
-      <button onclick="navegarA('estudio')">⏱️ Modo Estudio (Pomodoro)</button>
-      <button onclick="navegarA('examenes')">📅 Exámenes y Notas</button>
-      <button onclick="navegarA('estadisticas')">📈 Estadísticas y Progreso</button>
-      <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
-      <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
-      <button onclick="navegarA('objetivos')">🎯 Mis Objetivos</button>
-      <button onclick="navegarA('notas')">📝 Notas y Apuntes</button>
-      <button onclick="navegarA('trofeos')">🏆 Trofeos y Logros</button>
-      <button onclick="navegarA('ajustes')">⚙️ Ajustes / Copia</button>
+    <p>¿A qué te dedicas principalmente?</p>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button onclick="registrarUsuario('estudiante')">🎓 Estudiante</button>
+      <button onclick="registrarUsuario('trabajador')">💼 Trabajador</button>
     </div>
   </div>
 
-  <!-- PANEL DE CONTROL -->
-  <div id="page-panel" class="section-page section-active">
-    <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
-      <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
-      <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
-      <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
+  <!-- APP PRINCIPAL (Oculta al inicio hasta registrar usuario) -->
+  <div id="app-principal" style="display: none;">
+
+    <div class="top-bar">
+      <button class="hamburger" onclick="toggleMenu()">☰</button>
+      <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
+      <div id="nav-menu" class="nav-menu">
+        <button onclick="navegarA('panel')">📌 Panel de Control</button>
+        <button onclick="navegarA('estudio')">⏱️ Modo Estudio (Pomodoro)</button>
+        <button onclick="navegarA('examenes')">📅 Exámenes y Notas</button>
+        <button onclick="navegarA('estadisticas')">📈 Estadísticas y Progreso</button>
+        <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
+        <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
+        <button onclick="navegarA('objetivos')">🎯 Mis Objetivos</button>
+        <button onclick="navegarA('notas')">📝 Notas y Apuntes</button>
+        <button onclick="navegarA('trofeos')">🏆 Trofeos y Logros</button>
+        <button onclick="navegarA('ajustes')">⚙️ Ajustes / Copia</button>
+      </div>
     </div>
 
-    <div class="card tarjeta-tutorial" id="card-proxima-clase">
-      <h2>📌 Próxima Clase / Actividad</h2>
-      <p id="info-clase">Cargando...</p>
+    <!-- PANEL DE CONTROL -->
+    <div id="page-panel" class="section-page section-active">
+      <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
+        <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
+        <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
+        <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
+      </div>
+
+      <div class="card tarjeta-tutorial" id="card-proxima-clase">
+        <h2>📌 Próxima Clase / Actividad</h2>
+        <p id="info-clase">Cargando...</p>
+      </div>
+
+      <div class="card tarjeta-tutorial" id="card-objetivos-contenedor">
+        <h2>🎯 Objetivos / Tareas Diarias</h2>
+        <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde resplandeciente cuando completas tus tareas del día.</p>
+        <div id="lista-objetivos-diarios"></div>
+      </div>
+
+      <div class="card tarjeta-tutorial" id="card-examenes-destacados">
+        <h2>📅 Próximos Exámenes Destacados</h2>
+        <div id="lista-examenes-resumen"></div>
+      </div>
+
+      <div class="card tarjeta-tutorial" id="card-estado-sueno">
+        <h2>🌙 Estado del Sueño</h2>
+        <p id="info-sueno">Cargando hábitos de descanso...</p>
+      </div>
+
+      <div class="card tarjeta-tutorial" id="card-horario-semanal">
+        <h2>🗓️ Horario Semanal Completo (Clases y Hobbies)</h2>
+        <div style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <h3 style="margin-top:0; font-size:1rem; color:var(--primary);">Añadir Horas al Horario</h3>
+          <div class="form-group">
+            <select id="horario-dia-select" class="input-form">
+              <option value="1">Lunes</option>
+              <option value="2">Martes</option>
+              <option value="3">Miércoles</option>
+              <option value="4">Jueves</option>
+              <option value="5">Viernes</option>
+              <option value="6">Sábado</option>
+              <option value="0">Domingo</option>
+            </select>
+            
+            <label style="font-size: 0.85rem; font-weight:600;">Desde:</label>
+            <input type="time" id="horario-inicio-time" class="input-form" value="08:00" />
+            <label style="font-size: 0.85rem; font-weight:600;">Hasta:</label>
+            <input type="time" id="horario-fin-time" class="input-form" value="09:00" />
+
+            <select id="horario-materia-select" class="input-form"></select>
+            <input type="text" id="horario-aula-input" class="input-form" placeholder="Aula (opcional)" style="width: 110px;" />
+            <button onclick="agregarHorarioBloque()" class="btn-action">Guardar Bloque</button>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sábado</th><th>Domingo</th></tr>
+            </thead>
+            <tbody id="tabla-horario-body"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <div class="card tarjeta-tutorial" id="card-objetivos-contenedor">
-      <h2>🎯 Objetivos / Tareas Diarias</h2>
-      <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;">El borde cambia a verde resplandeciente cuando completas tus tareas del día.</p>
-      <div id="lista-objetivos-diarios"></div>
+    <!-- MODO ESTUDIO (POMODORO) -->
+    <div id="page-estudio" class="section-page">
+      <div class="card">
+        <h2>⏱️ Modo Estudio (Pomodoro por Bloques)</h2>
+        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
+        <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
+        <div class="timer-display" id="timer-display">25:00</div>
+        <div class="timer-controls">
+          <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
+          <button onclick="pausarTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;">Pausar</button>
+          <button onclick="reiniciarTimer()" class="btn-action" style="background: var(--danger);">Reiniciar</button>
+          <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #a855f7;">⚙️ Configurar Bloques</button>
+        </div>
+
+        <div class="modal-config" id="modal-config-pomodoro">
+          <h3 style="color: var(--primary); margin-top:0;">Personalizar Duración de Bloques</h3>
+          <p style="font-size: 0.9rem; color: #64748b;">Ajusta los minutos de estudio y descanso independientes:</p>
+          <div id="contenedor-bloques-config"></div>
+          <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;">Guardar Configuración</button>
+        </div>
+      </div>
     </div>
 
-    <div class="card tarjeta-tutorial" id="card-examenes-destacados">
-      <h2>📅 Próximos Exámenes Destacados</h2>
-      <div id="lista-examenes-resumen"></div>
-    </div>
-
-    <div class="card tarjeta-tutorial" id="card-estado-sueno">
-      <h2>🌙 Estado del Sueño</h2>
-      <p id="info-sueno">Cargando hábitos de descanso...</p>
-    </div>
-
-    <div class="card tarjeta-tutorial" id="card-horario-semanal">
-      <h2>🗓️ Horario Semanal Completo (Clases y Hobbies)</h2>
-      <div style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
-        <h3 style="margin-top:0; font-size:1rem; color:var(--primary);">Añadir Horas al Horario</h3>
+    <!-- EXÁMENES Y NOTAS -->
+    <div id="page-examenes" class="section-page">
+      <div class="card">
+        <h2>📚 Gestor de Asignaturas</h2>
         <div class="form-group">
-          <select id="horario-dia-select" class="input-form">
-            <option value="1">Lunes</option>
-            <option value="2">Martes</option>
-            <option value="3">Miércoles</option>
-            <option value="4">Jueves</option>
-            <option value="5">Viernes</option>
-            <option value="6">Sábado</option>
-            <option value="0">Domingo</option>
-          </select>
-          
-          <label style="font-size: 0.85rem; font-weight:600;">Desde:</label>
-          <input type="time" id="horario-inicio-time" class="input-form" value="08:00" />
-          <label style="font-size: 0.85rem; font-weight:600;">Hasta:</label>
-          <input type="time" id="horario-fin-time" class="input-form" value="09:00" />
+          <input type="text" id="nueva-asignatura-nombre" class="input-form" placeholder="Nombre de la materia (ej. Historia)" style="flex:1;" />
+          <button onclick="agregarNuevaAsignatura()" class="btn-action">Añadir Materia</button>
+        </div>
+        <div id="lista-gestion-asignaturas" style="margin-top:10px;"></div>
+      </div>
 
-          <select id="horario-materia-select" class="input-form"></select>
-          <input type="text" id="horario-aula-input" class="input-form" placeholder="Aula (opcional)" style="width: 110px;" />
-          <button onclick="agregarHorarioBloque()" class="btn-action">Guardar Bloque</button>
+      <div class="card" id="card-nuevo-examen">
+        <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
+        <div class="form-group">
+          <select id="examen-materia-select" class="input-form"></select>
+          <input type="datetime-local" id="examen-fecha" class="input-form" />
+          <input type="text" id="examen-objetivo-nota" class="input-form" placeholder="Nota objetivo (ej. 18 / 9.5)" style="width:160px;" />
+          <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
+        </div>
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Exámenes Programados</h3>
+        <div id="lista-examenes-completa"></div>
+      </div>
+
+      <div class="card">
+        <h2>📊 Calificaciones y Nota Objetivo Final</h2>
+        <p style="font-size: 0.9rem; color: #64748b;">Las materias se iluminarán en <strong>Verde Neón</strong> al alcanzar o superar tu Meta Objetivo, o en <strong>Rojo Neón</strong> si estás por debajo.</p>
+        <div id="contenedor-asignaturas"></div>
+      </div>
+    </div>
+
+    <!-- ESTADÍSTICAS Y GRÁFICOS -->
+    <div id="page-estadisticas" class="section-page">
+      <div class="card">
+        <h2>📈 Evolución de Promedios por Asignatura (Ejes X / Y)</h2>
+        <div class="canvas-container">
+          <canvas id="canvas-lineas-notas" width="500" height="250"></canvas>
         </div>
       </div>
 
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sábado</th><th>Domingo</th></tr>
-          </thead>
-          <tbody id="tabla-horario-body"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODO ESTUDIO (POMODORO) -->
-  <div id="page-estudio" class="section-page">
-    <div class="card">
-      <h2>⏱️ Modo Estudio (Pomodoro por Bloques)</h2>
-      <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
-      <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
-      <div class="timer-display" id="timer-display">25:00</div>
-      <div class="timer-controls">
-        <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
-        <button onclick="pausarTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;">Pausar</button>
-        <button onclick="reiniciarTimer()" class="btn-action" style="background: var(--danger);">Reiniciar</button>
-        <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #a855f7;">⚙️ Configurar Bloques</button>
-      </div>
-
-      <div class="modal-config" id="modal-config-pomodoro">
-        <h3 style="color: var(--primary); margin-top:0;">Personalizar Duración de Bloques</h3>
-        <p style="font-size: 0.9rem; color: #64748b;">Ajusta los minutos de estudio y descanso independientes:</p>
-        <div id="contenedor-bloques-config"></div>
-        <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;">Guardar Configuración</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- EXÁMENES Y NOTAS -->
-  <div id="page-examenes" class="section-page">
-    <div class="card">
-      <h2>📚 Gestor de Asignaturas</h2>
-      <div class="form-group">
-        <input type="text" id="nueva-asignatura-nombre" class="input-form" placeholder="Nombre de la materia (ej. Historia)" style="flex:1;" />
-        <button onclick="agregarNuevaAsignatura()" class="btn-action">Añadir Materia</button>
-      </div>
-      <div id="lista-gestion-asignaturas" style="margin-top:10px;"></div>
-    </div>
-
-    <div class="card" id="card-nuevo-examen">
-      <h2>📅 Añadir Próximo Examen y Nota Objetivo</h2>
-      <div class="form-group">
-        <select id="examen-materia-select" class="input-form"></select>
-        <input type="datetime-local" id="examen-fecha" class="input-form" />
-        <input type="text" id="examen-objetivo-nota" class="input-form" placeholder="Nota objetivo (ej. 18 / 9.5)" style="width:160px;" />
-        <button onclick="agregarExamen()" class="btn-action">Añadir Examen</button>
-      </div>
-      <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Exámenes Programados</h3>
-      <div id="lista-examenes-completa"></div>
-    </div>
-
-    <div class="card">
-      <h2>📊 Calificaciones y Nota Objetivo Final</h2>
-      <p style="font-size: 0.9rem; color: #64748b;">Las materias se iluminarán en <strong>Verde Neón</strong> al alcanzar o superar tu Meta Objetivo, o en <strong>Rojo Neón</strong> si estás por debajo.</p>
-      <div id="contenedor-asignaturas"></div>
-    </div>
-  </div>
-
-  <!-- ESTADÍSTICAS Y GRÁFICOS -->
-  <div id="page-estadisticas" class="section-page">
-    <div class="card">
-      <h2>📈 Evolución de Promedios por Asignatura (Ejes X / Y)</h2>
-      <div class="canvas-container">
-        <canvas id="canvas-lineas-notas" width="500" height="250"></canvas>
+      <div class="card">
+        <h2>⏱️ Estudio Diario en los Últimos 7 Días (Ejes X / Y)</h2>
+        <div class="canvas-container">
+          <canvas id="canvas-lineas-estudio" width="500" height="250"></canvas>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>⏱️ Estudio Diario en los Últimos 7 Días (Ejes X / Y)</h2>
-      <div class="canvas-container">
-        <canvas id="canvas-lineas-estudio" width="500" height="250"></canvas>
+    <!-- MIS HOBBIES -->
+    <div id="page-hobbies" class="section-page">
+      <div class="card">
+        <h2>🎨 Gestionar Mis Hobbies (Multidía)</h2>
+        <div class="form-group">
+          <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" style="flex:1;" />
+          <input type="time" id="hobby-hora-libre" class="input-form" value="18:00" />
+        </div>
+        <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;">Días de repetición:</label>
+        <div class="days-checkboxes">
+          <label><input type="checkbox" value="1" class="chk-dia"> Lunes</label>
+          <label><input type="checkbox" value="2" class="chk-dia"> Martes</label>
+          <label><input type="checkbox" value="3" class="chk-dia"> Miércoles</label>
+          <label><input type="checkbox" value="4" class="chk-dia"> Jueves</label>
+          <label><input type="checkbox" value="5" class="chk-dia"> Viernes</label>
+          <label><input type="checkbox" value="6" class="chk-dia"> Sábado</label>
+          <label><input type="checkbox" value="0" class="chk-dia"> Domingo</label>
+        </div>
+        <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;">Añadir Hobby</button>
+        
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Hobbies Registrados</h3>
+        <div id="lista-hobbies"></div>
       </div>
-    </div>
-  </div>
-
-  <!-- MIS HOBBIES -->
-  <div id="page-hobbies" class="section-page">
-    <div class="card">
-      <h2>🎨 Gestionar Mis Hobbies (Multidía)</h2>
-      <div class="form-group">
-        <input type="text" id="hobby-nombre" class="input-form" placeholder="Nombre del Hobby / Deporte" style="flex:1;" />
-        <input type="time" id="hobby-hora-libre" class="input-form" value="18:00" />
-      </div>
-      <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;">Días de repetición:</label>
-      <div class="days-checkboxes">
-        <label><input type="checkbox" value="1" class="chk-dia"> Lunes</label>
-        <label><input type="checkbox" value="2" class="chk-dia"> Martes</label>
-        <label><input type="checkbox" value="3" class="chk-dia"> Miércoles</label>
-        <label><input type="checkbox" value="4" class="chk-dia"> Jueves</label>
-        <label><input type="checkbox" value="5" class="chk-dia"> Viernes</label>
-        <label><input type="checkbox" value="6" class="chk-dia"> Sábado</label>
-        <label><input type="checkbox" value="0" class="chk-dia"> Domingo</label>
-      </div>
-      <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;">Añadir Hobby</button>
-      
-      <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Hobbies Registrados</h3>
-      <div id="lista-hobbies"></div>
-    </div>
-  </div>
-
-  <!-- CONTROL DE SUEÑO -->
-  <div id="page-sueno" class="section-page">
-    <div class="card">
-      <h2>💤 Configuración del Control de Sueño</h2>
-      <div class="form-group">
-        <label>Horas de sueño deseadas: <input type="number" step="0.5" id="sueno-horas" class="input-form" value="8" style="width:70px;" /></label>
-        <label>Hora de Dormir: <input type="time" id="sueno-acostar" class="input-form" value="23:00" /></label>
-        <label>Hora de Despertar: <input type="time" id="sueno-despertar" class="input-form" value="07:00" /></label>
-      </div>
-      <button onclick="guardarConfigSueno()" class="btn-action">Guardar Hábitos de Sueño</button>
     </div>
 
-    <div class="card">
-      <h2>🌙 Resumen de Descanso</h2>
-      <div id="resumen-sueno-box">
-        <p>Cargando datos de sueño...</p>
+    <!-- CONTROL DE SUEÑO -->
+    <div id="page-sueno" class="section-page">
+      <div class="card">
+        <h2>💤 Configuración del Control de Sueño</h2>
+        <div class="form-group">
+          <label>Horas de sueño deseadas: <input type="number" step="0.5" id="sueno-horas" class="input-form" value="8" style="width:70px;" /></label>
+          <label>Hora de Dormir: <input type="time" id="sueno-acostar" class="input-form" value="23:00" /></label>
+          <label>Hora de Despertar: <input type="time" id="sueno-despertar" class="input-form" value="07:00" /></label>
+        </div>
+        <button onclick="guardarConfigSueno()" class="btn-action">Guardar Hábitos de Sueño</button>
       </div>
-    </div>
-  </div>
 
-  <!-- MIS OBJETIVOS -->
-  <div id="page-objetivos" class="section-page">
-    <div class="card">
-      <h2>🎯 Administrar Objetivos Diarios</h2>
-      <div class="form-group">
-        <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" placeholder="Nuevo objetivo..." />
-        <button onclick="agregarObjetivo()" class="btn-action">Añadir Objetivo</button>
+      <div class="card">
+        <h2>🌙 Resumen de Descanso</h2>
+        <div id="resumen-sueno-box">
+          <p>Cargando datos de sueño...</p>
+        </div>
       </div>
-      <div id="lista-objetivos-admin"></div>
-    </div>
-
-    <div class="card">
-      <h2>📈 Constancia y Éxito del Mes</h2>
-      <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">0% de Éxito</p>
-      <div class="progress-bar-container">
-        <div id="progress-bar" class="progress-bar"></div>
-      </div>
-      <br>
-      <h3 style="color:var(--primary); font-size:1.1rem;">Registro Mensual (Últimos 30 días)</h3>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr><th>Día</th><th>Estado</th></tr>
-          </thead>
-          <tbody id="tabla-historico"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- NOTAS Y APUNTES -->
-  <div id="page-notas" class="section-page">
-    <div class="card">
-      <h2>📝 Añadir Apunte</h2>
-      <div class="form-group">
-        <select id="nota-asig-select" class="input-form"></select>
-        <input type="text" id="nota-titulo" class="input-form" placeholder="Título del apunte..." style="flex:1;" />
-      </div>
-      <div class="form-group">
-        <textarea id="nota-contenido" class="input-form" placeholder="Escribe tu apunte aquí..." style="width:100%; height:90px; resize:vertical;"></textarea>
-      </div>
-      <button onclick="guardarApunte()" class="btn-action">Guardar Apunte</button>
     </div>
 
-    <div class="card">
-      <h2>🔍 Buscar Apuntes</h2>
-      <div class="form-group">
-        <input type="text" id="buscador-notas" class="input-form" placeholder="Buscar..." style="flex:1;" oninput="filtrarNotas()" />
-        <select id="filtro-asig" class="input-form" onchange="filtrarNotas()">
-          <option value="TODAS">Todas las asignaturas</option>
-        </select>
+    <!-- MIS OBJETIVOS -->
+    <div id="page-objetivos" class="section-page">
+      <div class="card">
+        <h2>🎯 Administrar Objetivos Diarios</h2>
+        <div class="form-group">
+          <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" placeholder="Nuevo objetivo..." />
+          <button onclick="agregarObjetivo()" class="btn-action">Añadir Objetivo</button>
+        </div>
+        <div id="lista-objetivos-admin"></div>
       </div>
-      <div id="contenedor-lista-apuntes" style="margin-top: 15px;"></div>
-    </div>
-  </div>
 
-  <!-- TROFEOS -->
-  <div id="page-trofeos" class="section-page">
-    <div class="card">
-      <h2>🏆 Sala de Trofeos RemindEd</h2>
-      <div class="trophy-grid" id="grid-trofeos"></div>
+      <div class="card">
+        <h2>📈 Constancia y Éxito del Mes</h2>
+        <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">0% de Éxito</p>
+        <div class="progress-bar-container">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <br>
+        <h3 style="color:var(--primary); font-size:1.1rem;">Registro Mensual (Últimos 30 días)</h3>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Día</th><th>Estado</th></tr>
+            </thead>
+            <tbody id="tabla-historico"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- AJUSTES -->
-  <div id="page-ajustes" class="section-page">
-    <div class="card">
-      <h2>⚙️ Copia de Seguridad y Guías</h2>
-      <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
-      <br><br>
-      <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
-      <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos</button>
-      <br><br>
-      <button onclick="reiniciarTutoriales()" class="btn-action" style="background: var(--warning); color: #2b2d42;">🔄 Reactivar Guías Contextuales</button>
+    <!-- NOTAS Y APUNTES -->
+    <div id="page-notas" class="section-page">
+      <div class="card">
+        <h2>📝 Añadir Apunte</h2>
+        <div class="form-group">
+          <select id="nota-asig-select" class="input-form"></select>
+          <input type="text" id="nota-titulo" class="input-form" placeholder="Título del apunte..." style="flex:1;" />
+        </div>
+        <div class="form-group">
+          <textarea id="nota-contenido" class="input-form" placeholder="Escribe tu apunte aquí..." style="width:100%; height:90px; resize:vertical;"></textarea>
+        </div>
+        <button onclick="guardarApunte()" class="btn-action">Guardar Apunte</button>
+      </div>
+
+      <div class="card">
+        <h2>🔍 Buscar Apuntes</h2>
+        <div class="form-group">
+          <input type="text" id="buscador-notas" class="input-form" placeholder="Buscar..." style="flex:1;" oninput="filtrarNotas()" />
+          <select id="filtro-asig" class="input-form" onchange="filtrarNotas()">
+            <option value="TODAS">Todas las asignaturas</option>
+          </select>
+        </div>
+        <div id="contenedor-lista-apuntes" style="margin-top: 15px;"></div>
+      </div>
     </div>
-  </div>
+
+    <!-- TROFEOS -->
+    <div id="page-trofeos" class="section-page">
+      <div class="card">
+        <h2>🏆 Sala de Trofeos RemindEd</h2>
+        <div class="trophy-grid" id="grid-trofeos"></div>
+      </div>
+    </div>
+
+    <!-- AJUSTES -->
+    <div id="page-ajustes" class="section-page">
+      <div class="card">
+        <h2>⚙️ Copia de Seguridad y Guías</h2>
+        <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
+        <br><br>
+        <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
+        <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);">Restaurar Datos</button>
+        <br><br>
+        <button onclick="reiniciarTutoriales()" class="btn-action" style="background: var(--warning); color: #2b2d42;">🔄 Reactivar Guías Contextuales</button>
+      </div>
+    </div>
+
+  </div> <!-- FIN APP PRINCIPAL -->
 
   <!-- TUTORIAL CONTEXTUAL -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
@@ -507,7 +508,6 @@
   <script>
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
 
-    // SISTEMA DE SONIDOS SINTETIZADOS (Web Audio API)
     function reproducirEfectoSonido(tipo = 'trofeo') {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -515,8 +515,7 @@
         const audioCtx = new AudioContext();
 
         if (tipo === 'trofeo') {
-          // Arpegio retro estilo logro
-          const notas = [523.25, 659.25, 783.99, 1046.50]; // Do - Mi - Sol - Do
+          const notas = [523.25, 659.25, 783.99, 1046.50];
           notas.forEach((freq, i) => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -538,7 +537,6 @@
       }
     }
 
-    // MOSTRAR POP-UP DE TROFEO
     function mostrarNotificacionTrofeo(nombre) {
       const popup = document.getElementById("trophy-popup");
       const desc = document.getElementById("trophy-popup-desc");
@@ -780,7 +778,6 @@
       menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
 
-    // --- SISTEMA DE NAVEGACIÓN Y TUTORIALES CONTEXTUALES POR SECCIÓN ---
     const tutorialesPorSeccion = {
       panel: [
         { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel Principal." },
@@ -918,29 +915,32 @@
       navegarA('panel');
     }
 
-    function inicializarUsuario() {
-      const nombre = localStorage.getItem("nombreUsuario");
-      if (nombre) {
-        document.getElementById("form-registro").style.display = "none";
-        document.getElementById("welcome-title").innerText = `¡Hola de nuevo, ${nombre}!`;
-        document.getElementById("greeting-header").innerHTML = `Remind<span>Ed</span> — ${nombre}`;
-        setTimeout(() => { 
-          document.getElementById("welcome-screen").style.display = "none"; 
-          comprobarTutorialSeccion('panel');
-        }, 1200);
+    function registrarUsuario(rolElegido) {
+      const nombre = document.getElementById("input-nombre").value.trim();
+      
+      if (!nombre) {
+        alert("Por favor, escribe tu nombre antes de continuar.");
+        return;
       }
+
+      const perfil = { nombre: nombre, rol: rolElegido };
+      localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
+      cargarInterfazSegunRol();
     }
 
-    function guardarNombre() {
-      const input = document.getElementById('username-input');
-      const nombre = input ? input.value.trim() : '';
-      
-      if (nombre !== '') {
-        localStorage.setItem('nombreUsuario', nombre);
-        const welcome = document.getElementById('welcome-screen');
-        if (welcome) welcome.classList.add('hidden');
-        comprobarTutorialSeccion('panel');
+    function cargarInterfazSegunRol() {
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
+      if (!perfil) return;
+
+      document.getElementById("pantalla-bienvenida").style.display = "none";
+      document.getElementById("app-principal").style.display = "block";
+
+      const header = document.getElementById("greeting-header");
+      if (header) {
+        header.innerHTML = `Remind<span>Ed</span> — ${perfil.nombre}`;
       }
+
+      comprobarTutorialSeccion('panel');
     }
 
     function cargarObjetivos() {
@@ -1543,7 +1543,6 @@
       const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
 
-      // Evaluaciones específicas para las condiciones
       let tieneMinuto90 = false;
       const ahora = new Date();
       examenes.forEach(ex => {
@@ -1575,14 +1574,11 @@
       });
 
       const listaLogros = [
-        // --- 5 TROFEOS BÁSICOS ORIGINALES RESTAURADOS ---
         { id: 't_primer_paso', nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Inicia tu camino de organización guardando tu primera nota o examen.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
         { id: 't_foco_estudio', nivel: 'bronce', nombre: '⏱️ Foco Inquebrantable', desc: 'Completa tu primera sesión de estudio en el modo Pomodoro.', desbloqueado: totalMinutos > 0 },
         { id: 't_archivista', nivel: 'plata', nombre: '📝 El Archivista', desc: 'Escribe y guarda tu primer apunte o nota personal.', desbloqueado: apuntes.length >= 1 },
         { id: 't_equilibrio', nivel: 'plata', nombre: '🎨 Vida Equilibrada', desc: 'Añade al menos un hobby a tu rutina semanal.', desbloqueado: hobbies.length >= 1 },
         { id: 't_maestro_rutina', nivel: 'oro', nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos (2 horas) de estudio total.', desbloqueado: totalMinutos >= 120 },
-
-        // --- TROFEOS ADICIONALES ---
         { id: 't_min90', nivel: 'bronce', nombre: '⏱️ Estrategia del Minuto 90', desc: 'Registra un examen programado para las próximas 24 horas.', desbloqueado: tieneMinuto90 },
         { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Ilusiones', desc: 'Añade tu primer objetivo o meta diaria.', desbloqueado: objetosDiarios.length >= 1 },
         { id: 't_profeta', nivel: 'oro', nombre: '🔮 Profeta del Aprobado', desc: 'Consigue que el promedio de una asignatura sea idéntico a tu nota meta.', desbloqueado: tieneProfeta },
@@ -1676,134 +1672,61 @@
       }
       cargarControlSueno();
     }
-// 1. Solicitar permisos al usuario
-function solicitarPermisoNotificaciones() {
-  if ("Notification" in window) {
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        console.log("Notificaciones permitidas.");
+
+    function solicitarPermisoNotificaciones() {
+      if ("Notification" in window) {
+        Notification.requestPermission();
       }
-    });
-  }
-}
-
-// 2. Función helper para enviar la notificación nativa
-function enviarNotificacion(titulo, cuerpo) {
-  if ("Notification" in window && Notification.permission === "granted") {
-    new Notification(titulo, {
-      body: cuerpo,
-      icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" // Ícono opcional
-    });
-  }
-}
-
-// 3. Verificación de Recordatorios (Estudio y Sueño)
-function verificarRecordatoriosProgramados() {
-  const ahora = new Date();
-  const horas = ahora.getHours();
-  const minutos = ahora.getMinutes();
-  const fechaHoy = ahora.toISOString().split('T')[0];
-
-  // A) Recordatorio de Estudio (Ejemplo: Evalúa a las 16:00 y 20:00 si has estudiado hoy)
-  const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-  const minutosEstudiadosHoy = logEstudio[fechaHoy] || 0;
-
-  if (minutosEstudiadosHoy === 0) {
-    // Alerta a las 17:00
-    if (horas === 17 && minutos === 0) {
-      enviarNotificacion("⏱️ Recordatorio de Estudio", "¿Ya completaste tus sesiones de estudio de hoy? ¡Usa el modo Pomodoro!");
     }
-  }
 
-  // B) Recordatorio para Prepararse para Dormir
-  const cfgSueno = JSON.parse(localStorage.getItem("configSueno")) || { acostar: "23:00" };
-  if (cfgSueno.acostar) {
-    const [horaDormir, minDormir] = cfgSueno.acostar.split(":").map(Number);
-    
-    // Calcular tiempo actual vs hora de dormir en minutos
-    const minutosActuales = horas * 60 + minutos;
-    const minutosParaDormir = horaDormir * 60 + minDormir;
-    
-    // Notificar 30 minutos antes de la hora fijada
-    const tiempoDiferencia = minutosParaDormir - minutosActuales;
-
-    if (tiempoDiferencia === 30) {
-      enviarNotificacion("🌙 Hora de desconectar", "Faltan 30 minutos para tu hora de dormir configurada. Ve preparando tu descanso.");
+    function enviarNotificacion(titulo, cuerpo) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(titulo, {
+          body: cuerpo,
+          icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+        });
+      }
     }
-  }
-}
 
-// 4. Iniciar el verificador en segundo plano (Revisa cada minuto)
-function iniciarBucleNotificaciones() {
-  solicitarPermisoNotificaciones();
-  // Ejecutar inmediatamente y luego verificar cada 60 segundos (60000 ms)
-  verificarRecordatoriosProgramados();
-  setInterval(verificarRecordatoriosProgramados, 60000);
-}
+    function verificarRecordatoriosProgramados() {
+      const ahora = new Date();
+      const horas = ahora.getHours();
+      const minutos = ahora.getMinutes();
+      const fechaHoy = ahora.toISOString().split('T')[0];
 
-// Guardar el nombre y el rol elegido
-function registrarUsuario(rolElegido) {
-  const nombre = document.getElementById("input-nombre").value.trim();
-  
-  if (!nombre) {
-    alert("Por favor, escribe tu nombre antes de continuar.");
-    return;
-  }
+      const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
+      const minutosEstudiadosHoy = logEstudio[fechaHoy] || 0;
 
-  const perfil = {
-    nombre: nombre,
-    rol: rolElegido
-  };
+      if (minutosEstudiadosHoy === 0 && horas === 17 && minutos === 0) {
+        enviarNotificacion("⏱️ Recordatorio de Estudio", "¿Ya completaste tus sesiones de estudio de hoy? ¡Usa el modo Pomodoro!");
+      }
 
-  // Guardar en la memoria del navegador
-  localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
-  
-  // Cargar el panel correspondiente
-  cargarInterfazSegunRol();
-}
+      const cfgSueno = JSON.parse(localStorage.getItem("configSueno")) || { acostar: "23:00" };
+      if (cfgSueno.acostar) {
+        const [horaDormir, minDormir] = cfgSueno.acostar.split(":").map(Number);
+        const minutosActuales = horas * 60 + minutos;
+        const minutosParaDormir = horaDormir * 60 + minDormir;
+        if (minutosParaDormir - minutosActuales === 30) {
+          enviarNotificacion("🌙 Hora de desconectar", "Faltan 30 minutos para tu hora de dormir configurada.");
+        }
+      }
+    }
 
-// Ocultar o mostrar las secciones según el rol
-function cargarInterfazSegunRol() {
-  const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
-  if (!perfil) return; // Si no hay usuario, se queda en la bienvenida
+    document.addEventListener("DOMContentLoaded", () => {
+      aplicarModoOscuroAuto();
+      inicializarExamenesYNotas();
+      cargarHobbies();
+      cargarObjetivos();
+      cargarConfigPomodoro();
+      actualizarPanel();
 
-  // Ocultar pantalla de bienvenida y mostrar la app principal
-  document.getElementById("pantalla-bienvenida").style.display = "none";
-  document.getElementById("app-principal").style.display = "block";
+      if (localStorage.getItem("perfilUsuario")) {
+        cargarInterfazSegunRol();
+      }
 
-  // Mostrar u ocultar módulos según sea Estudiante o Trabajador
-  const seccionEstudios = document.getElementById("seccion-estudios");
-  const seccionTrabajo = document.getElementById("seccion-trabajo");
-
-  if (perfil.rol === "trabajador") {
-    if (seccionEstudios) seccionEstudios.style.display = "none";
-    if (seccionTrabajo) seccionTrabajo.style.display = "block";
-  } else {
-    if (seccionEstudios) seccionEstudios.style.display = "block";
-    if (seccionTrabajo) seccionTrabajo.style.display = "none";
-  }
-
-  // Personalizar el saludo
-  document.getElementById("saludo-usuario").textContent = `¡Hola, ${perfil.nombre}!`;
-}
-
-// Comprobar si ya existe un usuario guardado al abrir la página
-document.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("perfilUsuario")) {
-    cargarInterfazSegunRol();
-  }
-});
-
-// Llamar la función al inicializar la aplicación
-iniciarBucleNotificaciones();
-    // INICIALIZACIÓN
-    aplicarModoOscuroAuto();
-    inicializarUsuario();
-    inicializarExamenesYNotas();
-    cargarHobbies();
-    cargarObjetivos();
-    cargarConfigPomodoro();
-    actualizarPanel();
+      solicitarPermisoNotificaciones();
+      setInterval(verificarRecordatoriosProgramados, 60000);
+    });
   </script>
 </body>
 </html>
