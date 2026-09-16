@@ -101,7 +101,6 @@
     .section-page { display: none; animation: fadeIn 0.3s ease; }
     .section-active { display: block; }
 
-    /* Estilos para el Grid del Dashboard */
     .dashboard-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
     .row { display: flex; gap: 20px; flex-wrap: wrap; }
     .row > .card { flex: 1; min-width: 280px; margin-bottom: 0; }
@@ -231,8 +230,8 @@
       <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
       <div id="nav-menu" class="nav-menu">
         <button onclick="navegarA('panel')">📌 Panel de Control</button>
-        <button onclick="navegarA('estudio')">⏱️ Modo Estudio (Pomodoro)</button>
-        <button onclick="navegarA('examenes')">📅 Exámenes y Notas</button>
+        <button onclick="navegarA('estudio')">⏱️ Modo Enfoque / Pomodoro</button>
+        <button onclick="navegarA('examenes')" class="solo-estudiante">📅 Exámenes y Notas</button>
         <button onclick="navegarA('estadisticas')">📈 Estadísticas y Progreso</button>
         <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
         <button onclick="navegarA('sueno')">💤 Control de Sueño</button>
@@ -285,7 +284,7 @@
             <p class="progress-text" id="goals-text">0 de 0 completados (0%)</p>
 
             <ul class="task-list" id="task-list" style="padding-left: 20px;">
-              <!-- Las tareas creadas por el usuario se insertarán aquí dinámicamente -->
+              <!-- Tareas insertadas dinámicamente -->
             </ul>
 
             <div class="add-task-form form-group">
@@ -308,7 +307,7 @@
         </section>
       </div>
 
-      <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
+      <div class="countdown-box solo-estudiante" id="box-cuenta-atras" style="display: none;">
         <span style="font-weight: 600;">⏳ Próximo Examen Más Cercano:</span>
         <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
         <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
@@ -325,7 +324,7 @@
         <div id="lista-objetivos-diarios"></div>
       </div>
 
-      <div class="card tarjeta-tutorial" id="card-examenes-destacados">
+      <div class="card tarjeta-tutorial solo-estudiante" id="card-examenes-destacados">
         <h2>📅 Próximos Exámenes Destacados</h2>
         <div id="lista-examenes-resumen"></div>
       </div>
@@ -375,9 +374,9 @@
     <!-- MODO ESTUDIO (POMODORO) -->
     <div id="page-estudio" class="section-page">
       <div class="card">
-        <h2>⏱️ Modo Estudio (Pomodoro por Bloques)</h2>
-        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Estudiado hoy: 0 min</p>
-        <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Estudio</p>
+        <h2>⏱️ Modo Enfoque / Pomodoro</h2>
+        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Trabajado hoy: 0 min</p>
+        <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Enfoque</p>
         <div class="timer-display" id="timer-display">25:00</div>
         <div class="timer-controls">
           <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
@@ -388,7 +387,7 @@
 
         <div class="modal-config" id="modal-config-pomodoro">
           <h3 style="color: var(--primary); margin-top:0;">Personalizar Duración de Bloques</h3>
-          <p style="font-size: 0.9rem; color: #64748b;">Ajusta los minutos de estudio y descanso independientes:</p>
+          <p style="font-size: 0.9rem; color: #64748b;">Ajusta los minutos de enfoque y descanso independientes:</p>
           <div id="contenedor-bloques-config"></div>
           <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;">Guardar Configuración</button>
         </div>
@@ -396,7 +395,7 @@
     </div>
 
     <!-- EXÁMENES Y NOTAS -->
-    <div id="page-examenes" class="section-page">
+    <div id="page-examenes" class="section-page solo-estudiante">
       <div class="card">
         <h2>📚 Gestor de Asignaturas</h2>
         <div class="form-group">
@@ -427,7 +426,7 @@
 
     <!-- ESTADÍSTICAS Y GRÁFICOS -->
     <div id="page-estadisticas" class="section-page">
-      <div class="card">
+      <div class="card solo-estudiante">
         <h2>📈 Evolución de Promedios por Asignatura (Ejes X / Y)</h2>
         <div class="canvas-container">
           <canvas id="canvas-lineas-notas" width="500" height="250"></canvas>
@@ -435,7 +434,7 @@
       </div>
 
       <div class="card">
-        <h2>⏱️ Estudio Diario en los Últimos 7 Días (Ejes X / Y)</h2>
+        <h2>⏱️ Tiempo de Enfoque en los Últimos 7 Días (Ejes X / Y)</h2>
         <div class="canvas-container">
           <canvas id="canvas-lineas-estudio" width="500" height="250"></canvas>
         </div>
@@ -536,7 +535,7 @@
         <div class="form-group">
           <input type="text" id="buscador-notas" class="input-form" placeholder="Buscar..." style="flex:1;" oninput="filtrarNotas()" />
           <select id="filtro-asig" class="input-form" onchange="filtrarNotas()">
-            <option value="TODAS">Todas las asignaturas</option>
+            <option value="TODAS">Todas las categorías</option>
           </select>
         </div>
         <div id="contenedor-lista-apuntes" style="margin-top: 15px;"></div>
@@ -817,7 +816,7 @@
       });
 
       if (horasOrdenadas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay clases ni hobbies programados. Registra actividades arriba.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay actividades programadas. Registra bloques arriba.</td></tr>`;
         return;
       }
 
@@ -854,17 +853,11 @@
         { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel Principal." },
         { target: "#card-proxima-clase", texto: "Aquí verás la clase o hobby más próximo según tu horario diario." },
         { target: "#card-objetivos-contenedor", texto: "Revisa y marca tus metas diarias aquí. El borde cambiará de color según tu progreso." },
-        { target: "#card-examenes-destacados", texto: "Consulta tus próximos exámenes y cuentas regresivas activas." },
         { target: "#card-horario-semanal", texto: "Por último, aquí puedes construir tu horario semanal completo ordenado automáticamente." }
       ],
       estudio: [
         { target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Utiliza este reloj para gestionar tus bloques de concentración sin distracciones." },
-        { target: ".timer-controls", texto: "Puedes iniciar, pausar o configurar la duración independiente de estudio y descanso." }
-      ],
-      examenes: [
-        { target: "#page-examenes .card:nth-of-type(1)", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas o añade nuevas clases al sistema." },
-        { target: "#card-nuevo-examen", texto: "📅 <strong>Próximo Examen y Nota Objetivo</strong>: Aquí puedes agendar las fechas clave de tus evaluaciones junto con la calificación deseada." },
-        { target: "#contenedor-asignaturas", texto: "Ingresa tus notas y metas. La tarjeta se iluminará en <strong>Verde Neón</strong> o <strong>Rojo Neón</strong> según tu promedio." }
+        { target: ".timer-controls", texto: "Puedes iniciar, pausar o configurar la duración independiente de trabajo y descanso." }
       ],
       hobbies: [
         { target: "#page-hobbies .card", texto: "🎨 Registra tus actividades extracurriculares o deportes para que se integren automáticamente a tu Horario Semanal." }
@@ -876,8 +869,8 @@
         { target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Define las rutinas o tareas diarias que deseas cumplir regularmente." }
       ],
       notas: [
-        { target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escribe tus apuntes rápidos organizados por asignatura." },
-        { target: "#buscador-notas", texto: "Usa el buscador para filtrar tus temas guardados fácilmente durante tus semanas de repaso." }
+        { target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escribe tus apuntes rápidos organizados por categorías." },
+        { target: "#buscador-notas", texto: "Usa el buscador para filtrar tus temas guardados fácilmente." }
       ]
     };
 
@@ -1010,6 +1003,16 @@
       if (header) {
         header.innerHTML = `Remind<span>Ed</span> — ${perfil.nombre}`;
       }
+
+      // Ocultar o mostrar componentes exclusivos de estudiantes
+      const componentesEstudiante = document.querySelectorAll(".solo-estudiante");
+      componentesEstudiante.forEach(el => {
+        if (perfil.rol === "trabajador") {
+          el.style.display = "none";
+        } else {
+          el.style.display = "";
+        }
+      });
 
       comprobarTutorialSeccion('panel');
     }
@@ -1205,7 +1208,10 @@
       const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
       const contResumen = document.getElementById("lista-examenes-resumen");
       const contCompleto = document.getElementById("lista-examenes-completa");
+      if (!contResumen || !contCompleto) return;
       contResumen.innerHTML = ""; contCompleto.innerHTML = "";
+
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
 
       if (guardados.length === 0) {
         contResumen.innerHTML = "<p style='color:#64748b;'>No tienes exámenes pendientes.</p>";
@@ -1231,7 +1237,9 @@
         contResumen.appendChild(div);
       });
 
-      iniciarCuentaAtras(guardados[0]);
+      if (perfil && perfil.rol !== "trabajador") {
+        iniciarCuentaAtras(guardados[0]);
+      }
     }
 
     function iniciarCuentaAtras(examenCercano) {
@@ -1310,7 +1318,10 @@
     }
 
     function generarGraficosEstadisticas() {
-      generarGraficoNotasCanvas();
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
+      if (!perfil || perfil.rol !== "trabajador") {
+        generarGraficoNotasCanvas();
+      }
       generarGraficoEstudioCanvas();
     }
 
@@ -1528,7 +1539,7 @@
         row.innerHTML = `
           <span><strong>Bloque ${idx + 1}</strong></span>
           <div>
-            <label style="font-size:0.85rem;">Estudio (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
+            <label style="font-size:0.85rem;">Enfoque (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
             <label style="font-size:0.85rem; margin-left:8px;">Descanso (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label>
           </div>
         `;
@@ -1558,7 +1569,7 @@
       const sec = (tiempoRestante % 60).toString().padStart(2, '0');
       const bObj = bloquesConfig[indiceBloqueActual];
       document.getElementById("timer-display").innerText = `${min}:${sec}`;
-      document.getElementById("timer-mode").innerText = `Bloque ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Estudio (${bObj.estudio} min)` : `Descanso (${bObj.descanso} min)`}`;
+      document.getElementById("timer-mode").innerText = `Bloque ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Enfoque (${bObj.estudio} min)` : `Descanso (${bObj.descanso} min)`}`;
     }
 
     function registrarTiempoEstudio(minutos) {
@@ -1573,7 +1584,7 @@
     function actualizarTiempoEstudiadoHoy() {
       const fechaHoy = new Date().toISOString().split('T')[0];
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
-      document.getElementById("tiempo-estudiado-hoy").innerText = `Estudiado hoy: ${logEstudio[fechaHoy] || 0} min`;
+      document.getElementById("tiempo-estudiado-hoy").innerText = `Trabajado hoy: ${logEstudio[fechaHoy] || 0} min`;
     }
 
     function iniciarTimer() {
@@ -1645,18 +1656,12 @@
       });
 
       const listaLogros = [
-        { id: 't_primer_paso', nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Inicia tu camino de organización guardando tu primera nota o examen.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
-        { id: 't_foco_estudio', nivel: 'bronce', nombre: '⏱️ Foco Inquebrantable', desc: 'Completa tu primera sesión de estudio en el modo Pomodoro.', desbloqueado: totalMinutos > 0 },
+        { id: 't_primer_paso', nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Inicia tu camino de organización guardando tu primera nota o evento.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0 || apuntes.length > 0) },
+        { id: 't_foco_estudio', nivel: 'bronce', nombre: '⏱️ Foco Inquebrantable', desc: 'Completa tu primera sesión de trabajo en el modo Pomodoro.', desbloqueado: totalMinutos > 0 },
         { id: 't_archivista', nivel: 'plata', nombre: '📝 El Archivista', desc: 'Escribe y guarda tu primer apunte o nota personal.', desbloqueado: apuntes.length >= 1 },
         { id: 't_equilibrio', nivel: 'plata', nombre: '🎨 Vida Equilibrada', desc: 'Añade al menos un hobby a tu rutina semanal.', desbloqueado: hobbies.length >= 1 },
-        { id: 't_maestro_rutina', nivel: 'oro', nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos (2 horas) de estudio total.', desbloqueado: totalMinutos >= 120 },
-        { id: 't_min90', nivel: 'bronce', nombre: '⏱️ Estrategia del Minuto 90', desc: 'Registra un examen programado para las próximas 24 horas.', desbloqueado: tieneMinuto90 },
-        { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Ilusiones', desc: 'Añade tu primer objetivo o meta diaria.', desbloqueado: objetosDiarios.length >= 1 },
-        { id: 't_profeta', nivel: 'oro', nombre: '🔮 Profeta del Aprobado', desc: 'Consigue que el promedio de una asignatura sea idéntico a tu nota meta.', desbloqueado: tieneProfeta },
-        { id: 't_optimista', nivel: 'bronce', nombre: '✨ Optimista Incorregible', desc: 'Configura una nota objetivo exigente (18+) en alguna materia.', desbloqueado: tieneOptimista },
-        { id: 't_simulacros', nivel: 'oro', nombre: '🎓 Doctorado en Simulacros', desc: 'Registra al menos 5 exámenes programados en el sistema.', desbloqueado: examenes.length >= 5 },
-        { id: 't_calculadora', nivel: 'diamante', nombre: '🧮 Calculadora Humana', desc: 'Acumula más de 10 notas registradas entre tus materias.', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
-        { id: 't_fenix', nivel: 'diamante', nombre: '🔥 El Fénix del 4.9', desc: 'Registra una nota de 4.9 y demuestra tu capacidad de superación.', desbloqueado: tieneFenix }
+        { id: 't_maestro_rutina', nivel: 'oro', nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos (2 horas) de enfoque total.', desbloqueado: totalMinutos >= 120 },
+        { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Objetivos', desc: 'Añade tu primer objetivo o meta diaria.', desbloqueado: objetosDiarios.length >= 1 }
       ];
 
       const prevDesbloqueados = JSON.parse(localStorage.getItem("trofeosDesbloqueadosNotificados")) || {};
@@ -1732,13 +1737,13 @@
       actividadesHoy.sort((a, b) => a.inicio.localeCompare(b.inicio));
 
       if (actividadesHoy.length === 0) {
-        elClase.innerHTML = "¡Sin actividades programadas para hoy! 📖 Día libre.";
+        elClase.innerHTML = "¡Sin actividades programadas para hoy!";
       } else {
         const proxima = actividadesHoy.find(a => a.inicio > horaStr);
         if (proxima) {
           elClase.innerHTML = `Próxima actividad: <strong>${proxima.nombre}</strong> a las ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.`;
         } else {
-          elClase.innerHTML = "Terminaste todas tus actividades programadas por hoy. 📚";
+          elClase.innerHTML = "Terminaste todas tus actividades programadas por hoy. 👏";
         }
       }
       cargarControlSueno();
@@ -1769,7 +1774,7 @@
       const minutosEstudiadosHoy = logEstudio[fechaHoy] || 0;
 
       if (minutosEstudiadosHoy === 0 && horas === 17 && minutos === 0) {
-        enviarNotificacion("⏱️ Recordatorio de Estudio", "¿Ya completaste tus sesiones de estudio de hoy? ¡Usa el modo Pomodoro!");
+        enviarNotificacion("⏱️ Recordatorio de Enfoque", "¿Ya completaste tus sesiones de trabajo de hoy? ¡Usa el modo Pomodoro!");
       }
 
       const cfgSueno = JSON.parse(localStorage.getItem("configSueno")) || { acostar: "23:00" };
@@ -1799,10 +1804,8 @@
       setInterval(verificarRecordatoriosProgramados, 60000);
     });
 
-    // Arreglo global para guardar las tareas del usuario
     let userTasks = [];
 
-    // Función para agregar un objetivo escrito por el usuario
     function addTask() {
       const input = document.getElementById('new-task-input');
       const taskText = input.value.trim();
@@ -1810,12 +1813,11 @@
       if (taskText === "") return;
 
       userTasks.push({ text: taskText, completed: false });
-      input.value = ""; // Limpiar el campo de texto
+      input.value = "";
 
       renderTasks();
     }
 
-    // Dibujar las tareas en pantalla
     function renderTasks() {
       const listContainer = document.getElementById('task-list');
       listContainer.innerHTML = "";
@@ -1834,7 +1836,6 @@
         listContainer.appendChild(li);
       });
 
-      // Actualizar métricas de progreso
       const total = userTasks.length;
       const percentage = total === 0 ? 0 : Math.round((completedCount / total) * 100);
 
@@ -1842,13 +1843,11 @@
       document.getElementById('goals-text').innerText = `${completedCount} de ${total} completados (${percentage}%)`;
     }
 
-    // Cambiar estado de la tarea
     function toggleTask(index) {
       userTasks[index].completed = !userTasks[index].completed;
       renderTasks();
     }
 
-    // Función para registrar datos de descanso
     function logSleep() {
       const hours = prompt("¿Cuántas horas dormiste anoche?:");
       if (hours) {
@@ -1856,7 +1855,6 @@
       }
     }
 
-    // Funciones dummy para los botones de las tarjetas si no estaban implementadas
     function startActivity() {
       alert("¡Actividad iniciada!");
     }
