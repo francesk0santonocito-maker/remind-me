@@ -2264,37 +2264,6 @@ function renderizarGraficoNotas() {
         if (app) app.style.display = "none";
       }
     });
-
-    function alternarTema() {
-  document.body.classList.toggle('light-mode');
-  
-  const esClaro = document.body.classList.contains('light-mode');
-  
-  if (esClaro) {
-    localStorage.setItem('temaRemindEd', 'claro');
-  } else {
-    localStorage.setItem('temaRemindEd', 'oscuro');
-  }
-  
-  actualizarTextoBotonTema();
-}
-
-function actualizarTextoBotonTema() {
-  const btn = document.getElementById('btn-cambiar-tema');
-  if (btn) {
-    const esClaro = document.body.classList.contains('light-mode');
-    btn.textContent = esClaro ? '🌙 Cambiar a Oscuro' : '☀️ Cambiar a Claro';
-  }
-}
-
-// Cargar el tema guardado automáticamente al iniciar la app
-window.addEventListener('DOMContentLoaded', () => {
-  const temaGuardado = localStorage.getItem('temaRemindEd');
-  if (temaGuardado === 'claro') {
-    document.body.classList.add('light-mode');
-  }
-  actualizarTextoBotonTema();
-});
   </script>
 </body>
 </html>
