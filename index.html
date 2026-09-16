@@ -310,16 +310,7 @@
       </div>
     </div>
 
-    <!-- Opción de Tema en Ajustes -->
-<div class="card" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-  <div>
-    <h3 style="margin: 0; font-size: 1.1rem;">🎨 Apariencia de la Aplicación</h3>
-    <p style="margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.8;">Alterna entre el modo oscuro nocturno y el modo claro.</p>
-  </div>
-  <button onclick="alternarTema()" id="btn-cambiar-tema" style="padding: 8px 16px; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 500;">
-    🌓 Cambiar Tema
-  </button>
-</div>
+
 
     <!-- PANEL DE CONTROL -->
     <div id="page-panel" class="section-page section-active">
@@ -601,10 +592,23 @@
     </div>
 
     <!-- AJUSTES -->
+    <!-- AJUSTES -->
     <div id="page-ajustes" class="section-page">
       <div class="card" id="card-panel-colores">
         <h2>🎨 Personalizar Colores del Tema</h2>
         <p style="font-size: 0.85rem; color: #64748b;">Elige el color principal que prefieras para personalizar la interfaz:</p>
+        
+        <!-- BOTÓN DE CAMBIO DE TEMA MOVIDO AQUÍ -->
+        <div style="margin: 15px 0; display: flex; justify-content: space-between; align-items: center; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <div>
+            <h3 style="margin: 0; font-size: 1rem;">Modo Oscuro / Claro</h3>
+            <p style="margin: 3px 0 0 0; font-size: 0.85rem; opacity: 0.8;">Alterna la apariencia visual.</p>
+          </div>
+          <button onclick="alternarTema()" id="btn-cambiar-tema" class="btn-action" style="padding: 8px 16px;">🌓 Cambiar Tema</button>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
+          <!-- (Tus botones de colores existentes siguen aquí...) -->
         
         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
           <button onclick="cambiarColorTema('#6c5ce7', '#00cec9')" class="btn-small" style="background: #6c5ce7; border: none; color: white;">💜 Morado RemindEd</button>
