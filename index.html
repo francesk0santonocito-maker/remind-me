@@ -114,9 +114,6 @@
     .progress-bar-container { background: var(--item-bg); border-radius: 12px; height: 16px; width: 100%; overflow: hidden; margin-top: 10px; border: 1px solid var(--border-color); }
     .progress-bar { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 12px; }
     
-    .timer-display { font-size: 3.5rem; font-weight: 700; text-align: center; margin: 20px 0; color: var(--primary); letter-spacing: -2px; }
-    .timer-controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-    
     .materia-card { border: 2px solid var(--border-color); padding: 18px; border-radius: 18px; margin-bottom: 16px; background: var(--item-bg); transition: var(--transition); }
     .promedio-tag { font-weight: 600; color: var(--primary); float: right; background: rgba(108, 92, 231, 0.1); padding: 3px 12px; border-radius: 8px; font-size: 0.9rem; }
 
@@ -302,7 +299,7 @@
       <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
       <div id="nav-menu" class="nav-menu">
         <button onclick="navegarA('panel')">📌 Panel de Control</button>
-        <button onclick="navegarA('estudio')">🍅 Modo pomodoro</button>
+        <button id="menu-estudio" onclick="navegarA('estudio')">🍅 Modo pomodoro</button>
         <button id="menu-eventos" onclick="navegarA('examenes')">📅 Eventos y Reuniones</button>
         <button onclick="navegarA('hobbies')">🎨 Mis Hobbies</button>
         <button onclick="navegarA('sueno')">💤 Control del Sueño</button>
@@ -440,8 +437,8 @@
         <h2>⏱️ Modo Concentración (Pomodoro)</h2>
         <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Tiempo enfocado hoy: 0 min</p>
         <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Trabajo/Estudio</p>
-        <div class="timer-display" id="timer-display">25:00</div>
-        <div class="timer-controls">
+        <div class="timer-display" id="timer-display" style="font-size: 3.5rem; font-weight: 700; text-align: center; margin: 20px 0; color: var(--primary); letter-spacing: -2px;">25:00</div>
+        <div class="timer-controls" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
           <button onclick="iniciarTimer()" class="btn-action">Iniciar</button>
           <button onclick="pausarTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;">Pausar</button>
           <button onclick="reiniciarTimer()" class="btn-action" style="background: var(--danger);">Reiniciar</button>
@@ -748,108 +745,106 @@
       cargarInterfazSegunRol();
     }
 
-function cargarAsignaturasYNotas() {
-  const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-  const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
-  const contenedor = document.getElementById("contenedor-asignaturas");
-  if (!contenedor) return;
-  contenedor.innerHTML = "";
+    function cargarAsignaturasYNotas() {
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+      const contenedor = document.getElementById("contenedor-asignaturas");
+      if (!contenedor) return;
+      contenedor.innerHTML = "";
 
-  const escala = obtenerConfigEscala();
+      const escala = obtenerConfigEscala();
 
-  obtenerAsignaturas().forEach((asig) => {
-    const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
-    const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
-    const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
+      obtenerAsignaturas().forEach((asig) => {
+        const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
+        const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
+        const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
 
-    const suma = listaNotas.reduce((a, b) => a + b, 0);
-    const promedioNum = listaNotas.length > 0 ? (suma / listaNotas.length) : null;
-    const promedioStr = promedioNum !== null ? promedioNum.toFixed(1) : "-";
+        const suma = listaNotas.reduce((a, b) => a + b, 0);
+        const promedioNum = listaNotas.length > 0 ? (suma / listaNotas.length) : null;
+        const promedioStr = promedioNum !== null ? promedioNum.toFixed(1) : "-";
 
-    let notasItemsHTML = "";
-    listaNotas.forEach((n, idx) => {
-      notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
-    });
+        let notasItemsHTML = "";
+        listaNotas.forEach((n, idx) => {
+          notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
+        });
 
-    const div = document.createElement("div");
-    div.className = "materia-card";
-    div.innerHTML = `
-      <div>
-        <strong>${asig}</strong>
-        <span class="promedio-tag">Promedio: ${promedioStr} / ${escala.max}</span>
-      </div>
-      <div style="margin-top: 10px;" class="form-group">
-        <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="${escala.label}" id="input-nota-${asig}" class="input-form" style="width: 130px;" />
-        <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Registro</button>
-        <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
-          <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
-          <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="Ej. ${escala.metaEjemplo}" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
-        </div>
-      </div>
-      <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
-        <strong>Registros guardados:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin datos guardados"}
-      </div>
-    `;
-    contenedor.appendChild(div);
-  });
+        const div = document.createElement("div");
+        div.className = "materia-card";
+        div.innerHTML = `
+          <div>
+            <strong>${asig}</strong>
+            <span class="promedio-tag">Promedio: ${promedioStr} / ${escala.max}</span>
+          </div>
+          <div style="margin-top: 10px;" class="form-group">
+            <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="${escala.label}" id="input-nota-${asig}" class="input-form" style="width: 130px;" />
+            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Registro</button>
+            <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+              <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
+              <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="Ej. ${escala.metaEjemplo}" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
+            </div>
+          </div>
+          <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
+            <strong>Registros guardados:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin datos guardados"}
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
 
-  renderizarGraficoNotas();
-}
+      renderizarGraficoNotas();
+    }
 
-function renderizarGraficoNotas() {
-  const ctx = document.getElementById("chart-notas");
-  if (!ctx || typeof Chart === "undefined") return;
+    function renderizarGraficoNotas() {
+      const ctx = document.getElementById("chart-notas");
+      if (!ctx || typeof Chart === "undefined") return;
 
-  const asignaturas = obtenerAsignaturas();
-  const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-  const escala = obtenerConfigEscala();
+      const asignaturas = obtenerAsignaturas();
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const escala = obtenerConfigEscala();
 
-  const labels = asignaturas;
-  const dataPromedios = asignaturas.map(asig => {
-    const datos = notasGuardadas[asig];
-    const lista = Array.isArray(datos) ? datos : (datos ? datos.lista || [] : []);
-    if (lista.length === 0) return 0;
-    const suma = lista.reduce((a, b) => a + Number(b), 0);
-    return parseFloat((suma / lista.length).toFixed(1));
-  });
+      const labels = asignaturas;
+      const dataPromedios = asignaturas.map(asig => {
+        const datos = notasGuardadas[asig];
+        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista || [] : []);
+        if (lista.length === 0) return 0;
+        const suma = lista.reduce((a, b) => a + Number(b), 0);
+        return parseFloat((suma / lista.length).toFixed(1));
+      });
 
-  if (window.chartInstance) {
-    window.chartInstance.destroy();
-  }
+      if (window.chartInstance) {
+        window.chartInstance.destroy();
+      }
 
-  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#6c5ce7';
+      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#6c5ce7';
 
-  window.chartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: `Promedio / Rendimiento Actual (${escala.label})`,
-        data: dataPromedios,
-        backgroundColor: primaryColor + 'a6',
-        borderColor: primaryColor,
-        borderWidth: 2,
-        borderRadius: 8
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          min: 0,
-          max: escala.max,
-          ticks: {
-            stepSize: escala.max <= 10 ? 1 : (escala.max <= 20 ? 2 : 10)
+      window.chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: `Promedio / Rendimiento Actual (${escala.label})`,
+            data: dataPromedios,
+            backgroundColor: primaryColor + 'a6',
+            borderColor: primaryColor,
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 0,
+              max: escala.max,
+              ticks: {
+                stepSize: escala.max <= 10 ? 1 : (escala.max <= 20 ? 2 : 10)
+              }
+            }
           }
         }
-      }
+      });
     }
-  });
-}
-
-
 
     const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
     const PROYECTOS_PREDETERMINADOS = ["Proyecto A", "Reuniones", "Administración", "Capacitación"];
@@ -1024,62 +1019,6 @@ function renderizarGraficoNotas() {
       renderizarHorarioTabla();
     }
 
-    function cargarAsignaturasYNotas() {
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
-      const contenedor = document.getElementById("contenedor-asignaturas");
-      if (!contenedor) return;
-      contenedor.innerHTML = "";
-
-      obtenerAsignaturas().forEach((asig) => {
-        const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
-        const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
-        const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
-
-        const suma = listaNotas.reduce((a, b) => a + b, 0);
-        const promedioNum = listaNotas.length > 0 ? (suma / listaNotas.length) : null;
-        const promedioStr = promedioNum !== null ? promedioNum.toFixed(1) : "-";
-
-        let notasItemsHTML = "";
-        listaNotas.forEach((n, idx) => {
-          notasItemsHTML += `<span style="display:inline-block; background:var(--card-bg); border:1px solid var(--border-color); padding:3px 8px; border-radius:8px; margin-right:6px; margin-bottom:6px; font-weight:500;">${n} <button onclick="quitarNotaAsignatura('${asig}', ${idx})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">×</button></span>`;
-        });
-
-        let glowClass = "";
-        const metaNum = parseFloat(metaFinalVal);
-        if (promedioNum !== null && !isNaN(metaNum)) {
-          if (promedioNum >= metaNum) glowClass = "glow-border-green";
-          else glowClass = "glow-border-red";
-        }
-
-        const div = document.createElement("div");
-        div.className = `materia-card ${glowClass}`;
-        div.innerHTML = `
-          <div>
-            <strong>${asig}</strong>
-            <span class="promedio-tag">Promedio / Puntaje: ${promedioStr}</span>
-          </div>
-          <div style="margin-top: 10px;" class="form-group">
-            <input type="number" step="0.1" min="0" max="20" placeholder="Puntaje/Nota" id="input-nota-${asig}" class="input-form" style="width: 110px;" />
-            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Registro</button>
-            <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
-              <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
-              <input type="text" placeholder="Ej. 18" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
-            </div>
-          </div>
-          <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
-            <strong>Registros guardados:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin datos guardados"}
-          </div>
-        `;
-        contenedor.appendChild(div);
-      });
-
-      renderizarGraficoNotas();
-    }
-
-    // La función renderizarGraficoNotas principal está definida arriba.
-
-
     function agregarHorarioBloque() {
       const dia = document.getElementById("horario-dia-select").value;
       const hInicio = document.getElementById("horario-inicio-time").value;
@@ -1191,10 +1130,6 @@ function renderizarGraficoNotas() {
             { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
             { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus jornadas de trabajo y bloques libres de la semana.</strong><br><br>💡 <em>Recuerda que puedes cambiar o añadir tu actividad laboral y reuniones en la sección de <strong>Eventos y Reuniones</strong> del menú.</em>" }
           ],
-          estudio: [
-            { target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Usa el temporizador para gestionar tus bloques de trabajo intensivo." },
-            { target: "button[onclick='toggleConfigPomodoro()']", texto: "⚙️ <strong>Configurar Bloques</strong>: Haz clic aquí para personalizar los minutos exactos de enfoque y descanso de tus bloques." }
-          ],
           examenes: [
             { target: "#card-gestion-materias", texto: "💼 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." },
             { target: "#card-nuevo-examen", texto: "📅 <strong>Agendar Eventos</strong>: Registra tus fechas límite, entregas de proyectos o reuniones." },
@@ -1273,8 +1208,6 @@ function renderizarGraficoNotas() {
       const vistos = JSON.parse(localStorage.getItem("tutorialesVistos")) || {};
       const tuts = obtenerTutorialesConfig();
 
-      // El tutorial del Panel es el tutorial principal.
-      // Los demás son guías contextuales de cada sección.
       if (!vistos[seccion] && tuts[seccion]) {
         seccionActualTutorial = seccion;
         pasoTutorialActual = 0;
@@ -1351,20 +1284,6 @@ function renderizarGraficoNotas() {
       navegarA("panel");
     }
 
-    function registrarUsuario(rolElegido) {
-      const nombre = document.getElementById("input-nombre").value.trim();
-      
-      if (!nombre) {
-        alert("Por favor, escribe tu nombre antes de continuar.");
-        return;
-      }
-
-      const perfil = { nombre: nombre, rol: rolElegido };
-      localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
-      localStorage.removeItem("misAsignaturasPersonalizadas");
-      cargarInterfazSegunRol();
-    }
-
     function cargarInterfazSegunRol() {
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
       if (!perfil) return;
@@ -1385,6 +1304,7 @@ function renderizarGraficoNotas() {
       const cExamenes = document.getElementById("card-examenes-destacados");
       const cObjetivosEstudiante = document.getElementById("card-objetivos-contenedor");
       const menuEventos = document.getElementById("menu-eventos");
+      const menuEstudio = document.getElementById("menu-estudio");
       
       const cGraficoNotas = document.getElementById("card-grafico-notas");
       const tProxAct = document.getElementById("titulo-proxima-actividad");
@@ -1401,6 +1321,7 @@ function renderizarGraficoNotas() {
         if(cExamenes) cExamenes.style.display = "none";
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "none";
         if(cGraficoNotas) cGraficoNotas.style.display = "block";
+        if(menuEstudio) menuEstudio.style.display = "none"; // Oculta el modo pomodoro del menú para trabajadores
 
         if(menuEventos) menuEventos.innerText = "📅 Eventos y Reuniones";
         if(tMatGestor) tMatGestor.innerText = "💼 Gestor de Proyectos / Áreas";
@@ -1416,6 +1337,7 @@ function renderizarGraficoNotas() {
         if(cExamenes) cExamenes.style.display = "block";
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "block";
         if(cGraficoNotas) cGraficoNotas.style.display = "block";
+        if(menuEstudio) menuEstudio.style.display = "block";
 
         if(menuEventos) menuEventos.innerText = "📅 Eventos y Exámenes";
         if(tProxAct) tProxAct.innerText = "🎓 Próxima Clase / Actividad";
@@ -1628,54 +1550,6 @@ function renderizarGraficoNotas() {
       guardados.splice(index, 1);
       localStorage.setItem("misObjetivos", JSON.stringify(guardados));
       cargarObjetivos();
-    }
-
-    function agregarNota(asignatura) {
-      const input = document.getElementById(`input-nota-${asignatura}`);
-      const valor = parseFloat(input.value);
-      if (!isNaN(valor)) {
-        const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-        if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = { lista: [], metaFinal: "" };
-        if (Array.isArray(notasGuardadas[asignatura])) {
-          notasGuardadas[asignatura] = { lista: notasGuardadas[asignatura], metaFinal: "" };
-        }
-        notasGuardadas[asignatura].lista.push(valor);
-        localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
-        input.value = "";
-        cargarAsignaturasYNotas();
-        evaluarTrofeos();
-      }
-    }
-
-    function quitarNotaAsignatura(asignatura, indexNota) {
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      if (notasGuardadas[asignatura]) {
-        if (Array.isArray(notasGuardadas[asignatura])) {
-          notasGuardadas[asignatura].splice(indexNota, 1);
-        } else if (notasGuardadas[asignatura].lista) {
-          notasGuardadas[asignatura].lista.splice(indexNota, 1);
-        }
-        localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
-        cargarAsignaturasYNotas();
-      }
-    }
-
-    function guardarMetaAsignatura(asignatura) {
-      const metaInput = document.getElementById(`input-meta-${asignatura}`).value.trim();
-      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      if (!notasGuardadas[asignatura]) notasGuardadas[asignatura] = { lista: [], metaFinal: metaInput };
-      if (Array.isArray(notasGuardadas[asignatura])) {
-        notasGuardadas[asignatura] = { lista: notasGuardadas[asignatura], metaFinal: metaInput };
-      } else {
-        notasGuardadas[asignatura].metaFinal = metaInput;
-      }
-      localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
-      
-      const metas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
-      metas[asignatura] = metaInput;
-      localStorage.setItem("metasAsignaturas", JSON.stringify(metas));
-      cargarAsignaturasYNotas();
-      evaluarTrofeos();
     }
 
     function cargarHobbies() {
