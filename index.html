@@ -254,8 +254,17 @@
     </div>
   </div>
 
-  <!-- PANTALLA DE BIENVENIDA / ONBOARDING (Sin paso de idioma obligatorio) -->
-  <div id="pantalla-bienvenida" class="welcome-screen">
+  <!-- PANTALLA DE BIENVENIDA / ONBOARDING -->
+  <div id="pantalla-bienvenida" class="welcome-screen" style="position: relative;">
+    <!-- Selector de idioma exclusivo de la pantalla de inicio (Arriba a la derecha) -->
+    <div style="position: absolute; top: 20px; right: 20px;">
+      <select id="top-select-idioma" class="lang-selector-top" onchange="cambiarIdiomaDesdeTop(this.value)">
+        <option value="en">🇬🇧 EN</option>
+        <option value="es">🇪🇸 ES</option>
+        <option value="pt">🇧🇷 PT</option>
+      </select>
+    </div>
+
     <div class="welcome-card">
       <h2 style="font-size: 1.5rem; margin-bottom: 10px; text-align: center; width: 100%; display: block;" data-i18n="welcome_title">Welcome to <span style="color: var(--primary);">Remind<span style="color: var(--accent);">Ed</span></span>!</h2>
       <p class="welcome-subtitle" data-i18n="welcome_subtitle">Let's personalize your experience.</p>
@@ -302,12 +311,7 @@
       <button class="hamburger" onclick="toggleMenu()">☰</button>
       <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
       <div class="top-bar-right">
-        <!-- Selector de idioma flotante superior (Predeterminado Inglés) -->
-        <select id="top-select-idioma" class="lang-selector-top" onchange="cambiarIdiomaDesdeTop(this.value)">
-          <option value="en">🇬🇧 EN</option>
-          <option value="es">🇪🇸 ES</option>
-          <option value="pt">🇧🇷 PT</option>
-        </select>
+        <!-- El selector de idioma ya no aparece aquí en el panel principal -->
       </div>
       <div id="nav-menu" class="nav-menu">
         <button onclick="navegarA('panel')" data-i18n="menu_panel">📌 Control Panel</button>
@@ -1913,7 +1917,7 @@
 
         if(menuEventos) menuEventos.innerText = idiomaGlobal === 'es' ? "📅 Eventos y Exámenes" : idiomaGlobal === 'pt' ? "📅 Eventos e Exames" : "📅 Events & Exams";
         if(tProxAct) tProxAct.innerText = idiomaGlobal === 'es' ? "🎓 Próxima Clase / Actividad" : idiomaGlobal === 'pt' ? "🎓 Próxima Aula / Atividade" : "🎓 Next Class / Activity";
-        if(tBloqEv) tBloqEv.innerText = idiomaGlobal === 'es' ? "📅 Próximos Exámenes Destacados" : idiomaGlobal === 'pt' ? "📅 Próximos Exames em Destaque" : "📅 Upcoming Featured Exams";
+        if(tBloqEv) tBloqEv.innerText = idiomaGlobal === 'es' ? "📅 Próximos Exámenes Destacados" : idiomaGlobal === 'pt' ? "📅 Próximos Exámenes em Destaque" : "📅 Upcoming Featured Exams";
         if(tMatGestor) tMatGestor.innerText = idiomaGlobal === 'es' ? "📚 Gestor de Asignaturas" : idiomaGlobal === 'pt' ? "📚 Gerenciador de Matérias" : "📚 Subjects Manager";
         if(tAgendarEv) tAgendarEv.innerText = idiomaGlobal === 'es' ? "📅 Añadir Próximo Examen" : idiomaGlobal === 'pt' ? "📅 Adicionar Próximo Exame" : "📅 Add Upcoming Exam";
         if(tRendimientoNotas) tRendimientoNotas.innerText = idiomaGlobal === 'es' ? "📊 Registro de Notas y Calificaciones" : idiomaGlobal === 'pt' ? "📊 Registro de Notas e Avaliações" : "📊 Grades & Ratings Record";
