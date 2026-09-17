@@ -380,6 +380,38 @@
   </div>
 </div>
 
+<!-- MODO BLURTING (TÉCNICA DE ESTUDIO) -->
+<div id="page-blurting" class="section-page">
+  <div class="card">
+    <h2>🧠 Blurting Mode (Active Recall)</h2>
+    <p style="text-align: center; color: #64748b; font-size: 0.95rem;">
+      Escribe todo lo que recuerdes sobre el tema sin mirar tus apuntes antes de que el tiempo acabe.
+    </p>
+    
+    <!-- Controles de tiempo ajustables (3, 4 o 5 minutos) -->
+    <div style="display: flex; justify-content: center; gap: 10px; margin: 15px 0;">
+      <button class="btn btn-small" onclick="ajustarBlurtingTime(3)">3 Min</button>
+      <button class="btn btn-small" onclick="ajustarBlurtingTime(4)">4 Min</button>
+      <button class="btn btn-small" onclick="ajustarBlurtingTime(5)">5 Min</button>
+    </div>
+
+    <!-- Visualizador del temporizador -->
+    <div id="blurting-timer-display" style="font-size: 3rem; font-weight: 700; text-align: center; margin: 15px 0; color: var(--primary);">
+      03:00
+    </div>
+
+    <!-- Botones de control -->
+    <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 20px;">
+      <button onclick="iniciarBlurtingTimer()" class="btn-action">Iniciar Blurting</button>
+      <button onclick="pausarBlurtingTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;">Pausar</button>
+      <button onclick="reiniciarBlurtingTimer()" class="btn-action" style="background: var(--danger);">Reiniciar</button>
+    </div>
+
+    <!-- Área de escritura libre -->
+    <textarea id="blurting-text-area" class="input-form" placeholder="Escribe aquí todo lo que recuerdes del tema..." style="width: 100%; height: 200px; resize: vertical; box-sizing: border-box;"></textarea>
+  </div>
+</div>
+
   <!-- APP PRINCIPAL -->
   <div id="app-principal" style="display: none;">
 
@@ -796,7 +828,6 @@
         lbl_max_grade_help: "RemindEd will use this scale to adapt your charts and stats.",
         btn_start: "Start with RemindEd 🚀",
         menu_panel: "📌 Control Panel",
-        menu_pomodoro: "🍅 Pomodoro Mode",
         menu_eventos: "📅 Events & Meetings",
         menu_hobbies: "🎨 My Hobbies",
         menu_sueno: "💤 Sleep Tracker",
@@ -926,7 +957,6 @@
         lbl_max_grade_help: "RemindEd utilizará esta escala para adaptar tus gráficos y estadísticas.",
         btn_start: "Empezar con RemindEd 🚀",
         menu_panel: "📌 Panel de Control",
-        menu_pomodoro: "🍅 Modo pomodoro",
         menu_eventos: "📅 Eventos y Reuniones",
         menu_hobbies: "🎨 Mis Hobbies",
         menu_sueno: "💤 Control del Sueño",
@@ -1056,7 +1086,7 @@
         lbl_max_grade_help: "O RemindEd usará esta escala para adaptar seus gráficos e estatísticas.",
         btn_start: "Começar com RemindEd 🚀",
         menu_panel: "📌 Painel de Controle",
-        menu_pomodoro: "🍅 Modo Pomodoro",
+        
         menu_eventos: "📅 Eventos e Reuniões",
         menu_hobbies: "🎨 Meus Hobbies",
         menu_sueno: "💤 Controle de Sono",
@@ -2895,6 +2925,54 @@ window.addEventListener("click", function(e) {
     if (menu) menu.style.display = "none";
   }
 });
+
+let blurtingTimeLeft = 180; // 3 minutos por defecto en segundos
+let blurtingTimerId = null;
+let blurtingDuracionSeleccionada = 180;
+
+function ajustarBlurtingTime(minutos) {
+  pausarBlurtingTimer();
+  blurtingDuracionSeleccionada = minutos * 60;
+  blurtingTimeLeft = blurtingDuracionSeleccionada;
+  actualizarDisplayBlurting();
+}
+
+function actualizarDisplayBlurting() {
+  const minutos = Math.floor(blurtingTimeLeft / 60);
+  const segundos = blurtingTimeLeft % 60;
+  const display = document.getElementById("blurting-timer-display");
+  if (display) {
+    display.innerText = `${minutos < 10 ? '0' : ''}${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+  }
+}
+
+function iniciarBlurtingTimer() {
+  if (blurtingTimerId !== null) return; // Evita múltiples intervalos
+  
+  blurtingTimerId = setInterval(() => {
+    if (blurtingTimeLeft > 0) {
+      blurtingTimeLeft--;
+      actualizarDisplayBlurting();
+    } else {
+      clearInterval(blurtingTimerId);
+      blurtingTimerId = null;
+      alert("¡Tiempo terminado! Revisa tus apuntes y comprueba qué tanto recordaste.");
+    }
+  }, 1000);
+}
+
+function pausarBlurtingTimer() {
+  if (blurtingTimerId !== null) {
+    clearInterval(blurtingTimerId);
+    blurtingTimerId = null;
+  }
+}
+
+function reiniciarBlurtingTimer() {
+  pausarBlurtingTimer();
+  blurtingTimeLeft = blurtingDuracionSeleccionada;
+  actualizarDisplayBlurting();
+}
   </script>
 </body>
 </html>
