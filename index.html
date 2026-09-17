@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RemindEd - Organización Inteligente</title>
+  <title>RemindEd - Smart Organization</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -49,11 +49,15 @@
     body { font-family: 'Poppins', sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: var(--transition); }
     
     .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; position: relative; z-index: 1000; }
+    .top-bar-right { display: flex; align-items: center; gap: 10px; }
     .hamburger { font-size: 1.6rem; cursor: pointer; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary); padding: 8px 12px; box-shadow: var(--shadow); transition: var(--transition); }
     .hamburger:hover { transform: scale(1.05); background: var(--primary); color: white; }
     
     .brand-logo { font-size: 1.7rem; font-weight: 700; color: var(--primary); text-align: center; flex-grow: 1; letter-spacing: -0.5px; }
     .brand-logo span { color: var(--accent); }
+
+    .lang-selector-top { padding: 8px 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-family: 'Poppins', sans-serif; font-size: 0.9rem; cursor: pointer; outline: none; box-shadow: var(--shadow); transition: var(--transition); }
+    .lang-selector-top:hover { border-color: var(--primary); }
 
     .nav-menu { display: none; position: absolute; top: 55px; left: 0; background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 16px; box-shadow: 0 20px 30px rgba(0,0,0,0.25); z-index: 2000; width: 280px; overflow: hidden; animation: fadeIn 0.25s ease; }
     .nav-menu button { width: 100%; text-align: left; padding: 14px 18px; background: none; border: none; color: var(--text-color); font-size: 0.95rem; font-weight: 500; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: var(--transition); }
@@ -172,7 +176,6 @@
       background: var(--card-bg, white); border-radius: 24px;
       box-shadow: 0 20px 60px rgba(0,0,0,.12);
     }
-    .welcome-icon { font-size: 48px; margin-bottom: 10px; }
     .welcome-card h2 { margin: 0 0 10px; font-size: 2rem; }
     .welcome-subtitle { margin-bottom: 30px; color: #64748b; }
     .onboarding-step { animation: onboardingFade .25s ease; }
@@ -191,6 +194,7 @@
       border:2px solid var(--border-color,#e2e8f0); border-radius:16px; cursor:pointer;
       transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
     }
+    .role-option:hover { transform:translateY(-2px); border-color:var(--primary,#6c5ce7); }
     .role-option.selected {
       border-color:var(--primary,#6c5ce7) !important;
       background:rgba(108,92,231,.14) !important;
@@ -245,59 +249,48 @@
   <div id="trophy-popup" class="trophy-popup hidden">
     <div class="trophy-popup-icon">🏆</div>
     <div>
-      <div class="trophy-popup-title" id="trophy-popup-title">¡Logro Desbloqueado!</div>
-      <div class="trophy-popup-desc" id="trophy-popup-desc">Nombre del Trofeo</div>
+      <div class="trophy-popup-title" id="trophy-popup-title">Achievement Unlocked!</div>
+      <div class="trophy-popup-desc" id="trophy-popup-desc">Trophy Name</div>
     </div>
   </div>
 
-  <!-- PANTALLA DE BIENVENIDA / ONBOARDING -->
+  <!-- PANTALLA DE BIENVENIDA / ONBOARDING (Sin paso de idioma obligatorio) -->
   <div id="pantalla-bienvenida" class="welcome-screen">
     <div class="welcome-card">
-      <h2 style="font-size: 1.5rem; margin-bottom: 10px; text-align: center; width: 100%; display: block;">¡Bienvenido a <span style="color: var(--primary);">Remind<span style="color: var(--accent);">Ed</span></span>!</h2>
-      <p class="welcome-subtitle">Vamos a personalizar tu experiencia.</p>
+      <h2 style="font-size: 1.5rem; margin-bottom: 10px; text-align: center; width: 100%; display: block;" data-i18n="welcome_title">Welcome to <span style="color: var(--primary);">Remind<span style="color: var(--accent);">Ed</span></span>!</h2>
+      <p class="welcome-subtitle" data-i18n="welcome_subtitle">Let's personalize your experience.</p>
       
-      <!-- PASO 1: IDIOMA -->
-      <div id="onboarding-paso-idioma" class="onboarding-step">
-        <label for="onboarding-select-idioma">¿Qué idioma prefieres usar? / What language? / Qual idioma?</label>
-        <select id="onboarding-select-idioma" class="input-form" style="width: 100%; margin-bottom: 18px;">
-          <option value="es">🇪🇸 Español</option>
-          <option value="en">🇬🇧 English</option>
-          <option value="pt">🇧🇷 Português</option>
-        </select>
-        <button type="button" class="btn" onclick="onboardingContinuarIdioma()">Continuar →</button>
+      <!-- PASO 1: NOMBRE -->
+      <div id="onboarding-paso-1" class="onboarding-step">
+        <label id="lbl-q-te-llamas" for="onboarding-nombre" data-i18n="lbl_what_is_your_name">What is your name?</label>
+        <input type="text" id="onboarding-nombre" data-i18n-placeholder="placeholder_your_name" placeholder="Type your name" autocomplete="name">
+        <button type="button" class="btn" id="btn-cont-1" onclick="onboardingContinuarNombre()" data-i18n="btn_continue">Continue →</button>
       </div>
 
-      <!-- PASO 2: NOMBRE -->
-      <div id="onboarding-paso-1" class="onboarding-step" style="display:none;">
-        <label id="lbl-q-te-llamas" for="onboarding-nombre">¿Cómo te llamas?</label>
-        <input type="text" id="onboarding-nombre" placeholder="Escribe tu nombre" autocomplete="name">
-        <button type="button" class="btn" id="btn-cont-1" onclick="onboardingContinuarNombre()">Continuar →</button>
-      </div>
-
-      <!-- PASO 3: ROL -->
+      <!-- PASO 2: ROL -->
       <div id="onboarding-paso-2" class="onboarding-step" style="display:none;">
-        <label id="lbl-q-haces">¿Qué haces actualmente?</label>
+        <label id="lbl-q-haces" data-i18n="lbl_what_do_you_do">What do you currently do?</label>
         <div class="onboarding-options">
           <button type="button" id="btn-rol-estudiante" class="role-option" onclick="seleccionarRol('estudiante')">
             <span class="role-icon">🎓</span>
-            <strong id="lbl-estudio-opt">Estudio</strong>
-            <small id="lbl-estudiando">Estoy estudiando</small>
+            <strong id="lbl-estudio-opt" data-i18n="role_study">Study</strong>
+            <small id="lbl-estudiando" data-i18n="role_studying">I am studying</small>
           </button>
           <button type="button" id="btn-rol-trabajador" class="role-option" onclick="seleccionarRol('trabajador')">
             <span class="role-icon">💼</span>
-            <strong id="lbl-trabajo-opt">Trabajo</strong>
-            <small id="lbl-trabajando">Estoy trabajando</small>
+            <strong id="lbl-trabajo-opt" data-i18n="role_work">Work</strong>
+            <small id="lbl-trabajando" data-i18n="role_working">I am working</small>
           </button>
         </div>
-        <button type="button" class="btn" id="btn-cont-2" onclick="onboardingContinuarRol()">Continuar →</button>
+        <button type="button" class="btn" id="btn-cont-2" onclick="onboardingContinuarRol()" data-i18n="btn_continue">Continue →</button>
       </div>
 
-      <!-- PASO 4: NOTA MÁXIMA -->
+      <!-- PASO 3: NOTA MÁXIMA -->
       <div id="onboarding-paso-3" class="onboarding-step" style="display:none;">
-        <label id="lbl-nota-max-pregunta" for="onboarding-nota-max">¿Cuál es la nota máxima de tu sistema educativo?</label>
-        <p class="onboarding-help" id="lbl-nota-max-help">RemindEd utilizará esta escala para adaptar tus gráficos y estadísticas.</p>
-        <input type="number" id="onboarding-nota-max" min="1" step="0.1" placeholder="Ej.: 20">
-        <button type="button" class="btn" id="btn-empezar" onclick="guardarPerfilInicial()">Empezar con RemindEd 🚀</button>
+        <label id="lbl-nota-max-pregunta" for="onboarding-nota-max" data-i18n="lbl_max_grade">What is the maximum grade of your educational system?</label>
+        <p class="onboarding-help" id="lbl-nota-max-help" data-i18n="lbl_max_grade_help">RemindEd will use this scale to adapt your charts and stats.</p>
+        <input type="number" id="onboarding-nota-max" min="1" step="0.1" placeholder="Ex.: 20">
+        <button type="button" class="btn" id="btn-empezar" onclick="guardarPerfilInicial()" data-i18n="btn_start">Start with RemindEd 🚀</button>
       </div>
     </div>
   </div>
@@ -308,16 +301,24 @@
     <div class="top-bar">
       <button class="hamburger" onclick="toggleMenu()">☰</button>
       <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
+      <div class="top-bar-right">
+        <!-- Selector de idioma flotante superior (Predeterminado Inglés) -->
+        <select id="top-select-idioma" class="lang-selector-top" onchange="cambiarIdiomaDesdeTop(this.value)">
+          <option value="en">🇬🇧 EN</option>
+          <option value="es">🇪🇸 ES</option>
+          <option value="pt">🇧🇷 PT</option>
+        </select>
+      </div>
       <div id="nav-menu" class="nav-menu">
-        <button onclick="navegarA('panel')" data-i18n="menu_panel">📌 Panel de Control</button>
-        <button id="menu-estudio" onclick="navegarA('estudio')" data-i18n="menu_pomodoro">🍅 Modo pomodoro</button>
-        <button id="menu-eventos" onclick="navegarA('examenes')" data-i18n="menu_eventos">📅 Eventos y Reuniones</button>
-        <button onclick="navegarA('hobbies')" data-i18n="menu_hobbies">🎨 Mis Hobbies</button>
-        <button onclick="navegarA('sueno')" data-i18n="menu_sueno">💤 Control del Sueño</button>
-        <button onclick="navegarA('objetivos')" data-i18n="menu_objetivos">🎯 Mis Objetivos</button>
-        <button onclick="navegarA('notas')" data-i18n="menu_notas">📝 Notas y Apuntes</button>
-        <button onclick="navegarA('trofeos')" data-i18n="menu_trofeos">🏆 Trofeos y Logros</button>
-        <button onclick="navegarA('ajustes')" data-i18n="menu_ajustes">⚙️ Ajustes</button>
+        <button onclick="navegarA('panel')" data-i18n="menu_panel">📌 Control Panel</button>
+        <button id="menu-estudio" onclick="navegarA('estudio')" data-i18n="menu_pomodoro">🍅 Pomodoro Mode</button>
+        <button id="menu-eventos" onclick="navegarA('examenes')" data-i18n="menu_eventos">📅 Events & Meetings</button>
+        <button onclick="navegarA('hobbies')" data-i18n="menu_hobbies">🎨 My Hobbies</button>
+        <button onclick="navegarA('sueno')" data-i18n="menu_sueno">💤 Sleep Tracker</button>
+        <button onclick="navegarA('objetivos')" data-i18n="menu_objetivos">🎯 My Goals</button>
+        <button onclick="navegarA('notas')" data-i18n="menu_notas">📝 Notes & Memos</button>
+        <button onclick="navegarA('trofeos')" data-i18n="menu_trofeos">🏆 Trophies & Achievements</button>
+        <button onclick="navegarA('ajustes')" data-i18n="menu_ajustes">⚙️ Settings</button>
       </div>
     </div>
 
@@ -328,95 +329,95 @@
       <div id="bloques-trabajador" class="dashboard-container" style="display: none;">
         <section class="row top-row">
           <div class="card widget-activity" id="card-actividad-actual">
-            <h3 data-i18n="actividad_actual">⚡ Actividad Actual</h3>
+            <h3 data-i18n="actividad_actual">⚡ Current Activity</h3>
             <div class="activity-info">
-              <p class="activity-title" id="current-activity" style="font-weight:600; font-size:1.1rem; color:var(--primary); margin-bottom:5px;">Cargando horario...</p>
+              <p class="activity-title" id="current-activity" style="font-weight:600; font-size:1.1rem; color:var(--primary); margin-bottom:5px;" data-i18n="loading_schedule">Loading schedule...</p>
               <div id="worker-timer-container">
-                <p style="margin: 4px 0; font-size:0.95rem;"><span data-i18n="llevas_transcurrido">Llevas transcurrido:</span> <span id="worker-time-elapsed" style="font-weight:700; color:var(--accent);">00:00:00</span></p>
-                <p style="margin: 4px 0; font-size:0.95rem;" id="worker-next-info"><span data-i18n="proxima_actividad_en">Próxima actividad en:</span> <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">00:00:00</span></p>
+                <p style="margin: 4px 0; font-size:0.95rem;"><span data-i18n="llevas_transcurrido">Elapsed time:</span> <span id="worker-time-elapsed" style="font-weight:700; color:var(--accent);">00:00:00</span></p>
+                <p style="margin: 4px 0; font-size:0.95rem;" id="worker-next-info"><span data-i18n="proxima_actividad_en">Next activity in:</span> <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">00:00:00</span></p>
               </div>
             </div>
           </div>
 
           <div class="card widget-next-event" id="card-proximo-evento">
-            <h3 data-i18n="proximo_evento_reunion">📌 Próximo Evento / Reunión Destacada</h3>
+            <h3 data-i18n="proximo_evento_reunion">📌 Featured Next Event / Meeting</h3>
             <div class="event-info" id="next-event-container">
-              <p class="event-title" id="event-title" data-i18n="no_hay_eventos">No hay eventos ni reuniones próximas</p>
+              <p class="event-title" id="event-title" data-i18n="no_hay_eventos">No upcoming events or meetings</p>
               <p class="event-time" id="event-time" style="font-weight:600; color:var(--accent);">--:--</p>
             </div>
-            <button class="btn btn-small" onclick="navegarA('examenes')" style="margin-top: 10px;" data-i18n="agendar_evento">+ Agendar Evento</button>
+            <button class="btn btn-small" onclick="navegarA('examenes')" style="margin-top: 10px;" data-i18n="agendar_evento">+ Schedule Event</button>
           </div>
         </section>
       </div>
 
       <!-- BLOQUE OBJETIVOS TRABAJADOR -->
       <div id="bloque-objetivos-trabajador" class="card" style="display: none;">
-        <h3 data-i18n="objetivos_diarios_trabajo">🎯 Objetivos Diarios de Trabajo</h3>
+        <h3 data-i18n="objetivos_diarios_trabajo">🎯 Daily Work Goals</h3>
         <div class="progress-bar-container">
           <div class="progress-bar" id="goals-progress" style="width: 0%;"></div>
         </div>
-        <p class="progress-text" id="goals-text" style="font-size:0.9rem; font-weight:600; color:#64748b; margin-top:5px;">0 de 0 completados (0%)</p>
+        <p class="progress-text" id="goals-text" style="font-size:0.9rem; font-weight:600; color:#64748b; margin-top:5px;">0 of 0 completed (0%)</p>
 
         <ul class="task-list" id="task-list" style="padding-left: 0; list-style:none;"></ul>
 
         <div class="add-task-form form-group">
-          <input type="text" id="new-task-input" class="input-form" data-i18n-placeholder="placeholder_nuevo_objetivo" placeholder="Nuevo objetivo laboral..." style="flex:1;">
-          <button class="btn btn-small" onclick="addTask()" data-i18n="agregar">Agregar</button>
+          <input type="text" id="new-task-input" class="input-form" data-i18n-placeholder="placeholder_nuevo_objetivo" placeholder="New work goal..." style="flex:1;">
+          <button class="btn btn-small" onclick="addTask()" data-i18n="agregar">Add</button>
         </div>
       </div>
 
       <!-- SECCIONES ESTUDIANTE -->
       <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
-        <span style="font-weight: 600;" data-i18n="proximo_examen_cercano">⏳ Próximo Examen Más Cercano:</span>
+        <span style="font-weight: 600;" data-i18n="proximo_examen_cercano">⏳ Closest Exam / Deadline:</span>
         <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
         <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-proxima-clase">
-        <h2 id="titulo-proxima-actividad" data-i18n="proxima_clase_actividad">🎓 Próxima Clase / Actividad</h2>
-        <p id="info-clase">Cargando...</p>
+        <h2 id="titulo-proxima-actividad" data-i18n="proxima_clase_actividad">🎓 Next Class / Activity</h2>
+        <p id="info-clase" data-i18n="loading">Loading...</p>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-objetivos-contenedor">
-        <h2 data-i18n="objetivos_tareas_diarias">🎯 Objetivos / Tareas Diarias</h2>
-        <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;" data-i18n="borde_cambia_verde">El borde cambia a verde cuando completas tus tareas diarias.</p>
+        <h2 data-i18n="objetivos_tareas_diarias">🎯 Daily Goals / Tasks</h2>
+        <p style="font-size: 0.85rem; color:#64748b; margin-top:-5px;" data-i18n="borde_cambia_verde">The border turns green when you complete your daily tasks.</p>
         <div id="lista-objetivos-diarios"></div>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-examenes-destacados">
-        <h2 id="titulo-bloque-eventos" data-i18n="proximos_examenes_destacados">📅 Próximos Exámenes Destacados</h2>
+        <h2 id="titulo-bloque-eventos" data-i18n="proximos_examenes_destacados">📅 Upcoming Featured Exams</h2>
         <div id="lista-examenes-resumen"></div>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-estado-sueno">
-        <h2 data-i18n="estado_sueno">🌙 Estado del Sueño</h2>
-        <p id="info-sueno">Cargando hábitos de descanso...</p>
-        <button class="btn btn-small" style="margin-top: 10px;" onclick="logSleep()" data-i18n="registrar_sueno">Registrar Sueño de Anoche</button>
+        <h2 data-i18n="estado_sueno">🌙 Sleep Status</h2>
+        <p id="info-sueno" data-i18n="loading_sleep">Loading rest habits...</p>
+        <button class="btn btn-small" style="margin-top: 10px;" onclick="logSleep()" data-i18n="registrar_sueno">Log Last Night's Sleep</button>
       </div>
 
       <div class="card tarjeta-tutorial" id="card-horario-semanal">
-        <h2 data-i18n="horario_semanal_completo">🗓️ Horario Semanal Completo</h2>
+        <h2 data-i18n="horario_semanal_completo">🗓️ Full Weekly Schedule</h2>
         <div style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
-          <h3 style="margin-top:0; font-size:1rem; color:var(--primary);" data-i18n="anadir_horas_horario">Añadir Horas al Horario</h3>
+          <h3 style="margin-top:0; font-size:1rem; color:var(--primary);" data-i18n="anadir_horas_horario">Add Hours to Schedule</h3>
           <div class="form-group">
             <select id="horario-dia-select" class="input-form">
-              <option value="1" data-i18n="dia_lunes">Lunes</option>
-              <option value="2" data-i18n="dia_martes">Martes</option>
-              <option value="3" data-i18n="dia_miercoles">Miércoles</option>
-              <option value="4" data-i18n="dia_jueves">Jueves</option>
-              <option value="5" data-i18n="dia_viernes">Viernes</option>
-              <option value="6" data-i18n="dia_sabado">Sábado</option>
-              <option value="0" data-i18n="dia_domingo">Domingo</option>
+              <option value="1" data-i18n="dia_lunes">Monday</option>
+              <option value="2" data-i18n="dia_martes">Tuesday</option>
+              <option value="3" data-i18n="dia_miercoles">Wednesday</option>
+              <option value="4" data-i18n="dia_jueves">Thursday</option>
+              <option value="5" data-i18n="dia_viernes">Friday</option>
+              <option value="6" data-i18n="dia_sabado">Saturday</option>
+              <option value="0" data-i18n="dia_domingo">Sunday</option>
             </select>
             
-            <label style="font-size: 0.85rem; font-weight:600;" data-i18n="desde">Desde:</label>
+            <label style="font-size: 0.85rem; font-weight:600;" data-i18n="desde">From:</label>
             <input type="time" id="horario-inicio-time" class="input-form" value="08:00" />
-            <label style="font-size: 0.85rem; font-weight:600;" data-i18n="hasta">Hasta:</label>
+            <label style="font-size: 0.85rem; font-weight:600;" data-i18n="hasta">To:</label>
             <input type="time" id="horario-fin-time" class="input-form" value="09:00" />
 
             <select id="horario-materia-select" class="input-form"></select>
-            <input type="text" id="horario-aula-input" class="input-form" data-i18n-placeholder="placeholder_lugar_aula" placeholder="Lugar / Aula" style="width: 120px;" />
-            <button onclick="agregarHorarioBloque()" class="btn-action" data-i18n="guardar_bloque">Guardar Bloque</button>
+            <input type="text" id="horario-aula-input" class="input-form" data-i18n-placeholder="placeholder_lugar_aula" placeholder="Location / Room" style="width: 120px;" />
+            <button onclick="agregarHorarioBloque()" class="btn-action" data-i18n="guardar_bloque">Save Block</button>
           </div>
         </div>
 
@@ -424,14 +425,14 @@
           <table>
             <thead>
               <tr>
-                <th data-i18n="th_hora">Hora</th>
-                <th data-i18n="dia_lunes">Lunes</th>
-                <th data-i18n="dia_martes">Martes</th>
-                <th data-i18n="dia_miercoles">Miércoles</th>
-                <th data-i18n="dia_jueves">Jueves</th>
-                <th data-i18n="dia_viernes">Viernes</th>
-                <th data-i18n="dia_sabado">Sábado</th>
-                <th data-i18n="dia_domingo">Domingo</th>
+                <th data-i18n="th_hora">Time</th>
+                <th data-i18n="dia_lunes">Monday</th>
+                <th data-i18n="dia_martes">Tuesday</th>
+                <th data-i18n="dia_miercoles">Wednesday</th>
+                <th data-i18n="dia_jueves">Thursday</th>
+                <th data-i18n="dia_viernes">Friday</th>
+                <th data-i18n="dia_sabado">Saturday</th>
+                <th data-i18n="dia_domingo">Sunday</th>
               </tr>
             </thead>
             <tbody id="tabla-horario-body"></tbody>
@@ -443,21 +444,21 @@
     <!-- MODO ESTUDIO (POMODORO) -->
     <div id="page-estudio" class="section-page">
       <div class="card">
-        <h2 data-i18n="modo_concentracion">⏱️ Modo Concentración (Pomodoro)</h2>
-        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Tiempo enfocado hoy: 0 min</p>
-        <p style="text-align: center; font-weight: 500;" id="timer-mode">Bloque 1 / 4 - Sesión de Trabajo/Estudio</p>
+        <h2 data-i18n="modo_concentracion">⏱️ Focus Mode (Pomodoro)</h2>
+        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Focused time today: 0 min</p>
+        <p style="text-align: center; font-weight: 500;" id="timer-mode">Block 1 / 4 - Study/Work Session</p>
         <div class="timer-display" id="timer-display" style="font-size: 3.5rem; font-weight: 700; text-align: center; margin: 20px 0; color: var(--primary); letter-spacing: -2px;">25:00</div>
         <div class="timer-controls" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <button onclick="iniciarTimer()" class="btn-action" data-i18n="btn_iniciar">Iniciar</button>
-          <button onclick="pausarTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;" data-i18n="btn_pausar">Pausar</button>
-          <button onclick="reiniciarTimer()" class="btn-action" style="background: var(--danger);" data-i18n="btn_reiniciar">Reiniciar</button>
-          <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #a855f7;" data-i18n="btn_config_bloques">⚙️ Configurar Bloques</button>
+          <button onclick="iniciarTimer()" class="btn-action" data-i18n="btn_iniciar">Start</button>
+          <button onclick="pausarTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;" data-i18n="btn_pausar">Pause</button>
+          <button onclick="reiniciarTimer()" class="btn-action" style="background: var(--danger);" data-i18n="btn_reiniciar">Reset</button>
+          <button onclick="toggleConfigPomodoro()" class="btn-action" style="background: #a855f7;" data-i18n="btn_config_bloques">⚙️ Configure Blocks</button>
         </div>
 
         <div class="modal-config" id="modal-config-pomodoro">
-          <h3 style="color: var(--primary); margin-top:0;" data-i18n="personalizar_duracion">Personalizar Duración de Bloques</h3>
+          <h3 style="color: var(--primary); margin-top:0;" data-i18n="personalizar_duracion">Customize Block Duration</h3>
           <div id="contenedor-bloques-config"></div>
-          <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;" data-i18n="guardar_config">Guardar Configuración</button>
+          <button onclick="guardarConfigPomodoro()" class="btn-action" style="margin-top: 10px;" data-i18n="guardar_config">Save Configuration</button>
         </div>
       </div>
     </div>
@@ -465,35 +466,35 @@
     <!-- EVENTOS Y REUNIONES / EXÁMENES -->
     <div id="page-examenes" class="section-page">
       <div class="card" id="card-gestion-materias">
-        <h2 id="titulo-materia-gestor" data-i18n="gestor_asignaturas_proyectos">📚 Gestor de Asignaturas y Proyectos</h2>
+        <h2 id="titulo-materia-gestor" data-i18n="gestor_asignaturas_proyectos">📚 Subjects & Projects Manager</h2>
         <div class="form-group">
-          <input type="text" id="nueva-asignatura-nombre" class="input-form" data-i18n-placeholder="placeholder_nombre_asig" placeholder="Nombre (ej. Proyecto X / Historia)" style="flex:1;" />
-          <button onclick="agregarNuevaAsignatura()" class="btn-action" data-i18n="anadir">Añadir</button>
+          <input type="text" id="nueva-asignatura-nombre" class="input-form" data-i18n-placeholder="placeholder_nombre_asig" placeholder="Name (e.g. Project X / History)" style="flex:1;" />
+          <button onclick="agregarNuevaAsignatura()" class="btn-action" data-i18n="anadir">Add</button>
         </div>
         <div id="lista-gestion-asignaturas" style="margin-top:10px;"></div>
       </div>
 
       <div class="card" id="card-nuevo-examen">
-        <h2 id="titulo-agendar-evento" data-i18n="agendar_proximo_evento">📅 Agendar Próximo Evento / Examen</h2>
+        <h2 id="titulo-agendar-evento" data-i18n="agendar_proximo_evento">📅 Schedule Next Event / Exam</h2>
         <div class="form-group">
           <select id="examen-materia-select" class="input-form"></select>
           <input type="datetime-local" id="examen-fecha" class="input-form" />
-          <input type="text" id="examen-objetivo-nota" class="input-form" data-i18n-placeholder="placeholder_meta_clave" placeholder="Nota o Meta clave" style="width:160px;" />
-          <button onclick="agregarExamen()" class="btn-action" data-i18n="guardar">Guardar</button>
+          <input type="text" id="examen-objetivo-nota" class="input-form" data-i18n-placeholder="placeholder_meta_clave" placeholder="Grade or Key Goal" style="width:160px;" />
+          <button onclick="agregarExamen()" class="btn-action" data-i18n="guardar">Save</button>
         </div>
-        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;" data-i18n="eventos_programados">Eventos Programados</h3>
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;" data-i18n="eventos_programados">Scheduled Events</h3>
         <div id="lista-examenes-completa"></div>
       </div>
 
       <div class="card" id="card-metricas-notas">
-        <h2 id="titulo-rendimiento-notas" data-i18n="registro_notas_calificaciones">📊 Registro de Notas y Calificaciones</h2>
-        <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;" data-i18n="registra_calificaciones_desc">Registra tus calificaciones o avances para calcular tus promedios automáticamente y graficar tu evolución.</p>
+        <h2 id="titulo-rendimiento-notas" data-i18n="registro_notas_calificaciones">📊 Grades & Ratings Record</h2>
+        <p style="font-size:0.85rem; color:#64748b; margin-top:-5px;" data-i18n="registra_calificaciones_desc">Record your grades or progress to automatically calculate averages and chart your progress.</p>
         <div id="contenedor-asignaturas"></div>
       </div>
 
-      <!-- GRÁFICO DE EVOLUCIÓN (Estudiantes y Trabajadores) -->
+      <!-- GRÁFICO DE EVOLUCIÓN -->
       <div class="card" id="card-grafico-notas">
-        <h2 id="titulo-grafico-desempeno" data-i18n="grafico_evolucion_academica">📈 Gráfico de Evolución Académica</h2>
+        <h2 id="titulo-grafico-desempeno" data-i18n="grafico_evolucion_academica">📈 Academic Evolution Chart</h2>
         <div class="canvas-container">
           <canvas id="chart-notas"></canvas>
         </div>
@@ -503,24 +504,24 @@
     <!-- HOBBIES -->
     <div id="page-hobbies" class="section-page">
       <div class="card">
-        <h2 data-i18n="mis_hobbies_actividades">🎨 Mis Hobbies y Actividades Libres</h2>
+        <h2 data-i18n="mis_hobbies_actividades">🎨 My Hobbies & Free Activities</h2>
         <div class="form-group">
-          <input type="text" id="hobby-nombre" class="input-form" data-i18n-placeholder="placeholder_hobby" placeholder="Hobby o Deporte..." style="flex:1;" />
+          <input type="text" id="hobby-nombre" class="input-form" data-i18n-placeholder="placeholder_hobby" placeholder="Hobby or Sport..." style="flex:1;" />
           <input type="time" id="hobby-hora-libre" class="input-form" value="18:00" />
         </div>
-        <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;" data-i18n="dias_repeticion">Días de repetición:</label>
+        <label style="font-weight: 600; font-size: 0.9rem; display: block; margin: 12px 0 6px 0;" data-i18n="dias_repeticion">Repeat days:</label>
         <div class="days-checkboxes">
-          <label><input type="checkbox" value="1" class="chk-dia"> <span data-i18n="dia_lunes">Lunes</span></label>
-          <label><input type="checkbox" value="2" class="chk-dia"> <span data-i18n="dia_martes">Martes</span></label>
-          <label><input type="checkbox" value="3" class="chk-dia"> <span data-i18n="dia_miercoles">Miércoles</span></label>
-          <label><input type="checkbox" value="4" class="chk-dia"> <span data-i18n="dia_jueves">Jueves</span></label>
-          <label><input type="checkbox" value="5" class="chk-dia"> <span data-i18n="dia_viernes">Viernes</span></label>
-          <label><input type="checkbox" value="6" class="chk-dia"> <span data-i18n="dia_sabado">Sábado</span></label>
-          <label><input type="checkbox" value="0" class="chk-dia"> <span data-i18n="dia_domingo">Domingo</span></label>
+          <label><input type="checkbox" value="1" class="chk-dia"> <span data-i18n="dia_lunes">Monday</span></label>
+          <label><input type="checkbox" value="2" class="chk-dia"> <span data-i18n="dia_martes">Tuesday</span></label>
+          <label><input type="checkbox" value="3" class="chk-dia"> <span data-i18n="dia_miercoles">Wednesday</span></label>
+          <label><input type="checkbox" value="4" class="chk-dia"> <span data-i18n="dia_jueves">Thursday</span></label>
+          <label><input type="checkbox" value="5" class="chk-dia"> <span data-i18n="dia_viernes">Friday</span></label>
+          <label><input type="checkbox" value="6" class="chk-dia"> <span data-i18n="dia_sabado">Saturday</span></label>
+          <label><input type="checkbox" value="0" class="chk-dia"> <span data-i18n="dia_domingo">Sunday</span></label>
         </div>
-        <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;" data-i18n="anadir_hobby">Añadir Hobby</button>
+        <button onclick="agregarHobbyMulti()" class="btn-action" style="margin-top: 10px;" data-i18n="anadir_hobby">Add Hobby</button>
         
-        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;" data-i18n="hobbies_registrados">Hobbies Registrados</h3>
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;" data-i18n="hobbies_registrados">Registered Hobbies</h3>
         <div id="lista-hobbies"></div>
       </div>
     </div>
@@ -528,19 +529,19 @@
     <!-- CONTROL DE SUEÑO -->
     <div id="page-sueno" class="section-page">
       <div class="card">
-        <h2 data-i18n="config_control_sueno">💤 Configuración del Control de Sueño</h2>
+        <h2 data-i18n="config_control_sueno">💤 Sleep Tracker Configuration</h2>
         <div class="form-group">
-          <label><span data-i18n="horas_sueno_deseadas">Horas de sueño deseadas:</span> <input type="number" step="0.5" id="sueno-horas" class="input-form" value="8" style="width:70px;" /></label>
-          <label><span data-i18n="hora_dormir">Hora de Dormir:</span> <input type="time" id="sueno-acostar" class="input-form" value="23:00" /></label>
-          <label><span data-i18n="hora_despertar">Hora de Despertar:</span> <input type="time" id="sueno-despertar" class="input-form" value="07:00" /></label>
+          <label><span data-i18n="horas_sueno_deseadas">Desired sleep hours:</span> <input type="number" step="0.5" id="sueno-horas" class="input-form" value="8" style="width:70px;" /></label>
+          <label><span data-i18n="hora_dormir">Bedtime:</span> <input type="time" id="sueno-acostar" class="input-form" value="23:00" /></label>
+          <label><span data-i18n="hora_despertar">Wake-up Time:</span> <input type="time" id="sueno-despertar" class="input-form" value="07:00" /></label>
         </div>
-        <button onclick="guardarConfigSueno()" class="btn-action" data-i18n="guardar_habitos">Guardar Hábitos</button>
+        <button onclick="guardarConfigSueno()" class="btn-action" data-i18n="guardar_habitos">Save Habits</button>
       </div>
 
       <div class="card">
-        <h2 data-i18n="resumen_descanso">🌙 Resumen de Descanso</h2>
+        <h2 data-i18n="resumen_descanso">🌙 Rest Summary</h2>
         <div id="resumen-sueno-box">
-          <p data-i18n="cargando_sueno">Cargando datos de sueño...</p>
+          <p data-i18n="cargando_sueno">Loading sleep data...</p>
         </div>
       </div>
     </div>
@@ -548,26 +549,26 @@
     <!-- MIS OBJETIVOS -->
     <div id="page-objetivos" class="section-page">
       <div class="card">
-        <h2 data-i18n="administrar_objetivos_diarios">🎯 Administrar Objetivos Diarios</h2>
+        <h2 data-i18n="administrar_objetivos_diarios">🎯 Manage Daily Goals</h2>
         <div class="form-group">
-          <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" data-i18n-placeholder="placeholder_nuevo_objetivo_gral" placeholder="Nuevo objetivo..." />
-          <button onclick="agregarObjetivo()" class="btn-action" data-i18n="anadir_objetivo">Añadir Objetivo</button>
+          <input type="text" id="nuevo-objetivo" class="input-form" style="width: 60%;" data-i18n-placeholder="placeholder_nuevo_objetivo_gral" placeholder="New goal..." />
+          <button onclick="agregarObjetivo()" class="btn-action" data-i18n="anadir_objetivo">Add Goal</button>
         </div>
         <div id="lista-objetivos-admin"></div>
       </div>
 
       <div class="card">
-        <h2 data-i18n="constancia_exito_mes">📈 Constancia y Éxito del Mes</h2>
-        <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">0% de Éxito</p>
+        <h2 data-i18n="constancia_exito_mes">📈 Monthly Consistency & Success</h2>
+        <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">0% Success</p>
         <div class="progress-bar-container">
           <div id="progress-bar" class="progress-bar"></div>
         </div>
         <br>
-        <h3 style="color:var(--primary); font-size:1.1rem;" data-i18n="registro_mensual">Registro Mensual (Últimos 30 días)</h3>
+        <h3 style="color:var(--primary); font-size:1.1rem;" data-i18n="registro_mensual">Monthly Log (Last 30 days)</h3>
         <div style="overflow-x:auto;">
           <table>
             <thead>
-              <tr><th data-i18n="th_dia">Día</th><th data-i18n="th_estado">Estado</th></tr>
+              <tr><th data-i18n="th_dia">Day</th><th data-i18n="th_estado">Status</th></tr>
             </thead>
             <tbody id="tabla-historico"></tbody>
           </table>
@@ -578,23 +579,23 @@
     <!-- NOTAS Y APUNTES -->
     <div id="page-notas" class="section-page">
       <div class="card">
-        <h2 data-i18n="anadir_apunte_nota">📝 Añadir Apunte / Nota</h2>
+        <h2 data-i18n="anadir_apunte_nota">📝 Add Note / Memo</h2>
         <div class="form-group">
           <select id="nota-asig-select" class="input-form"></select>
-          <input type="text" id="nota-titulo" class="input-form" data-i18n-placeholder="placeholder_titulo_nota" placeholder="Título..." style="flex:1;" />
+          <input type="text" id="nota-titulo" class="input-form" data-i18n-placeholder="placeholder_titulo_nota" placeholder="Title..." style="flex:1;" />
         </div>
         <div class="form-group">
-          <textarea id="nota-contenido" class="input-form" data-i18n-placeholder="placeholder_contenido_nota" placeholder="Escribe aquí tu apunte o minuta de reunión..." style="width:100%; height:90px; resize:vertical;"></textarea>
+          <textarea id="nota-contenido" class="input-form" data-i18n-placeholder="placeholder_contenido_nota" placeholder="Write your note or meeting minutes here..." style="width:100%; height:90px; resize:vertical;"></textarea>
         </div>
-        <button onclick="guardarApunte()" class="btn-action" data-i18n="guardar_apunte">Guardar Apunte</button>
+        <button onclick="guardarApunte()" class="btn-action" data-i18n="guardar_apunte">Save Note</button>
       </div>
 
       <div class="card">
-        <h2 data-i18n="buscar_apuntes">🔍 Buscar Apuntes</h2>
+        <h2 data-i18n="buscar_apuntes">🔍 Search Notes</h2>
         <div class="form-group">
-          <input type="text" id="buscador-notas" class="input-form" data-i18n-placeholder="placeholder_buscar" placeholder="Buscar..." style="flex:1;" oninput="filtrarNotas()" />
+          <input type="text" id="buscador-notas" class="input-form" data-i18n-placeholder="placeholder_buscar" placeholder="Search..." style="flex:1;" oninput="filtrarNotas()" />
           <select id="filtro-asig" class="input-form" onchange="filtrarNotas()">
-            <option value="TODAS" data-i18n="todas_categorias">Todas las categorías</option>
+            <option value="TODAS" data-i18n="todas_categorias">All categories</option>
           </select>
         </div>
         <div id="contenedor-lista-apuntes" style="margin-top: 15px;"></div>
@@ -604,7 +605,7 @@
     <!-- TROFEOS -->
     <div id="page-trofeos" class="section-page">
       <div class="card">
-        <h2 data-i18n="sala_trofeos">🏆 Sala de Trofeos RemindEd</h2>
+        <h2 data-i18n="sala_trofeos">🏆 RemindEd Trophy Room</h2>
         <div class="trophy-grid" id="grid-trofeos"></div>
       </div>
     </div>
@@ -613,77 +614,77 @@
     <div id="page-ajustes" class="section-page">
       <!-- Tarjeta 1: Apariencia y Modo Oscuro/Claro -->
       <div class="card" id="card-panel-colores">
-        <h2 data-i18n="personalizar_apariencia">🎨 Personalizar Apariencia y Tema</h2>
-        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="alterna_modo_visualizacion">Alterna el modo de visualización y personaliza los colores principales:</p>
+        <h2 data-i18n="personalizar_apariencia">🎨 Customize Appearance & Theme</h2>
+        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="alterna_modo_visualizacion">Toggle display mode and customize primary colors:</p>
         
         <div style="margin: 15px 0; display: flex; justify-content: space-between; align-items: center; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
           <div>
-            <h3 style="margin: 0; font-size: 1rem;" data-i18n="modo_oscuro_claro">Modo Oscuro / Claro</h3>
-            <p style="margin: 3px 0 0 0; font-size: 0.85rem; opacity: 0.8;" data-i18n="alterna_apariencia_visual">Alterna la apariencia visual.</p>
+            <h3 style="margin: 0; font-size: 1rem;" data-i18n="modo_oscuro_claro">Dark / Light Mode</h3>
+            <p style="margin: 3px 0 0 0; font-size: 0.85rem; opacity: 0.8;" data-i18n="alterna_apariencia_visual">Toggle visual appearance.</p>
           </div>
-          <button onclick="alternarTema()" id="btn-cambiar-tema" class="btn-action" style="padding: 8px 16px;" data-i18n="btn_cambiar_tema">🌓 Cambiar Tema</button>
+          <button onclick="alternarTema()" id="btn-cambiar-tema" class="btn-action" style="padding: 8px 16px;" data-i18n="btn_cambiar_tema">🌓 Change Theme</button>
         </div>
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
-          <button onclick="cambiarColorTema('#6c5ce7', '#00cec9')" class="btn-small" style="background: #6c5ce7; border: none; color: white;" data-i18n="tema_morado">💜 Morado RemindEd</button>
-          <button onclick="cambiarColorTema('#0984e3', '#74b9ff')" class="btn-small" style="background: #0984e3; border: none; color: white;" data-i18n="tema_azul">💙 Azul Océano</button>
-          <button onclick="cambiarColorTema('#00b894', '#55efc4')" class="btn-small" style="background: #00b894; border: none; color: white;" data-i18n="tema_verde">💚 Verde Esmeralda</button>
-          <button onclick="cambiarColorTema('#e17055', '#ffeaa7')" class="btn-small" style="background: #e17055; border: none; color: white;" data-i18n="tema_terracota">🧡 Terracota / Cálido</button>
-          <button onclick="cambiarColorTema('#d63031', '#ff7675')" class="btn-small" style="background: #d63031; border: none; color: white;" data-i18n="tema_rojo">🔴 Rojo Carmín</button>
+          <button onclick="cambiarColorTema('#6c5ce7', '#00cec9')" class="btn-small" style="background: #6c5ce7; border: none; color: white;" data-i18n="tema_morado">💜 RemindEd Purple</button>
+          <button onclick="cambiarColorTema('#0984e3', '#74b9ff')" class="btn-small" style="background: #0984e3; border: none; color: white;" data-i18n="tema_azul">💙 Ocean Blue</button>
+          <button onclick="cambiarColorTema('#00b894', '#55efc4')" class="btn-small" style="background: #00b894; border: none; color: white;" data-i18n="tema_verde">💚 Emerald Green</button>
+          <button onclick="cambiarColorTema('#e17055', '#ffeaa7')" class="btn-small" style="background: #e17055; border: none; color: white;" data-i18n="tema_terracota">🧡 Terracotta / Warm</button>
+          <button onclick="cambiarColorTema('#d63031', '#ff7675')" class="btn-small" style="background: #d63031; border: none; color: white;" data-i18n="tema_rojo">🔴 Carmine Red</button>
         </div>
 
         <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
-          <label style="font-size: 0.9rem; font-weight: 600;" data-i18n="elige_color_personalizado">O elige un color personalizado:</label>
+          <label style="font-size: 0.9rem; font-weight: 600;" data-i18n="elige_color_personalizado">Or choose a custom color:</label>
           <input type="color" id="picker-color-primary" value="#6c5ce7" onchange="aplicarColorPersonalizado(this.value)" style="border: none; background: none; cursor: pointer; width: 40px; height: 40px;">
         </div>
       </div>
 
       <!-- Tarjeta 2: Idioma -->
       <div class="card">
-        <h2 data-i18n="idioma_aplicacion">🌐 Idioma de la Aplicación</h2>
-        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="selecciona_idioma_interfaz">Selecciona el idioma con el que deseas ver la interfaz:</p>
+        <h2 data-i18n="idioma_aplicacion">🌐 Application Language</h2>
+        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="selecciona_idioma_interfaz">Select the language you want for the interface:</p>
         <div class="form-group" style="margin-top: 15px;">
           <select id="ajustes-select-idioma" class="input-form" style="flex:1;">
-            <option value="es">🇪🇸 Español</option>
             <option value="en">🇬🇧 English</option>
+            <option value="es">🇪🇸 Español</option>
             <option value="pt">🇧🇷 Português</option>
           </select>
-          <button onclick="guardarIdiomaDesdeAjustes()" class="btn-action" data-i18n="cambiar_idioma">Cambiar Idioma</button>
+          <button onclick="guardarIdiomaDesdeAjustes()" class="btn-action" data-i18n="cambiar_idioma">Change Language</button>
         </div>
       </div>
 
       <!-- Tarjeta 3: Cambiar Nombre -->
       <div class="card">
-        <h2 data-i18n="cambiar_nombre_usuario">✏️ Cambiar Nombre de Usuario</h2>
-        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="actualiza_nombre_saludo">Actualiza cómo te saluda la aplicación:</p>
+        <h2 data-i18n="cambiar_nombre_usuario">✏️ Change Username</h2>
+        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="actualiza_nombre_saludo">Update how the app greets you:</p>
         <div class="form-group" style="margin-top: 15px;">
-          <input type="text" id="ajustes-input-nombre" class="input-form" data-i18n-placeholder="placeholder_nuevo_nombre" placeholder="Escribe tu nuevo nombre" style="flex:1;" />
-          <button onclick="guardarNombreDesdeAjustes()" class="btn-action" data-i18n="guardar_nombre">Guardar Nombre</button>
+          <input type="text" id="ajustes-input-nombre" class="input-form" data-i18n-placeholder="placeholder_nuevo_nombre" placeholder="Type your new name" style="flex:1;" />
+          <button onclick="guardarNombreDesdeAjustes()" class="btn-action" data-i18n="guardar_nombre">Save Name</button>
         </div>
       </div>
 
       <!-- Tarjeta 4: Cambiar Rol -->
       <div class="card">
-        <h2 data-i18n="cambiar_rol">💼 Cambiar Rol (Estudiante / Trabajador)</h2>
-        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="modifica_actividad_actual">Modifica tu actividad principal actual:</p>
+        <h2 data-i18n="cambiar_rol">💼 Change Role (Student / Worker)</h2>
+        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="modifica_actividad_actual">Modify your current main activity:</p>
         <div class="form-group" style="margin-top: 15px;">
           <select id="ajustes-select-rol" class="input-form" style="flex:1;">
-            <option value="estudiante" data-i18n="opt_estudiante">🎓 Estudiante</option>
-            <option value="trabajador" data-i18n="opt_trabajador">💼 Trabajador</option>
+            <option value="estudiante" data-i18n="opt_estudiante">🎓 Student</option>
+            <option value="trabajador" data-i18n="opt_trabajador">💼 Worker</option>
           </select>
-          <button onclick="guardarRolDesdeAjustes()" class="btn-action" data-i18n="guardar_rol">Guardar Rol</button>
+          <button onclick="guardarRolDesdeAjustes()" class="btn-action" data-i18n="guardar_rol">Save Role</button>
         </div>
       </div>
 
       <!-- Tarjeta 5: Copia de seguridad -->
       <div class="card">
-        <h2 data-i18n="copia_seguridad_guias">⚙️ Copia de Seguridad y Guías</h2>
-        <button onclick="exportarDatos()" class="btn-action" data-i18n="exportar_copia">Exportar Copia de Seguridad</button>
+        <h2 data-i18n="copia_seguridad_guias">⚙️ Backup & Guides</h2>
+        <button onclick="exportarDatos()" class="btn-action" data-i18n="exportar_copia">Export Backup</button>
         <br><br>
         <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
-        <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);" data-i18n="restaurar_datos">Restaurar Datos</button>
+        <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);" data-i18n="restaurar_datos">Restore Data</button>
         <br><br>
-        <button onclick="reiniciarTutoriales()" class="btn-action" style="background: var(--warning); color: #2b2d42;" data-i18n="reactivar_guias">🔄 Reactivar Guías Contextuales</button>
+        <button onclick="reiniciarTutoriales()" class="btn-action" style="background: var(--warning); color: #2b2d42;" data-i18n="reactivar_guias">🔄 Reset Context Guides</button>
       </div>
     </div>
 
@@ -694,129 +695,26 @@
   <div id="tutorial-card" class="tutorial-card hidden">
     <p id="tutorial-text"></p>
     <div class="tutorial-buttons" style="display:flex; justify-content:space-between; margin-top:15px;">
-      <button id="tutorial-btn-skip" class="btn-action" style="background:var(--danger);" onclick="cerrarTutorialModulo()" data-i18n="btn_omitir">Omitir</button>
-      <button id="tutorial-btn-next" class="btn-action" onclick="siguientePaso()" data-i18n="btn_entendido">Entendido</button>
+      <button id="tutorial-btn-skip" class="btn-action" style="background:var(--danger);" onclick="cerrarTutorialModulo()" data-i18n="btn_omitir">Skip</button>
+      <button id="tutorial-btn-next" class="btn-action" onclick="siguientePaso()" data-i18n="btn_entendido">Got it</button>
     </div>
   </div>
 
   <script>
-    // --- DICCIONARIO DE TRADUCCIONES ---
+    // --- DICCIONARIO DE TRADUCCIONES COMPLETO (Con Inglés como predeterminado) ---
     const i18n = {
-      es: {
-        menu_panel: "📌 Panel de Control",
-        menu_pomodoro: "🍅 Modo pomodoro",
-        menu_eventos: "📅 Eventos y Reuniones",
-        menu_hobbies: "🎨 Mis Hobbies",
-        menu_sueno: "💤 Control del Sueño",
-        menu_objetivos: "🎯 Mis Objetivos",
-        menu_notas: "📝 Notas y Apuntes",
-        menu_trofeos: "🏆 Trofeos y Logros",
-        menu_ajustes: "⚙️ Ajustes",
-        actividad_actual: "⚡ Actividad Actual",
-        llevas_transcurrido: "Llevas transcurrido:",
-        proxima_actividad_en: "Próxima actividad en:",
-        proximo_evento_reunion: "📌 Próximo Evento / Reunión Destacada",
-        no_hay_eventos: "No hay eventos ni reuniones próximas",
-        agendar_evento: "+ Agendar Evento",
-        objetivos_diarios_trabajo: "🎯 Objetivos Diarios de Trabajo",
-        agregar: "Agregar",
-        proximo_examen_cercano: "⏳ Próximo Examen Más Cercano:",
-        proxima_clase_actividad: "🎓 Próxima Clase / Actividad",
-        objetivos_tareas_diarias: "🎯 Objetivos / Tareas Diarias",
-        borde_cambia_verde: "El borde cambia a verde cuando completas tus tareas diarias.",
-        proximos_examenes_destacados: "📅 Próximos Exámenes Destacados",
-        estado_sueno: "🌙 Estado del Sueño",
-        registrar_sueno: "Registrar Sueño de Anoche",
-        horario_semanal_completo: "🗓️ Horario Semanal Completo",
-        anadir_horas_horario: "Añadir Horas al Horario",
-        dia_lunes: "Lunes",
-        dia_martes: "Martes",
-        dia_miercoles: "Miércoles",
-        dia_jueves: "Jueves",
-        dia_viernes: "Viernes",
-        dia_sabado: "Sábado",
-        dia_domingo: "Domingo",
-        desde: "Desde:",
-        hasta: "Hasta:",
-        guardar_bloque: "Guardar Bloque",
-        th_hora: "Hora",
-        modo_concentracion: "⏱️ Modo Concentración (Pomodoro)",
-        btn_iniciar: "Iniciar",
-        btn_pausar: "Pausar",
-        btn_reiniciar: "Reiniciar",
-        btn_config_bloques: "⚙️ Configurar Bloques",
-        personalizar_duracion: "Personalizar Duración de Bloques",
-        guardar_config: "Guardar Configuración",
-        gestor_asignaturas_proyectos: "📚 Gestor de Asignaturas y Proyectos",
-        anadir: "Añadir",
-        agendar_proximo_evento: "📅 Agendar Próximo Evento / Examen",
-        guardar: "Guardar",
-        eventos_programados: "Eventos Programados",
-        registro_notas_calificaciones: "📊 Registro de Notas y Calificaciones",
-        registra_calificaciones_desc: "Registra tus calificaciones o avances para calcular tus promedios automáticamente y graficar tu evolución.",
-        grafico_evolucion_academica: "📈 Gráfico de Evolución Académica",
-        mis_hobbies_actividades: "🎨 Mis Hobbies y Actividades Libres",
-        dias_repeticion: "Días de repetición:",
-        anadir_hobby: "Añadir Hobby",
-        hobbies_registrados: "Hobbies Registrados",
-        config_control_sueno: "💤 Configuración del Control de Sueño",
-        horas_sueno_deseadas: "Horas de sueño deseadas:",
-        hora_dormir: "Hora de Dormir:",
-        hora_despertar: "Hora de Despertar:",
-        guardar_habitos: "Guardar Hábitos",
-        resumen_descanso: "🌙 Resumen de Descanso",
-        cargando_sueno: "Cargando datos de sueño...",
-        administrar_objetivos_diarios: "🎯 Administrar Objetivos Diarios",
-        anadir_objetivo: "Añadir Objetivo",
-        constancia_exito_mes: "📈 Constancia y Éxito del Mes",
-        registro_mensual: "Registro Mensual (Últimos 30 días)",
-        th_dia: "Día",
-        th_estado: "Estado",
-        anadir_apunte_nota: "📝 Añadir Apunte / Nota",
-        guardar_apunte: "Guardar Apunte",
-        buscar_apuntes: "🔍 Buscar Apuntes",
-        todas_categorias: "Todas las categorías",
-        sala_trofeos: "🏆 Sala de Trofeos RemindEd",
-        personalizar_apariencia: "🎨 Personalizar Apariencia y Tema",
-        alterna_modo_visualizacion: "Alterna el modo de visualización y personaliza los colores principales:",
-        modo_oscuro_claro: "Modo Oscuro / Claro",
-        alterna_apariencia_visual: "Alterna la apariencia visual.",
-        btn_cambiar_tema: "🌓 Cambiar Tema",
-        tema_morado: "💜 Morado RemindEd",
-        tema_azul: "💙 Azul Océano",
-        tema_verde: "💚 Verde Esmeralda",
-        tema_terracota: "🧡 Terracota / Cálido",
-        tema_rojo: "🔴 Rojo Carmín",
-        elige_color_personalizado: "O elige un color personalizado:",
-        idioma_aplicacion: "🌐 Idioma de la Aplicación",
-        selecciona_idioma_interfaz: "Selecciona el idioma con el que deseas ver la interfaz:",
-        cambiar_idioma: "Cambiar Idioma",
-        cambiar_nombre_usuario: "✏️ Cambiar Nombre de Usuario",
-        actualiza_nombre_saludo: "Actualiza cómo te saluda la aplicación:",
-        guardar_nombre: "Guardar Nombre",
-        cambiar_rol: "💼 Cambiar Rol (Estudiante / Trabajador)",
-        modifica_actividad_actual: "Modifica tu actividad principal actual:",
-        opt_estudiante: "🎓 Estudiante",
-        opt_trabajador: "💼 Trabajador",
-        guardar_rol: "Guardar Rol",
-        copia_seguridad_guias: "⚙️ Copia de Seguridad y Guías",
-        exportar_copia: "Exportar Copia de Seguridad",
-        restaurar_datos: "Restaurar Datos",
-        reactivar_guias: "🔄 Reactivar Guías Contextuales",
-        btn_omitir: "Omitir",
-        btn_entendido: "Entendido",
-        placeholder_nuevo_objetivo: "Nuevo objetivo laboral...",
-        placeholder_lugar_aula: "Lugar / Aula",
-        placeholder_nombre_asig: "Nombre (ej. Proyecto X / Historia)",
-        placeholder_meta_clave: "Nota o Meta clave",
-        placeholder_hobby: "Hobby o Deporte...",
-        placeholder_nuevo_objetivo_gral: "Nuevo objetivo...",
-        placeholder_titulo_nota: "Título...",
-        placeholder_contenido_nota: "Escribe aquí tu apunte o minuta de reunión...",
-        placeholder_buscar: "Buscar...",
-        placeholder_nuevo_nombre: "Escribe tu nuevo nombre"
-      },
       en: {
+        welcome_title: "Welcome to <span style='color: var(--primary);'>Remind<span style='color: var(--accent);'>Ed</span></span>!",
+        welcome_subtitle: "Let's personalize your experience.",
+        lbl_what_is_your_name: "What is your name?",
+        lbl_what_do_you_do: "What do you currently do?",
+        role_study: "Study",
+        role_studying: "I am studying",
+        role_work: "Work",
+        role_working: "I am working",
+        lbl_max_grade: "What is the maximum grade of your educational system?",
+        lbl_max_grade_help: "RemindEd will use this scale to adapt your charts and stats.",
+        btn_start: "Start with RemindEd 🚀",
         menu_panel: "📌 Control Panel",
         menu_pomodoro: "🍅 Pomodoro Mode",
         menu_eventos: "📅 Events & Meetings",
@@ -919,6 +817,11 @@
         reactivar_guias: "🔄 Reset Context Guides",
         btn_omitir: "Skip",
         btn_entendido: "Got it",
+        btn_continue: "Continue →",
+        loading: "Loading...",
+        loading_schedule: "Loading schedule...",
+        loading_sleep: "Loading rest habits...",
+        placeholder_your_name: "Type your name",
         placeholder_nuevo_objetivo: "New work goal...",
         placeholder_lugar_aula: "Location / Room",
         placeholder_nombre_asig: "Name (e.g., Project X / History)",
@@ -930,7 +833,148 @@
         placeholder_buscar: "Search...",
         placeholder_nuevo_nombre: "Type your new name"
       },
+      es: {
+        welcome_title: "¡Bienvenido a <span style='color: var(--primary);'>Remind<span style='color: var(--accent);'>Ed</span></span>!",
+        welcome_subtitle: "Vamos a personalizar tu experiencia.",
+        lbl_what_is_your_name: "¿Cómo te llamas?",
+        lbl_what_do_you_do: "¿Qué haces actualmente?",
+        role_study: "Estudio",
+        role_studying: "Estoy estudiando",
+        role_work: "Trabajo",
+        role_working: "Estoy trabajando",
+        lbl_max_grade: "¿Cuál es la nota máxima de tu sistema educativo?",
+        lbl_max_grade_help: "RemindEd utilizará esta escala para adaptar tus gráficos y estadísticas.",
+        btn_start: "Empezar con RemindEd 🚀",
+        menu_panel: "📌 Panel de Control",
+        menu_pomodoro: "🍅 Modo pomodoro",
+        menu_eventos: "📅 Eventos y Reuniones",
+        menu_hobbies: "🎨 Mis Hobbies",
+        menu_sueno: "💤 Control del Sueño",
+        menu_objetivos: "🎯 Mis Objetivos",
+        menu_notas: "📝 Notas y Apuntes",
+        menu_trofeos: "🏆 Trofeos y Logros",
+        menu_ajustes: "⚙️ Ajustes",
+        actividad_actual: "⚡ Actividad Actual",
+        llevas_transcurrido: "Llevas transcurrido:",
+        proxima_actividad_en: "Próxima actividad en:",
+        proximo_evento_reunion: "📌 Próximo Evento / Reunión Destacada",
+        no_hay_eventos: "No hay eventos ni reuniones próximas",
+        agendar_evento: "+ Agendar Evento",
+        objetivos_diarios_trabajo: "🎯 Objetivos Diarios de Trabajo",
+        agregar: "Agregar",
+        proximo_examen_cercano: "⏳ Próximo Examen Más Cercano:",
+        proxima_clase_actividad: "🎓 Próxima Clase / Actividad",
+        objetivos_tareas_diarias: "🎯 Objetivos / Tareas Diarias",
+        borde_cambia_verde: "El borde cambia a verde cuando completas tus tareas diarias.",
+        proximos_examenes_destacados: "📅 Próximos Exámenes Destacados",
+        estado_sueno: "🌙 Estado del Sueño",
+        registrar_sueno: "Registrar Sueño de Anoche",
+        horario_semanal_completo: "🗓️ Horario Semanal Completo",
+        anadir_horas_horario: "Añadir Horas al Horario",
+        dia_lunes: "Lunes",
+        dia_martes: "Martes",
+        dia_miercoles: "Miércoles",
+        dia_jueves: "Jueves",
+        dia_viernes: "Viernes",
+        dia_sabado: "Sábado",
+        dia_domingo: "Domingo",
+        desde: "Desde:",
+        hasta: "Hasta:",
+        guardar_bloque: "Guardar Bloque",
+        th_hora: "Hora",
+        modo_concentracion: "⏱️ Modo Concentración (Pomodoro)",
+        btn_iniciar: "Iniciar",
+        btn_pausar: "Pausar",
+        btn_reiniciar: "Reiniciar",
+        btn_config_bloques: "⚙️ Configurar Bloques",
+        personalizar_duracion: "Personalizar Duración de Bloques",
+        guardar_config: "Guardar Configuración",
+        gestor_asignaturas_proyectos: "📚 Gestor de Asignaturas y Proyectos",
+        anadir: "Añadir",
+        agendar_proximo_evento: "📅 Agendar Próximo Evento / Examen",
+        guardar: "Guardar",
+        eventos_programados: "Eventos Programados",
+        registro_notas_calificaciones: "📊 Registro de Notas y Calificaciones",
+        registra_calificaciones_desc: "Registra tus calificaciones o avances para calcular tus promedios automáticamente y graficar tu evolución.",
+        grafico_evolucion_academica: "📈 Gráfico de Evolución Académica",
+        mis_hobbies_actividades: "🎨 Mis Hobbies y Actividades Libres",
+        dias_repeticion: "Días de repetición:",
+        anadir_hobby: "Añadir Hobby",
+        hobbies_registrados: "Hobbies Registrados",
+        config_control_sueno: "💤 Configuración del Control de Sueño",
+        horas_sueno_deseadas: "Horas de sueño deseadas:",
+        hora_dormir: "Hora de Dormir:",
+        hora_despertar: "Hora de Despertar:",
+        guardar_habitos: "Guardar Hábitos",
+        resumen_descanso: "🌙 Resumen de Descanso",
+        cargando_sueno: "Cargando datos de sueño...",
+        administrar_objetivos_diarios: "🎯 Administrar Objetivos Diarios",
+        anadir_objetivo: "Añadir Objetivo",
+        constancia_exito_mes: "📈 Constancia y Éxito del Mes",
+        registro_mensual: "Registro Mensual (Últimos 30 días)",
+        th_dia: "Día",
+        th_estado: "Estado",
+        anadir_apunte_nota: "📝 Añadir Apunte / Nota",
+        guardar_apunte: "Guardar Apunte",
+        buscar_apuntes: "🔍 Buscar Apuntes",
+        todas_categorias: "Todas las categorías",
+        sala_trofeos: "🏆 Sala de Trofeos RemindEd",
+        personalizar_apariencia: "🎨 Personalizar Apariencia y Tema",
+        alterna_modo_visualizacion: "Alterna el modo de visualización y personaliza los colores principales:",
+        modo_oscuro_claro: "Modo Oscuro / Claro",
+        alterna_apariencia_visual: "Alterna la apariencia visual.",
+        btn_cambiar_tema: "🌓 Cambiar Tema",
+        tema_morado: "💜 Morado RemindEd",
+        tema_azul: "💙 Azul Océano",
+        tema_verde: "💚 Verde Esmeralda",
+        tema_terracota: "🧡 Terracota / Cálido",
+        tema_rojo: "🔴 Rojo Carmín",
+        elige_color_personalizado: "O elige un color personalizado:",
+        idioma_aplicacion: "🌐 Idioma de la Aplicación",
+        selecciona_idioma_interfaz: "Selecciona el idioma con el que deseas ver la interfaz:",
+        cambiar_idioma: "Cambiar Idioma",
+        cambiar_nombre_usuario: "✏️ Cambiar Nombre de Usuario",
+        actualiza_nombre_saludo: "Actualiza cómo te saluda la aplicación:",
+        guardar_nombre: "Guardar Nombre",
+        cambiar_rol: "💼 Cambiar Rol (Estudiante / Trabajador)",
+        modifica_actividad_actual: "Modifica tu actividad principal actual:",
+        opt_estudiante: "🎓 Estudiante",
+        opt_trabajador: "💼 Trabajador",
+        guardar_rol: "Guardar Rol",
+        copia_seguridad_guias: "⚙️ Copia de Seguridad y Guías",
+        exportar_copia: "Exportar Copia de Seguridad",
+        restaurar_datos: "Restaurar Datos",
+        reactivar_guias: "🔄 Reactivar Guías Contextuales",
+        btn_omitir: "Omitir",
+        btn_entendido: "Entendido",
+        btn_continue: "Continuar →",
+        loading: "Cargando...",
+        loading_schedule: "Cargando horario...",
+        loading_sleep: "Cargando hábitos de descanso...",
+        placeholder_your_name: "Escribe tu nombre",
+        placeholder_nuevo_objetivo: "Nuevo objetivo laboral...",
+        placeholder_lugar_aula: "Lugar / Aula",
+        placeholder_nombre_asig: "Nombre (ej. Proyecto X / Historia)",
+        placeholder_meta_clave: "Nota o Meta clave",
+        placeholder_hobby: "Hobby o Deporte...",
+        placeholder_nuevo_objetivo_gral: "Nuevo objetivo...",
+        placeholder_titulo_nota: "Título...",
+        placeholder_contenido_nota: "Escribe aquí tu apunte o minuta de reunión...",
+        placeholder_buscar: "Buscar...",
+        placeholder_nuevo_nombre: "Escribe tu nuevo nombre"
+      },
       pt: {
+        welcome_title: "Bem-vindo ao <span style='color: var(--primary);'>Remind<span style='color: var(--accent);'>Ed</span></span>!",
+        welcome_subtitle: "Vamos personalizar sua experiência.",
+        lbl_what_is_your_name: "Qual é o seu nome?",
+        lbl_what_do_you_do: "O que você faz atualmente?",
+        role_study: "Estudo",
+        role_studying: "Estou estudando",
+        role_work: "Trabalho",
+        role_working: "Estou trabalhando",
+        lbl_max_grade: "Qual é a nota máxima do seu sistema educacional?",
+        lbl_max_grade_help: "O RemindEd usará esta escala para adaptar seus gráficos e estatísticas.",
+        btn_start: "Começar com RemindEd 🚀",
         menu_panel: "📌 Painel de Controle",
         menu_pomodoro: "🍅 Modo Pomodoro",
         menu_eventos: "📅 Eventos e Reuniões",
@@ -1033,6 +1077,11 @@
         reactivar_guias: "🔄 Reativar Guias Contextuais",
         btn_omitir: "Pular",
         btn_entendido: "Entendido",
+        btn_continue: "Continuar →",
+        loading: "Carregando...",
+        loading_schedule: "Carregando horário...",
+        loading_sleep: "Carregando hábitos de descanso...",
+        placeholder_your_name: "Digite seu nome",
         placeholder_nuevo_objetivo: "Novo objetivo de trabalho...",
         placeholder_lugar_aula: "Local / Sala",
         placeholder_nombre_asig: "Nome (ex. Projeto X / História)",
@@ -1048,15 +1097,156 @@
 
     let rolSeleccionado = null;
     window.rolSeleccionado = null;
-    let idiomaSeleccionado = "es";
+    let idiomaGlobal = "en"; // Predeterminado inglés
 
-    function onboardingContinuarIdioma() {
-      const select = document.getElementById("onboarding-select-idioma");
-      if (select) idiomaSeleccionado = select.value;
+    // Textos multilingües para tutoriales por rol
+    function obtenerTutorialesConfig() {
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
+      const esTrabajador = perfil && perfil.rol === 'trabajador';
+
+      if (esTrabajador) {
+        if (idiomaGlobal === 'es') {
+          return {
+            panel: [
+              { target: null, texto: "¡Bienvenido a tu Panel de Trabajo en RemindEd! Te guiaremos por tus herramientas activas." },
+              { target: "#card-actividad-actual", texto: "⚡ <strong>Actividad Actual</strong>: Sigue en tiempo real las tareas o reuniones que estás ejecutando según tu horario semanal." },
+              { target: "#card-proximo-evento", texto: "📌 <strong>Eventos y Reuniones</strong>: Mantén visibilidad completa de tus compromisos de trabajo próximos." },
+              { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diarios</strong>: Marca tus hitos clave diarios para visualizar el porcentaje de avance." },
+              { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus jornadas de trabajo y bloques libres de la semana.</strong>" }
+            ],
+            examenes: [{ target: "#card-gestion-materias", texto: "💼 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." }],
+            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planifica tus hobbies para asegurar una vida balanceada fuera del trabajo." }],
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configura tus metas de sueño para un descanso reparador." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Configura y revisa la métrica de tus hábitos del mes." }],
+            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escribe minutas de reuniones y notas rápidas de trabajo." }]
+          };
+        } else if (idiomaGlobal === 'pt') {
+          return {
+            panel: [
+              { target: null, texto: "Bem-vindo ao seu Painel de Trabalho no RemindEd! Vamos guiá-lo pelas suas ferramentas ativas." },
+              { target: "#card-actividad-actual", texto: "⚡ <strong>Atividade Atual</strong>: Acompanhe em tempo real as tarefas ou reuniões de acordo com sua agenda." },
+              { target: "#card-proximo-evento", texto: "📌 <strong>Eventos e Reuniões</strong>: Mantenha visibilidade total dos seus próximos compromissos." },
+              { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diários</strong>: Marque seus marcos principais para acompanhar o progresso." },
+              { target: "#card-estado-sueno", texto: "🌙 <strong>Estado do Sono</strong>: Monitore seus hábitos de descanso." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horário Semanal: Planeje seus dias de trabalho e blocos livres.</strong>" }
+            ],
+            examenes: [{ target: "#card-gestion-materias", texto: "💼 <strong>Projetos e Categorias</strong>: Gerencie suas áreas profissionais." }],
+            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planeje seus hobbies para uma vida equilibrada." }],
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configure suas metas de sono." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitore seus hábitos do mês." }],
+            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escreva atas de reuniões e notas de trabalho." }]
+          };
+        } else {
+          // Inglés (Predeterminado)
+          return {
+            panel: [
+              { target: null, texto: "Welcome to your Work Panel in RemindEd! Let's guide you through your active tools." },
+              { target: "#card-actividad-actual", texto: "⚡ <strong>Current Activity</strong>: Track tasks or meetings in real time based on your weekly schedule." },
+              { target: "#card-proximo-evento", texto: "📌 <strong>Events & Meetings</strong>: Maintain full visibility of upcoming work commitments." },
+              { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Daily Goals</strong>: Check off key daily milestones to visualize your progress." },
+              { target: "#card-estado-sueno", texto: "🌙 <strong>Sleep Status</strong>: Monitor your rest habits for optimal work performance." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Weekly Schedule: Plan your work shifts and free blocks for the week.</strong>" }
+            ],
+            examenes: [{ target: "#card-gestion-materias", texto: "💼 <strong>Projects & Categories</strong>: Manage your different professional areas or clients." }],
+            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Plan your hobbies to ensure a balanced life outside of work." }],
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Set your sleep goals for restorative rest." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Set up and review your month's habit metrics." }],
+            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Write meeting minutes and quick work notes." }]
+          };
+        }
+      } else {
+        if (idiomaGlobal === 'es') {
+          return {
+            panel: [
+              { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel de Estudiante." },
+              { target: "#card-proxima-clase", texto: "🎓 Aquí verás tu próxima clase o hobby de la jornada." },
+              { target: "#card-objetivos-contenedor", texto: "🎯 Revisa y completa tus metas diarias para cambiar el borde a verde resplandeciente." },
+              { target: "#card-examenes-destacados", texto: "📅 Revisa tus próximos exámenes y cuentas regresivas." },
+              { target: "#card-estado-sueno", texto: "🌙 Registra tu descanso de la noche anterior." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus clases y bloques libres de la semana.</strong>" }
+            ],
+            estudio: [{ target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Administra tus bloques de estudio." }],
+            examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas." }],
+            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Añade actividades extracurriculares a tu agenda." }],
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Define tus hábitos de descanso diario." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitorea tus hábitos académicos diarios." }],
+            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Guarda y organiza tus apuntes de clase." }]
+          };
+        } else if (idiomaGlobal === 'pt') {
+          return {
+            panel: [
+              { target: null, texto: "Bem-vindo ao RemindEd! Vamos dar uma olhada rápida no seu Painel de Estudante." },
+              { target: "#card-proxima-clase", texto: "🎓 Aqui você verá sua próxima aula ou hobby." },
+              { target: "#card-objetivos-contenedor", texto: "🎯 Revise e complete suas metas diárias." },
+              { target: "#card-examenes-destacados", texto: "📅 Revise seus próximos exames e contagens regressivas." },
+              { target: "#card-estado-sueno", texto: "🌙 Registre seu descanso da noite anterior." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horário Semanal: Planeje suas aulas e blocos livres.</strong>" }
+            ],
+            estudio: [{ target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Gerencie seus blocos de estudo." }],
+            examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Matérias</strong>: Gerencie suas matérias ativas." }],
+            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Adicione atividades extracurriculares." }],
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Defina seus hábitos de descanso diário." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitore seus hábitos acadêmicos." }],
+            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Salve e organize suas anotações de aula." }]
+          };
+        } else {
+          // Inglés (Predeterminado)
+          return {
+            panel: [
+              { target: null, texto: "Welcome to RemindEd! Let's take a quick look at your Student Panel." },
+              { target: "#card-proxima-clase", texto: "🎓 Here you will see your next class or hobby for the day." },
+              { target: "#card-objetivos-contenedor", texto: "🎯 Review and complete your daily goals to turn the border glowing green." },
+              { target: "#card-examenes-destacados", texto: "📅 Check your upcoming exams and countdowns." },
+              { target: "#card-estado-sueno", texto: "🌙 Record your rest from last night." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Weekly Schedule: Plan your classes and free blocks for the week.</strong>" }
+            ],
+            estudio: [{ target: ".timer-display", texto: "⏱️ <strong>Pomodoro Mode</strong>: Manage your study blocks to improve retention." }],
+            examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Subjects</strong>: Manage your active subjects." }],
+            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Add extracurricular activities to your agenda." }],
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Define your daily rest habits." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitor your daily academic habits." }],
+            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Save and organize your class notes." }]
+          };
+        }
+      }
+    }
+
+    function cambiarIdiomaDesdeTop(nuevoIdioma) {
+      idiomaGlobal = nuevoIdioma;
+      aplicarTraduccionesUI(nuevoIdioma);
       
-      document.getElementById("onboarding-paso-idioma").style.display = "none";
-      document.getElementById("onboarding-paso-1").style.display = "block";
-      aplicarTraduccionesUI(idiomaSeleccionado);
+      const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
+      perfilActual.idioma = nuevoIdioma;
+      localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
+
+      const selectAjustes = document.getElementById("ajustes-select-idioma");
+      if (selectAjustes) selectAjustes.value = nuevoIdioma;
+    }
+
+    function aplicarTraduccionesUI(lang) {
+      if (!i18n[lang]) return;
+      const dict = i18n[lang];
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (dict[key]) {
+          el.setAttribute("placeholder", dict[key]);
+        }
+      });
+
+      const topSelect = document.getElementById("top-select-idioma");
+      if (topSelect) topSelect.value = lang;
+
+      const ajustesSelect = document.getElementById("ajustes-select-idioma");
+      if (ajustesSelect) ajustesSelect.value = lang;
     }
 
     function onboardingContinuarNombre() {
@@ -1064,7 +1254,7 @@
       if (!input) return;
       const nombre = input.value.trim();
       if (!nombre) {
-        alert("Por favor, escribe tu nombre antes de continuar.");
+        alert(idiomaGlobal === 'es' ? "Por favor, escribe tu nombre antes de continuar." : idiomaGlobal === 'pt' ? "Por favor, digite seu nome antes de continuar." : "Please type your name before continuing.");
         input.focus();
         return;
       }
@@ -1093,7 +1283,7 @@
 
     function onboardingContinuarRol() {
       if (!rolSeleccionado) {
-        alert("Selecciona si estudias o trabajas.");
+        alert(idiomaGlobal === 'es' ? "Selecciona si estudias o trabajas." : idiomaGlobal === 'pt' ? "Selecione se você estuda ou trabalha." : "Select whether you study or work.");
         return;
       }
 
@@ -1110,14 +1300,14 @@
     function obtenerConfigEscala() {
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
       if (perfil.rol === "trabajador") {
-        return { min: 0, max: 100, paso: 1, label: "Rendimiento (%)", metaEjemplo: "85" };
+        return { min: 0, max: 100, paso: 1, label: idiomaGlobal === 'es' ? "Rendimiento (%)" : idiomaGlobal === 'pt' ? "Desempenho (%)" : "Performance (%)", metaEjemplo: "85" };
       }
       const maxima = parseFloat(perfil.notaMaxima) || 10;
       return {
         min: maxima <= 10 ? 1 : 0,
         max: maxima,
         paso: maxima <= 10 ? 0.1 : 1,
-        label: `Nota (1-${maxima})`,
+        label: `${idiomaGlobal === 'es' ? 'Nota' : idiomaGlobal === 'pt' ? 'Nota' : 'Grade'} (1-${maxima})`,
         metaEjemplo: (maxima * 0.9).toFixed(1)
       };
     }
@@ -1127,11 +1317,11 @@
       const rol = rolSeleccionado || window.rolSeleccionado;
 
       if (!nombre) {
-        alert("Por favor, escribe tu nombre.");
+        alert(idiomaGlobal === 'es' ? "Por favor, escribe tu nombre." : idiomaGlobal === 'pt' ? "Por favor, digite seu nome." : "Please type your name.");
         return;
       }
       if (!rol) {
-        alert("Selecciona si estudias o trabajas.");
+        alert(idiomaGlobal === 'es' ? "Selecciona si estudias o trabajas." : idiomaGlobal === 'pt' ? "Selecione se você estuda ou trabalha." : "Select whether you study or work.");
         return;
       }
 
@@ -1140,14 +1330,14 @@
         const input = document.getElementById("onboarding-nota-max");
         const valor = parseFloat(input?.value);
         if (!valor || valor <= 0) {
-          alert("Introduce una nota máxima válida.");
+          alert(idiomaGlobal === 'es' ? "Introduce una nota máxima válida." : idiomaGlobal === 'pt' ? "Insira uma nota máxima válida." : "Enter a valid maximum grade.");
           input?.focus();
           return;
         }
         notaMaxima = valor;
       }
 
-      const perfil = { nombre, rol, notaMaxima, idioma: idiomaSeleccionado };
+      const perfil = { nombre, rol, notaMaxima, idioma: idiomaGlobal };
       localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
 
       const pantalla = document.getElementById("pantalla-bienvenida");
@@ -1156,29 +1346,7 @@
       if (app) app.style.display = "block";
 
       cargarInterfazSegunRol();
-      aplicarTraduccionesUI(idiomaSeleccionado);
-    }
-
-    function aplicarTraduccionesUI(lang) {
-      if (!i18n[lang]) return;
-      const dict = i18n[lang];
-
-      document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (dict[key]) {
-          el.innerText = dict[key];
-        }
-      });
-
-      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-        const key = el.getAttribute("data-i18n-placeholder");
-        if (dict[key]) {
-          el.setAttribute("placeholder", dict[key]);
-        }
-      });
-
-      const selectIdiomaAjustes = document.getElementById("ajustes-select-idioma");
-      if (selectIdiomaAjustes) selectIdiomaAjustes.value = lang;
+      aplicarTraduccionesUI(idiomaGlobal);
     }
 
     function cargarAsignaturasYNotas() {
@@ -1209,18 +1377,18 @@
         div.innerHTML = `
           <div>
             <strong>${asig}</strong>
-            <span class="promedio-tag">Promedio: ${promedioStr} / ${escala.max}</span>
+            <span class="promedio-tag">${idiomaGlobal === 'es' ? 'Promedio' : idiomaGlobal === 'pt' ? 'Média' : 'Average'}: ${promedioStr} / ${escala.max}</span>
           </div>
           <div style="margin-top: 10px;" class="form-group">
             <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="${escala.label}" id="input-nota-${asig}" class="input-form" style="width: 130px;" />
-            <button onclick="agregarNota('${asig}')" class="btn-action">Guardar Registro</button>
+            <button onclick="agregarNota('${asig}')" class="btn-action">${idiomaGlobal === 'es' ? 'Guardar Registro' : idiomaGlobal === 'pt' ? 'Salvar Registro' : 'Save Record'}</button>
             <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
-              <span style="font-size:0.85rem; font-weight:600;">🎯 Meta Objetivo:</span>
-              <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="Ej. ${escala.metaEjemplo}" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
+              <span style="font-size:0.85rem; font-weight:600;">🎯 ${idiomaGlobal === 'es' ? 'Meta Objetivo' : idiomaGlobal === 'pt' ? 'Meta Alvo' : 'Target Goal'}:</span>
+              <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="Ex. ${escala.metaEjemplo}" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
             </div>
           </div>
           <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
-            <strong>Registros guardados:</strong> ${listaNotas.length > 0 ? notasItemsHTML : "Sin datos guardados"}
+            <strong>${idiomaGlobal === 'es' ? 'Registros guardados:' : idiomaGlobal === 'pt' ? 'Registros salvos:' : 'Saved records:'}</strong> ${listaNotas.length > 0 ? notasItemsHTML : (idiomaGlobal === 'es' ? 'Sin datos guardados' : idiomaGlobal === 'pt' ? 'Sem dados salvos' : 'No data saved')}
           </div>
         `;
         contenedor.appendChild(div);
@@ -1257,7 +1425,7 @@
         data: {
           labels: labels,
           datasets: [{
-            label: `Promedio / Rendimiento Actual (${escala.label})`,
+            label: `${idiomaGlobal === 'es' ? 'Promedio / Rendimiento Actual' : idiomaGlobal === 'pt' ? 'Média / Desempenho Atual' : 'Average / Current Performance'} (${escala.label})`,
             data: dataPromedios,
             backgroundColor: primaryColor + 'a6',
             borderColor: primaryColor,
@@ -1282,8 +1450,8 @@
       });
     }
 
-    const MATERIAS_PREDETERMINADAS = ["Matemática", "Portugués", "Inglés", "Educación Física", "Filosofía"];
-    const PROYECTOS_PREDETERMINADOS = ["Proyecto A", "Reuniones", "Administración", "Capacitación"];
+    const MATERIAS_PREDETERMINADAS = ["Mathematics", "Portuguese", "English", "Physical Education", "Philosophy"];
+    const PROYECTOS_PREDETERMINADOS = ["Project A", "Meetings", "Administration", "Training"];
 
     let userTasks = [];
     let workerTimerInterval = null;
@@ -1361,7 +1529,7 @@
           });
         }
       } catch (e) {
-        console.log("Audio no habilitado.");
+        console.log("Audio not enabled.");
       }
     }
 
@@ -1408,7 +1576,7 @@
           inicializarExamenesYNotas();
           evaluarTrofeos();
         } else {
-          alert("Ya existe este elemento.");
+          alert(idiomaGlobal === 'es' ? "Ya existe este elemento." : idiomaGlobal === 'pt' ? "Este elemento já existe." : "This item already exists.");
         }
       }
     }
@@ -1434,14 +1602,14 @@
       cont.innerHTML = "";
       
       if (lista.length === 0) {
-        cont.innerHTML = "<p style='color:#64748b;'>No hay registros creados.</p>";
+        cont.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'No hay registros creados.' : idiomaGlobal === 'pt' ? 'Nenhum registro criado.' : 'No records created.'}</p>`;
         return;
       }
 
       lista.forEach(asig => {
         const div = document.createElement("div");
         div.className = "item-list";
-        div.innerHTML = `<span>📖 <strong>${asig}</strong></span> <button class="btn-del" onclick="borrarAsignatura('${asig}')">Eliminar</button>`;
+        div.innerHTML = `<span>📖 <strong>${asig}</strong></span> <button class="btn-del" onclick="borrarAsignatura('${asig}')">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
         cont.appendChild(div);
       });
     }
@@ -1454,7 +1622,7 @@
       
       if (select) select.innerHTML = ""; 
       if (notaSel) notaSel.innerHTML = "";
-      if (filtroSel) filtroSel.innerHTML = `<option value="TODAS">Todas las categorías</option>`;
+      if (filtroSel) filtroSel.innerHTML = `<option value="TODAS">${idiomaGlobal === 'es' ? 'Todas las categorías' : idiomaGlobal === 'pt' ? 'Todas as categorias' : 'All categories'}</option>`;
       if (horarioSel) horarioSel.innerHTML = "";
 
       obtenerAsignaturas().forEach(asig => {
@@ -1490,7 +1658,7 @@
         renderizarHorarioTabla();
         actualizarPanel();
       } else {
-        alert("Por favor completa las horas e indica una categoría.");
+        alert(idiomaGlobal === 'es' ? "Por favor completa las horas e indica una categoría." : idiomaGlobal === 'pt' ? "Por favor, preencha os horários e selecione uma categoria." : "Please complete the times and select a category.");
       }
     }
 
@@ -1527,7 +1695,7 @@
       });
 
       if (horasOrdenadas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No hay horarios programados aún.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">${idiomaGlobal === 'es' ? 'No hay horarios programados aún.' : idiomaGlobal === 'pt' ? 'Nenhum horário programado ainda.' : 'No schedules programmed yet.'}</td></tr>`;
         return;
       }
 
@@ -1565,59 +1733,6 @@
       } else {
         menu.style.setProperty("display", "block", "important");
         menu.setAttribute("aria-hidden", "false");
-      }
-    }
-
-    function obtenerTutorialesConfig() {
-      const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
-      const esTrabajador = perfil && perfil.rol === 'trabajador';
-
-      if (esTrabajador) {
-        return {
-          panel: [
-            { target: null, texto: "¡Bienvenido a tu Panel de Trabajo en RemindEd! Te guiaremos por tus herramientas activas." },
-            { target: "#card-actividad-actual", texto: "⚡ <strong>Actividad Actual</strong>: Sigue en tiempo real las tareas o reuniones que estás ejecutando según tu horario semanal." },
-            { target: "#card-proximo-evento", texto: "📌 <strong>Eventos y Reuniones</strong>: Mantén visibilidad completa de tus compromisos de trabajo próximos." },
-            { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diarios</strong>: Marca tus hitos clave diarios para visualizar el porcentaje de avance." },
-            { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
-            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus jornadas de trabajo y bloques libres de la semana.</strong><br><br>💡 <em>Recuerda que puedes cambiar o añadir tu actividad laboral y reuniones en la sección de <strong>Eventos y Reuniones</strong> del menú.</em>" }
-          ],
-          examenes: [
-            { target: "#card-gestion-materias", texto: "💼 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." },
-            { target: "#card-nuevo-examen", texto: "📅 <strong>Agendar Eventos</strong>: Registra tus fechas límite, entregas de proyectos o reuniones." },
-            { target: "#card-metricas-notas", texto: "📊 <strong>Métricas y Objetivos</strong>: Registra el avance de tus metas para calcular tu rendimiento laboral." },
-            { target: "#card-grafico-notas", texto: "📈 <strong>Gráfico de Evolución</strong>: Analiza de forma visual tu desempeño en cada proyecto." }
-          ],
-          hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planifica tus hobbies para asegurar una vida balanceada fuera del trabajo." }],
-          sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configura tus metas de sueño para un descanso reparador." }],
-          objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Configura y revisa la métrica de tus hábitos del mes." }],
-          notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escribe minutas de reuniones y notas rápidas de trabajo." }]
-        };
-      } else {
-        return {
-          panel: [
-            { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel de Estudiante." },
-            { target: "#card-proxima-clase", texto: "🎓 Aquí verás tu próxima clase o hobby de la jornada." },
-            { target: "#card-objetivos-contenedor", texto: "🎯 Revisa y completa tus metas diarias para cambiar el borde a verde resplandeciente." },
-            { target: "#card-examenes-destacados", texto: "📅 Revisa tus próximos exámenes y cuentas regresivas." },
-            { target: "#card-estado-sueno", texto: "🌙 Registra tu descanso de la noche anterior." },
-            { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus clases y bloques libres de la semana.</strong><br><br>💡 <em>Recuerda que puedes cambiar o añadir tus actividades y clases en la sección de <strong>Eventos y Exámenes</strong> del menú.</em>" }
-          ],
-          estudio: [
-            { target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Administra tus bloques de estudio para mejorar tu retención." },
-            { target: "button[onclick='toggleConfigPomodoro()']", texto: "⚙️ <strong>Configurar Bloques</strong>: Personaliza la duración de tus tiempos de estudio y descanso según prefieras." }
-          ],
-          examenes: [
-            { target: "#card-gestion-materias", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas." },
-            { target: "#card-nuevo-examen", texto: "📅 <strong>Exámenes</strong>: Programa evaluaciones y establece la nota meta." },
-            { target: "#card-metricas-notas", texto: "📊 <strong>Notas y Calificaciones</strong>: Registra tus calificaciones y evalúa tu promedio acumulado." },
-            { target: "#card-grafico-notas", texto: "📈 <strong>Gráfico de Evolución</strong>: Analiza visualmente tus avances en cada materia." }
-          ],
-          hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Añade actividades extracurriculares a tu agenda." }],
-          sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Define tus hábitos de descanso diario." }],
-          objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitorea tus hábitos académicos diarios." }],
-          notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Guarda y organiza tus apuntes de clase." }]
-        };
       }
     }
 
@@ -1691,7 +1806,7 @@
       
       if (textEl) textEl.innerHTML = paso.texto;
       if (btnEl) {
-        btnEl.innerText = (pasoTutorialActual === pasos.length - 1) ? "¡Entendido!" : "Siguiente";
+        btnEl.innerText = (pasoTutorialActual === pasos.length - 1) ? (idiomaGlobal === 'es' ? "¡Entendido!" : idiomaGlobal === 'pt' ? "Entendido!" : "Got it!") : (idiomaGlobal === 'es' ? "Siguiente" : idiomaGlobal === 'pt' ? "Próximo" : "Next");
       }
 
       if (paso.target) {
@@ -1732,7 +1847,7 @@
     function reiniciarTutoriales() {
       cerrarTutorialModulo();
       localStorage.removeItem("tutorialesVistos");
-      alert("¡Guías restablecidas con éxito!");
+      alert(idiomaGlobal === 'es' ? "¡Guías restablecidas con éxito!" : idiomaGlobal === 'pt' ? "Guias redefinidas com sucesso!" : "Guides successfully reset!");
       navegarA("panel");
     }
 
@@ -1744,6 +1859,7 @@
       document.getElementById("app-principal").style.display = "block";
 
       if (perfil.idioma) {
+        idiomaGlobal = perfil.idioma;
         aplicarTraduccionesUI(perfil.idioma);
       }
 
@@ -1779,11 +1895,11 @@
         if(cGraficoNotas) cGraficoNotas.style.display = "block";
         if(menuEstudio) menuEstudio.style.display = "none";
 
-        if(menuEventos) menuEventos.innerText = "📅 Eventos y Reuniones";
-        if(tMatGestor) tMatGestor.innerText = "💼 Gestor de Proyectos / Áreas";
-        if(tAgendarEv) tAgendarEv.innerText = "📅 Agendar Evento o Reunión";
-        if(tRendimientoNotas) tRendimientoNotas.innerText = "📊 Métricas y Objetivos del Proyecto";
-        if(tGraficoDesempeno) tGraficoDesempeno.innerText = "📈 Gráfico de Desempeño Laboral";
+        if(menuEventos) menuEventos.innerText = idiomaGlobal === 'es' ? "📅 Eventos y Reuniones" : idiomaGlobal === 'pt' ? "📅 Eventos e Reuniões" : "📅 Events & Meetings";
+        if(tMatGestor) tMatGestor.innerText = idiomaGlobal === 'es' ? "💼 Gestor de Proyectos / Áreas" : idiomaGlobal === 'pt' ? "💼 Gerenciador de Projetos / Áreas" : "💼 Projects & Areas Manager";
+        if(tAgendarEv) tAgendarEv.innerText = idiomaGlobal === 'es' ? "📅 Agendar Evento o Reunión" : idiomaGlobal === 'pt' ? "📅 Agendar Evento ou Reunião" : "📅 Schedule Event or Meeting";
+        if(tRendimientoNotas) tRendimientoNotas.innerText = idiomaGlobal === 'es' ? "📊 Métricas y Objetivos del Proyecto" : idiomaGlobal === 'pt' ? "📊 Métricas e Objetivos do Projeto" : "📊 Project Metrics & Goals";
+        if(tGraficoDesempeno) tGraficoDesempeno.innerText = idiomaGlobal === 'es' ? "📈 Gráfico de Desempeño Laboral" : idiomaGlobal === 'pt' ? "📈 Gráfico de Desempenho de Trabalho" : "📈 Work Performance Chart";
 
         iniciarTimerTrabajadorAutomatico();
       } else {
@@ -1795,13 +1911,13 @@
         if(cGraficoNotas) cGraficoNotas.style.display = "block";
         if(menuEstudio) menuEstudio.style.display = "block";
 
-        if(menuEventos) menuEventos.innerText = "📅 Eventos y Exámenes";
-        if(tProxAct) tProxAct.innerText = "🎓 Próxima Clase / Actividad";
-        if(tBloqEv) tBloqEv.innerText = "📅 Próximos Exámenes Destacados";
-        if(tMatGestor) tMatGestor.innerText = "📚 Gestor de Asignaturas";
-        if(tAgendarEv) tAgendarEv.innerText = "📅 Añadir Próximo Examen";
-        if(tRendimientoNotas) tRendimientoNotas.innerText = "📊 Registro de Notas y Calificaciones";
-        if(tGraficoDesempeno) tGraficoDesempeno.innerText = "📈 Gráfico de Evolución Académica";
+        if(menuEventos) menuEventos.innerText = idiomaGlobal === 'es' ? "📅 Eventos y Exámenes" : idiomaGlobal === 'pt' ? "📅 Eventos e Exames" : "📅 Events & Exams";
+        if(tProxAct) tProxAct.innerText = idiomaGlobal === 'es' ? "🎓 Próxima Clase / Actividad" : idiomaGlobal === 'pt' ? "🎓 Próxima Aula / Atividade" : "🎓 Next Class / Activity";
+        if(tBloqEv) tBloqEv.innerText = idiomaGlobal === 'es' ? "📅 Próximos Exámenes Destacados" : idiomaGlobal === 'pt' ? "📅 Próximos Exames em Destaque" : "📅 Upcoming Featured Exams";
+        if(tMatGestor) tMatGestor.innerText = idiomaGlobal === 'es' ? "📚 Gestor de Asignaturas" : idiomaGlobal === 'pt' ? "📚 Gerenciador de Matérias" : "📚 Subjects Manager";
+        if(tAgendarEv) tAgendarEv.innerText = idiomaGlobal === 'es' ? "📅 Añadir Próximo Examen" : idiomaGlobal === 'pt' ? "📅 Adicionar Próximo Exame" : "📅 Add Upcoming Exam";
+        if(tRendimientoNotas) tRendimientoNotas.innerText = idiomaGlobal === 'es' ? "📊 Registro de Notas y Calificaciones" : idiomaGlobal === 'pt' ? "📊 Registro de Notas e Avaliações" : "📊 Grades & Ratings Record";
+        if(tGraficoDesempeno) tGraficoDesempeno.innerText = idiomaGlobal === 'es' ? "📈 Gráfico de Evolución Académica" : idiomaGlobal === 'pt' ? "📈 Gráfico de Evolução Acadêmica" : "📈 Academic Evolution Chart";
 
         if (workerTimerInterval) clearInterval(workerTimerInterval);
       }
@@ -1895,16 +2011,16 @@
 
         if (elElapsed) elElapsed.innerText = formatDiff(transcurrido);
         if (elRemaining) elRemaining.innerText = formatDiff(faltante);
-        if (elNextInfo) elNextInfo.innerHTML = `Falta para estar libre / terminar: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
+        if (elNextInfo) elNextInfo.innerHTML = `${idiomaGlobal === 'es' ? 'Falta para terminar:' : idiomaGlobal === 'pt' ? 'Tempo restante:' : 'Time remaining:'} <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
       } else {
-        if (elNombreAct) elNombreAct.innerText = "Sin actividad laboral activa en este momento";
+        if (elNombreAct) elNombreAct.innerText = idiomaGlobal === 'es' ? "Sin actividad laboral activa en este momento" : idiomaGlobal === 'pt' ? "Sem atividade de trabalho ativa no momento" : "No active work activity at this moment";
         if (elElapsed) elElapsed.innerText = "--:--:--";
 
         if (proximaActividad) {
           const faltante = proximaActividad.fInicio - ahora;
-          if (elNextInfo) elNextInfo.innerHTML = `Próxima actividad (<strong>${proximaActividad.nombre}</strong>) en: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
+          if (elNextInfo) elNextInfo.innerHTML = `${idiomaGlobal === 'es' ? 'Próxima actividad' : idiomaGlobal === 'pt' ? 'Próxima atividade' : 'Next activity'} (<strong>${proximaActividad.nombre}</strong>) in: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
         } else {
-          if (elNextInfo) elNextInfo.innerHTML = `<span style="color:var(--success); font-weight:600;">¡Libre por el resto del día! 🎉</span>`;
+          if (elNextInfo) elNextInfo.innerHTML = `<span style="color:var(--success); font-weight:600;">${idiomaGlobal === 'es' ? '¡Libre por el resto del día! 🎉' : idiomaGlobal === 'pt' ? 'Livre pelo resto do dia! 🎉' : 'Free for the rest of the day! 🎉'}</span>`;
         }
       }
     }
@@ -1927,8 +2043,8 @@
       let tareasCompletadas = 0;
 
       if (totalTareas === 0) {
-        if(contDiario) contDiario.innerHTML = "<p style='color:#64748b;'>Añade tareas en 'Mis Objetivos'.</p>";
-        if(contAdmin) contAdmin.innerHTML = "<p style='color:#64748b;'>Sin tareas cargadas.</p>";
+        if(contDiario) contDiario.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'Añade tareas en tus objetivos.' : idiomaGlobal === 'pt' ? 'Adicione tarefas nos seus objetivos.' : 'Add tasks in your goals.'}</p>`;
+        if(contAdmin) contAdmin.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'Sin tareas cargadas.' : idiomaGlobal === 'pt' ? 'Sem tarefas carregadas.' : 'No tasks loaded.'}</p>`;
         if(cardContenedor) cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
       } else {
         guardados.forEach((obj, index) => {
@@ -1950,7 +2066,7 @@
           if(contAdmin) {
             const divAdmin = document.createElement("div");
             divAdmin.className = "item-list";
-            divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Eliminar</button>`;
+            divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
             contAdmin.appendChild(divAdmin);
           }
         });
@@ -2013,12 +2129,12 @@
       const contLista = document.getElementById("lista-hobbies");
       if(!contLista) return;
       contLista.innerHTML = "";
-      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const diasNombres = idiomaGlobal === 'es' ? ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"] : idiomaGlobal === 'pt' ? ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"] : ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
       hobbies.forEach((hb, idx) => {
         const div = document.createElement("div");
         div.className = "item-list";
-        div.innerHTML = `<span>• <strong>${hb.nombre}</strong> — ${diasNombres[hb.dia]} a las ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">Eliminar</button>`;
+        div.innerHTML = `<span>• <strong>${hb.name || hb.nombre}</strong> — ${diasNombres[hb.dia]} at ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
         contLista.appendChild(div);
       });
       renderizarHorarioTabla();
@@ -2040,7 +2156,7 @@
         cargarHobbies();
         actualizarPanel();
         evaluarTrofeos();
-      } else alert("Introduce el nombre e indica al menos un día.");
+      } else alert(idiomaGlobal === 'es' ? "Introduce el nombre e indica al menos un día." : idiomaGlobal === 'pt' ? "Insira o nome e indique pelo menos um dia." : "Enter the name and select at least one day.");
     }
 
     function borrarHobby(idx) {
@@ -2061,8 +2177,9 @@
       if (contCompleto) contCompleto.innerHTML = "";
 
       if (guardados.length === 0) {
-        if(contResumen) contResumen.innerHTML = "<p style='color:#64748b;'>Sin compromisos o exámenes agendados.</p>";
-        if(contCompleto) contCompleto.innerHTML = "<p style='color:#64748b;'>Sin compromisos o exámenes agendados.</p>";
+        const msg = idiomaGlobal === 'es' ? "Sin compromisos o exámenes agendados." : idiomaGlobal === 'pt' ? "Sem compromissos ou exames agendados." : "No scheduled commitments or exams.";
+        if(contResumen) contResumen.innerHTML = `<p style='color:#64748b;'>${msg}</p>`;
+        if(contCompleto) contCompleto.innerHTML = `<p style='color:#64748b;'>${msg}</p>`;
         const box = document.getElementById("box-cuenta-atras");
         if(box) box.style.display = "none";
         actualizarProximoEventoTrabajador(null);
@@ -2075,12 +2192,12 @@
       guardados.forEach((ex, index) => {
         const fechaEx = new Date(ex.fecha);
         const diff = Math.ceil((fechaEx - ahora) / (1000 * 60 * 60 * 24));
-        const objetivoStr = ex.objetivo ? ` | 🎯 Meta: ${ex.objetivo}` : "";
+        const objetivoStr = ex.objetivo ? ` | 🎯 Goal: ${ex.objetivo}` : "";
         
         const div = document.createElement("div");
         div.className = "item-list";
-        let texto = diff > 0 ? `Faltan <span style='font-weight:600; color:var(--primary);'>${diff} días</span> para ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
-        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Eliminar</button>`;
+        let texto = diff > 0 ? `${diff} days left for ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
+        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
         
         if(contCompleto) contCompleto.appendChild(div.cloneNode(true));
         if(contResumen) contResumen.appendChild(div);
@@ -2103,7 +2220,7 @@
         titleEl.innerText = `${evento.asignatura} ${evento.objetivo ? '(' + evento.objetivo + ')' : ''}`;
         timeEl.innerText = evento.fecha.replace('T', ' ');
       } else {
-        titleEl.innerText = "No hay eventos ni reuniones próximas";
+        titleEl.innerText = idiomaGlobal === 'es' ? "No hay eventos ni reuniones próximas" : idiomaGlobal === 'pt' ? "Não há eventos ou reuniões próximas" : "No upcoming events or meetings";
         timeEl.innerText = "--:--";
       }
     }
@@ -2112,7 +2229,7 @@
       if (!examenCercano) return;
       const box = document.getElementById("box-cuenta-atras");
       if(box) box.style.display = "block";
-      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')}) ${examenCercano.objetivo ? '— Meta: ' + examenCercano.objetivo : ''}`;
+      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')}) ${examenCercano.objetivo ? '— Goal: ' + examenCercano.objetivo : ''}`;
 
       if (countdownInterval) clearInterval(countdownInterval);
       const targetDate = new Date(examenCercano.fecha).getTime();
@@ -2123,7 +2240,7 @@
 
         if (distance < 0) {
           clearInterval(countdownInterval);
-          document.getElementById("timer-cuenta-atras").innerText = "¡Ha llegado la fecha!";
+          document.getElementById("timer-cuenta-atras").innerText = idiomaGlobal === 'es' ? "¡Ha llegado la fecha!" : idiomaGlobal === 'pt' ? "A data chegou!" : "The date has arrived!";
           return;
         }
 
@@ -2149,7 +2266,7 @@
         document.getElementById("examen-objetivo-nota").value = "";
         cargarExamenes();
         evaluarTrofeos();
-      } else alert("Selecciona la categoría y la fecha.");
+      } else alert(idiomaGlobal === 'es' ? "Selecciona la categoría y la fecha." : idiomaGlobal === 'pt' ? "Selecione a categoria e a data." : "Select the category and date.");
     }
 
     function borrarExamen(index) {
@@ -2165,7 +2282,7 @@
       const despertar = document.getElementById("sueno-despertar").value;
 
       localStorage.setItem("configSueno", JSON.stringify({ horas, acostar, despertar }));
-      alert("¡Hábitos guardados!");
+      alert(idiomaGlobal === 'es' ? "¡Hábitos guardados!" : idiomaGlobal === 'pt' ? "Hábitos salvos!" : "Habits saved!");
       cargarControlSueno();
     }
 
@@ -2181,13 +2298,13 @@
       const rBox = document.getElementById("resumen-sueno-box");
       if(rBox) {
         rBox.innerHTML = `
-          <p>🛌 <strong>Meta:</strong> ${cfg.horas}h diarias.</p>
-          <p>🌙 <strong>Acostarse:</strong> ${cfg.acostar} | ⏰ <strong>Despertar:</strong> ${cfg.despertar}</p>
+          <p>🛌 <strong>Goal:</strong> ${cfg.horas}h daily.</p>
+          <p>🌙 <strong>Bedtime:</strong> ${cfg.acostar} | ⏰ <strong>Wake-up:</strong> ${cfg.despertar}</p>
         `;
       }
 
       const infoSuenoPanel = document.getElementById("info-sueno");
-      if (infoSuenoPanel) infoSuenoPanel.innerText = `💤 Meta: Dormir ${cfg.horas}h (Ir a la cama a las ${cfg.acostar}).`;
+      if (infoSuenoPanel) infoSuenoPanel.innerText = `💤 Goal: Sleep ${cfg.horas}h (Bedtime at ${cfg.acostar}).`;
     }
 
     function guardarApunte() {
@@ -2219,7 +2336,7 @@
       const filtrados = apuntes.filter(ap => (filtroAsig === "TODAS" || ap.asignatura === filtroAsig) && (ap.titulo.toLowerCase().includes(busqueda) || ap.contenido.toLowerCase().includes(busqueda)));
 
       if (filtrados.length === 0) {
-        contenedor.innerHTML = "<p style='color:#64748b;'>No hay elementos que coincidan.</p>";
+        contenedor.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'No hay elementos que coincidan.' : idiomaGlobal === 'pt' ? 'Nenhum item correspondia.' : 'No matching items.'}</p>`;
         return;
       }
 
@@ -2230,7 +2347,7 @@
         div.innerHTML = `
           <div class="note-header">
             <span>📚 <strong>${ap.asignatura}</strong> | 📅 ${ap.fecha}</span>
-            <button class="btn-del" onclick="borrarApunte(${idxOrig})" style="padding:4px 8px; font-size:0.75rem;">Eliminar</button>
+            <button class="btn-del" onclick="borrarApunte(${idxOrig})" style="padding:4px 8px; font-size:0.75rem;">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>
           </div>
           <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">${ap.titulo}</div>
           <div style="white-space: pre-wrap; font-size: 0.95rem;">${ap.contenido}</div>
@@ -2254,7 +2371,7 @@
       tabla.innerHTML = "";
 
       if (guardados.length === 0) {
-        if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = "0% de Éxito";
+        if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `0% ${idiomaGlobal === 'es' ? 'de Éxito' : idiomaGlobal === 'pt' ? 'de Sucesso' : 'Success'}`;
         if(document.getElementById("progress-bar")) document.getElementById("progress-bar").style.width = "0%";
         return;
       }
@@ -2271,12 +2388,12 @@
 
         const tr = document.createElement("tr");
         const exitoDia = verdesDia === guardados.length;
-        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">${exitoDia ? 'Completado (Verde)' : 'Incompleto (Rojo)'}</td>`;
+        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">${exitoDia ? (idiomaGlobal === 'es' ? 'Completado' : idiomaGlobal === 'pt' ? 'Concluído' : 'Completed') : (idiomaGlobal === 'es' ? 'Incompleto' : idiomaGlobal === 'pt' ? 'Incompleto' : 'Incomplete')}</td>`;
         tabla.appendChild(tr);
       }
 
       const porcentaje = Math.round((puntosVerdes / totalPuntos) * 100);
-      if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `${porcentaje}% de Éxito y Constancia`;
+      if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `${porcentaje}% ${idiomaGlobal === 'es' ? 'de Éxito y Constancia' : idiomaGlobal === 'pt' ? 'de Sucesso e Constância' : 'Success & Consistency'}`;
       if(document.getElementById("progress-bar")) document.getElementById("progress-bar").style.width = `${porcentaje}%`;
     }
 
@@ -2300,10 +2417,10 @@
         const row = document.createElement("div");
         row.className = "block-config-row";
         row.innerHTML = `
-          <span><strong>Bloque ${idx + 1}</strong></span>
+          <span><strong>Block ${idx + 1}</strong></span>
           <div>
-            <label style="font-size:0.85rem;">Mente (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
-            <label style="font-size:0.85rem; margin-left:8px;">Descanso (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label>
+            <label style="font-size:0.85rem;">Focus (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
+            <label style="font-size:0.85rem; margin-left:8px;">Rest (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label>
           </div>
         `;
         contenedor.appendChild(row);
@@ -2332,7 +2449,7 @@
       const sec = (tiempoRestante % 60).toString().padStart(2, '0');
       const bObj = bloquesConfig[indiceBloqueActual];
       if(document.getElementById("timer-display")) document.getElementById("timer-display").innerText = `${min}:${sec}`;
-      if(document.getElementById("timer-mode")) document.getElementById("timer-mode").innerText = `Bloque ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Enfoque (${bObj.estudio} min)` : `Descanso (${bObj.descanso} min)`}`;
+      if(document.getElementById("timer-mode")) document.getElementById("timer-mode").innerText = `Block ${indiceBloqueActual + 1} / ${bloquesConfig.length} - ${modoEstudio ? `Focus (${bObj.estudio} min)` : `Rest (${bObj.descanso} min)`}`;
     }
 
     function registrarTiempoEstudio(minutos) {
@@ -2348,7 +2465,7 @@
       const fechaHoy = new Date().toISOString().split('T')[0];
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
       const el = document.getElementById("tiempo-estudiado-hoy");
-      if(el) el.innerText = `Tiempo enfocado hoy: ${logEstudio[fechaHoy] || 0} min`;
+      if(el) el.innerText = `${idiomaGlobal === 'es' ? 'Tiempo enfocado hoy' : idiomaGlobal === 'pt' ? 'Tempo focado hoje' : 'Focused time today'}: ${logEstudio[fechaHoy] || 0} min`;
     }
 
     function iniciarTimer() {
@@ -2364,7 +2481,7 @@
             registrarTiempoEstudio(bObj.estudio);
             modoEstudio = false;
             tiempoRestante = bObj.descanso * 60;
-            alert(`¡Bloque completado! Descanso de ${bObj.descanso} min.`);
+            alert(idiomaGlobal === 'es' ? `¡Bloque completado! Descanso de ${bObj.descanso} min.` : idiomaGlobal === 'pt' ? `Bloco concluído! Descanso de ${bObj.descanso} min.` : `Block completed! Rest of ${bObj.descanso} min.`);
           } else {
             modoEstudio = true;
             if (indiceBloqueActual < bloquesConfig.length - 1) indiceBloqueActual++;
@@ -2420,18 +2537,18 @@
       });
 
       const listaLogros = [
-        { id: 't_primer_paso', nivel: 'bronce', nombre: '🌱 Primer Paso', desc: 'Guarda tu primer proyecto, apunte o evento.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
-        { id: 't_foco_estudio', nivel: 'bronce', nombre: '⏱️ Foco Inquebrantable', desc: 'Completa tu primera sesión en el temporizador.', desbloqueado: totalMinutos > 0 },
-        { id: 't_archivista', nivel: 'plata', nombre: '📝 El Archivista', desc: 'Guarda tu primera nota personal o minuta.', desbloqueado: apuntes.length >= 1 },
-        { id: 't_equilibrio', nivel: 'plata', nombre: '🎨 Vida Equilibrada', desc: 'Añade un hobby a tu semana.', desbloqueado: hobbies.length >= 1 },
-        { id: 't_maestro_rutina', nivel: 'oro', nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos enfocados.', desbloqueado: totalMinutos >= 120 },
-        { id: 't_min90', nivel: 'bronce', nombre: '⏱️ Minuto 90', desc: 'Registra un evento dentro de las próximas 24 horas.', desbloqueado: tieneMinuto90 },
-        { id: 't_cazador', nivel: 'plata', nombre: '🎯 Cazador de Metas', desc: 'Añade tu primer objetivo diario.', desbloqueado: objetosDiarios.length >= 1 },
-        { id: 't_profeta', nivel: 'oro', nombre: '🔮 Profeta del Éxito', desc: 'Logra que tu promedio coincida con tu meta.', desbloqueado: tieneProfeta },
-        { id: 't_optimista', nivel: 'bronce', nombre: '✨ Optimista Incorregible', desc: 'Configura una meta exigente (18+).', desbloqueado: tieneOptimista },
-        { id: 't_simulacros', nivel: 'oro', nombre: '🎓 Planificador Experto', desc: 'Registra al menos 5 eventos/exámenes.', desbloqueado: examenes.length >= 5 },
-        { id: 't_calculadora', nivel: 'diamante', nombre: '🧮 Control Total', desc: 'Acumula más de 10 registros.', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
-        { id: 't_fenix', nivel: 'diamante', nombre: '🔥 El Fénix', desc: 'Supera una calificación complicada.', desbloqueado: tieneFenix }
+        { id: 't_primer_paso', nivel: 'bronze', nombre: '🌱 First Step', desc: 'Save your first project, note, or event.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
+        { id: 't_foco_estudio', nivel: 'bronze', nombre: '⏱️ Unwavering Focus', desc: 'Complete your first timer session.', desbloqueado: totalMinutos > 0 },
+        { id: 't_archivista', nivel: 'silver', nombre: '📝 The Archivist', desc: 'Save your first personal note.', desbloqueado: apuntes.length >= 1 },
+        { id: 't_equilibrio', nivel: 'silver', nombre: '🎨 Balanced Life', desc: 'Add a hobby to your week.', desbloqueado: hobbies.length >= 1 },
+        { id: 't_maestro_rutina', nivel: 'gold', nombre: '🏆 Routine Master', desc: 'Accumulate at least 120 focused minutes.', desbloqueado: totalMinutos >= 120 },
+        { id: 't_min90', nivel: 'bronze', nombre: '⏱️ Minute 90', desc: 'Register an event within the next 24 hours.', desbloqueado: tieneMinuto90 },
+        { id: 't_cazador', nivel: 'silver', nombre: '🎯 Goal Hunter', desc: 'Add your first daily goal.', desbloqueado: objetosDiarios.length >= 1 },
+        { id: 't_profeta', nivel: 'gold', nombre: '🔮 Success Prophet', desc: 'Make your average match your goal.', desbloqueado: tieneProfeta },
+        { id: 't_optimista', nivel: 'bronze', nombre: '✨ Incorrigible Optimist', desc: 'Set a demanding goal (18+).', desbloqueado: tieneOptimista },
+        { id: 't_simulacros', nivel: 'gold', nombre: '🎓 Expert Planner', desc: 'Register at least 5 events/exams.', desbloqueado: examenes.length >= 5 },
+        { id: 't_calculadora', nivel: 'diamond', nombre: '🧮 Total Control', desc: 'Accumulate more than 10 records.', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
+        { id: 't_fenix', nivel: 'diamond', nombre: '🔥 The Phoenix', desc: 'Overcome a complicated grade.', desbloqueado: tieneFenix }
       ];
 
       const prevDesbloqueados = JSON.parse(localStorage.getItem("trofeosDesbloqueadosNotificados")) || {};
@@ -2455,7 +2572,7 @@
           <span class="badge-nivel ${tr.desbloqueado ? 'badge-oro' : 'badge-bronce'}">${tr.nivel.toUpperCase()}</span>
           <h3 style="margin:6px 0;">${tr.nombre}</h3>
           <p style="font-size:0.85rem; margin-bottom:8px;">${tr.desc}</p>
-          <div style="font-size:0.85rem; font-weight:600;">${tr.desbloqueado ? '✅ ¡Desbloqueado!' : '🔒 Bloqueado'}</div>
+          <div style="font-size:0.85rem; font-weight:600;">${tr.desbloqueado ? '✅ Unlocked!' : '🔒 Locked'}</div>
         `;
         grid.appendChild(card);
       });
@@ -2480,9 +2597,9 @@
         try {
           const datos = JSON.parse(e.target.result);
           Object.keys(datos).forEach(k => localStorage.setItem(k, datos[k]));
-          alert("¡Datos restaurados con éxito!");
+          alert("Data successfully restored!");
           location.reload();
-        } catch (err) { alert("Error al importar el archivo."); }
+        } catch (err) { alert("Error importing file."); }
       };
       reader.readAsText(event.target.files[0]);
     }
@@ -2498,23 +2615,23 @@
       const diaHoy = ahora.getDay();
 
       if (horario[diaHoy]) {
-        horario[diaHoy].forEach(c => actividadesHoy.push({ inicio: c.inicio, nombre: c.asignatura, tipo: "Clase", sala: c.sala }));
+        horario[diaHoy].forEach(c => actividadesHoy.push({ inicio: c.inicio, nombre: c.asignatura, tipo: "Class", sala: c.sala }));
       }
       hobbies.filter(h => h.dia === diaHoy).forEach(h => {
-        actividadesHoy.push({ inicio: h.hora, nombre: `🎨 ${h.nombre}`, tipo: "Hobby" });
+        actividadesHoy.push({ inicio: h.hora, nombre: `🎨 ${h.name || h.nombre}`, tipo: "Hobby" });
       });
 
       actividadesHoy.sort((a, b) => a.inicio.localeCompare(b.inicio));
 
       if (elClase) {
         if (actividadesHoy.length === 0) {
-          elClase.innerHTML = "¡Sin actividades programadas para hoy!";
+          elClase.innerHTML = idiomaGlobal === 'es' ? "¡Sin actividades programadas para hoy!" : idiomaGlobal === 'pt' ? "Nenhuma atividade agendada para hoje!" : "No activities scheduled for today!";
         } else {
           const proxima = actividadesHoy.find(a => a.inicio > horaStr);
           if (proxima) {
-            elClase.innerHTML = `Próxima actividad: <strong>${proxima.nombre}</strong> a las ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.`;
+            elClase.innerHTML = `${idiomaGlobal === 'es' ? 'Próxima actividad' : idiomaGlobal === 'pt' ? 'Próxima atividade' : 'Next activity'}: <strong>${proxima.nombre}</strong> at ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.`;
           } else {
-            elClase.innerHTML = "Has completado todas tus actividades de hoy. 📖";
+            elClase.innerHTML = idiomaGlobal === 'es' ? "Has completado todas tus actividades de hoy. 📖" : idiomaGlobal === 'pt' ? "Você concluiu todas as atividades de hoje. 📖" : "You have completed all your activities for today. 📖";
           }
         }
       }
@@ -2559,7 +2676,7 @@
       const pb = document.getElementById('goals-progress');
       const gt = document.getElementById('goals-text');
       if (pb) pb.style.width = percentage + '%';
-      if (gt) gt.innerText = `${completedCount} de ${total} completados (${percentage}%)`;
+      if (gt) gt.innerText = `${completedCount} of ${total} completed (${percentage}%)`;
     }
 
     function toggleTask(index) {
@@ -2570,23 +2687,23 @@
     }
 
     function logSleep() {
-      const hours = prompt("¿Cuántas horas descansaste anoche?:");
+      const hours = prompt(idiomaGlobal === 'es' ? "¿Cuántas horas descansaste anoche?:" : idiomaGlobal === 'pt' ? "Quantas horas você descansou ontem à noite?:" : "How many hours did you rest last night?:");
       if (hours) {
         const infoSueno = document.getElementById("info-sueno");
-        if(infoSueno) infoSueno.innerText = `💤 Anoche descansaste: ${hours} horas.`;
+        if(infoSueno) infoSueno.innerText = `💤 Rest: ${hours} hours.`;
       }
     }
 
     function guardarNombreDesdeAjustes() {
       const nuevoNombre = document.getElementById("ajustes-input-nombre").value.trim();
       if (!nuevoNombre) {
-        alert("Escribe un nombre válido.");
+        alert(idiomaGlobal === 'es' ? "Escribe un nombre válido." : idiomaGlobal === 'pt' ? "Digite um nome válido." : "Type a valid name.");
         return;
       }
       const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
       perfilActual.nombre = nuevoNombre;
       localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
-      alert("¡Nombre actualizado con éxito!");
+      alert(idiomaGlobal === 'es' ? "¡Nombre actualizado con éxito!" : idiomaGlobal === 'pt' ? "Nome atualizado com sucesso!" : "Name successfully updated!");
       location.reload();
     }
 
@@ -2595,17 +2712,14 @@
       const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
       perfilActual.rol = nuevoRol;
       localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
-      alert("¡Rol actualizado con éxito!");
+      alert(idiomaGlobal === 'es' ? "¡Rol actualizado con éxito!" : idiomaGlobal === 'pt' ? "Função atualizada com sucesso!" : "Role successfully updated!");
       location.reload();
     }
 
     function guardarIdiomaDesdeAjustes() {
       const nuevoIdioma = document.getElementById("ajustes-select-idioma").value;
-      const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
-      perfilActual.idioma = nuevoIdioma;
-      localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
-      aplicarTraduccionesUI(nuevoIdioma);
-      alert("¡Idioma actualizado con éxito!");
+      cambiarIdiomaDesdeTop(nuevoIdioma);
+      alert(idiomaGlobal === 'es' ? "¡Idioma actualizado con éxito!" : idiomaGlobal === 'pt' ? "Idioma atualizado com sucesso!" : "Language successfully updated!");
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -2618,11 +2732,14 @@
 
       const perfilGuardado = JSON.parse(localStorage.getItem("perfilUsuario"));
       if (perfilGuardado) {
-        cargarInterfazSegunRol();
         if (perfilGuardado.idioma) {
-          aplicarTraduccionesUI(perfilGuardado.idioma);
+          idiomaGlobal = perfilGuardado.idioma;
         }
+        cargarInterfazSegunRol();
+        aplicarTraduccionesUI(idiomaGlobal);
       } else {
+        // Cargar por defecto en inglés si no hay perfil creado
+        aplicarTraduccionesUI("en");
         const pantalla = document.getElementById("pantalla-bienvenida");
         const app = document.getElementById("app-principal");
         if (pantalla) pantalla.style.display = "flex";
