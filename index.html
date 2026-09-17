@@ -254,8 +254,8 @@
     </div>
   </div>
 
-  <!-- PANTALLA DE BIENVENIDA / ONBOARDING -->
-  <div id="pantalla-bienvenida" class="welcome-screen" style="position: relative;">
+  <!-- PANTALLA DE BIENVENIDA / ONBOARDING (Corregido: se eliminó el style position: relative conflictivo) -->
+  <div id="pantalla-bienvenida" class="welcome-screen">
     <!-- Selector de idioma exclusivo de la pantalla de inicio (Arriba a la derecha) -->
     <div style="position: absolute; top: 20px; right: 20px;">
       <select id="top-select-idioma" class="lang-selector-top" onchange="cambiarIdiomaDesdeTop(this.value)">
@@ -705,7 +705,7 @@
   </div>
 
   <script>
-    // --- DICCIONARIO DE TRADUCCIONES COMPLETO (Con Inglés como predeterminado) ---
+    // --- DICCIONARIO DE TRADUCCIONES COMPLETO ---
     const i18n = {
       en: {
         welcome_title: "Welcome to <span style='color: var(--primary);'>Remind<span style='color: var(--accent);'>Ed</span></span>!",
@@ -1103,7 +1103,6 @@
     window.rolSeleccionado = null;
     let idiomaGlobal = "en"; // Predeterminado inglés
 
-    // Textos multilingües para tutoriales por rol
     function obtenerTutorialesConfig() {
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
       const esTrabajador = perfil && perfil.rol === 'trabajador';
@@ -1142,7 +1141,6 @@
             notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escreva atas de reuniões e notas de trabalho." }]
           };
         } else {
-          // Inglés (Predeterminado)
           return {
             panel: [
               { target: null, texto: "Welcome to your Work Panel in RemindEd! Let's guide you through your active tools." },
@@ -1195,7 +1193,6 @@
             notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Salve e organize suas anotações de aula." }]
           };
         } else {
-          // Inglés (Predeterminado)
           return {
             panel: [
               { target: null, texto: "Welcome to RemindEd! Let's take a quick look at your Student Panel." },
@@ -1919,7 +1916,7 @@
         if(tProxAct) tProxAct.innerText = idiomaGlobal === 'es' ? "🎓 Próxima Clase / Actividad" : idiomaGlobal === 'pt' ? "🎓 Próxima Aula / Atividade" : "🎓 Next Class / Activity";
         if(tBloqEv) tBloqEv.innerText = idiomaGlobal === 'es' ? "📅 Próximos Exámenes Destacados" : idiomaGlobal === 'pt' ? "📅 Próximos Exámenes em Destaque" : "📅 Upcoming Featured Exams";
         if(tMatGestor) tMatGestor.innerText = idiomaGlobal === 'es' ? "📚 Gestor de Asignaturas" : idiomaGlobal === 'pt' ? "📚 Gerenciador de Matérias" : "📚 Subjects Manager";
-        if(tAgendarEv) tAgendarEv.innerText = idiomaGlobal === 'es' ? "📅 Añadir Próximo Examen" : idiomaGlobal === 'pt' ? "📅 Adicionar Próximo Exame" : "📅 Add Upcoming Exam";
+        if(tAgendarEv) tAgendarEv.innerText = idiomaGlobal === 'es' ? "📅 Añadir Próximo Exame" : idiomaGlobal === 'pt' ? "📅 Adicionar Próximo Exame" : "📅 Add Upcoming Exam";
         if(tRendimientoNotas) tRendimientoNotas.innerText = idiomaGlobal === 'es' ? "📊 Registro de Notas y Calificaciones" : idiomaGlobal === 'pt' ? "📊 Registro de Notas e Avaliações" : "📊 Grades & Ratings Record";
         if(tGraficoDesempeno) tGraficoDesempeno.innerText = idiomaGlobal === 'es' ? "📈 Gráfico de Evolución Académica" : idiomaGlobal === 'pt' ? "📈 Gráfico de Evolução Acadêmica" : "📈 Academic Evolution Chart";
 
@@ -2500,6 +2497,7 @@
     function pausarTimer() { clearInterval(timerInterval); timerInterval = null; }
     function reiniciarTimer() { pausarTimer(); modoEstudio = true; indiceBloqueActual = 0; tiempoRestante = bloquesConfig[0].estudio * 60; actualizarDisplayTimer(); }
 
+    // --- EVALUAR TROFEOS (Actualizado con soporte multilingüe) ---
     function evaluarTrofeos() {
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
       let totalMinutos = Object.values(logEstudio).reduce((a, b) => a + b, 0);
@@ -2540,26 +2538,81 @@
         }
       });
 
+      // Diccionario de textos de trofeos según el idioma global
+      const trophiesDict = {
+        en: {
+          t_primer_paso: { nombre: '🌱 First Step', desc: 'Save your first project, note, or event.' },
+          t_foco_estudio: { nombre: '⏱️ Unwavering Focus', desc: 'Complete your first timer session.' },
+          t_archivista: { nombre: '📝 The Archivist', desc: 'Save your first personal note.' },
+          t_equilibrio: { nombre: '🎨 Balanced Life', desc: 'Add a hobby to your week.' },
+          t_maestro_rutina: { nombre: '🏆 Routine Master', desc: 'Accumulate at least 120 focused minutes.' },
+          t_min90: { nombre: '⏱️ Minute 90', desc: 'Register an event within the next 24 hours.' },
+          t_cazador: { nombre: '🎯 Goal Hunter', desc: 'Add your first daily goal.' },
+          t_profeta: { nombre: '🔮 Success Prophet', desc: 'Make your average match your goal.' },
+          t_optimista: { nombre: '✨ Incorrigible Optimist', desc: 'Set a demanding goal (18+).' },
+          t_simulacros: { nombre: '🎓 Expert Planner', desc: 'Register at least 5 events/exams.' },
+          t_calculadora: { nombre: '🧮 Total Control', desc: 'Accumulate more than 10 records.' },
+          t_fenix: { nombre: '🔥 The Phoenix', desc: 'Overcome a complicated grade.' },
+          unlocked: '✅ Unlocked!',
+          locked: '🔒 Locked'
+        },
+        es: {
+          t_primer_paso: { nombre: '🌱 Primer Paso', desc: 'Guarda tu primer proyecto, nota o evento.' },
+          t_foco_estudio: { nombre: '⏱️ Enfoque Inquebrantable', desc: 'Completa tu primera sesión de temporizador.' },
+          t_archivista: { nombre: '📝 El Archivista', desc: 'Guarda tu primera nota personal.' },
+          t_equilibrio: { nombre: '🎨 Vida Equilibrada', desc: 'Añade un hobby a tu semana.' },
+          t_maestro_rutina: { nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos enfocados.' },
+          t_min90: { nombre: '⏱️ Minuto 90', desc: 'Registra un evento dentro de las próximas 24 horas.' },
+          t_cazador: { nombre: '🎯 Cazador de Metas', desc: 'Añade tu primer objetivo diario.' },
+          t_profeta: { nombre: '🔮 Profeta del Éxito', desc: 'Haz que tu promedio coincida con tu meta.' },
+          t_optimista: { nombre: '✨ Optimista Incorregible', desc: 'Establece una meta exigente (18+).' },
+          t_simulacros: { nombre: '🎓 Planificador Experto', desc: 'Registra al menos 5 eventos/exámenes.' },
+          t_calculadora: { nombre: '🧮 Control Total', desc: 'Acumula más de 10 registros.' },
+          t_fenix: { nombre: '🔥 El Fénix', desc: 'Supera una calificación complicada.' },
+          unlocked: '✅ ¡Desbloqueado!',
+          locked: '🔒 Bloqueado'
+        },
+        pt: {
+          t_primer_paso: { nombre: '🌱 Primeiro Passo', desc: 'Salve seu primeiro projeto, nota ou evento.' },
+          t_foco_estudio: { nombre: '⏱️ Foco Inabalável', desc: 'Conclua sua primeira sessão de cronômetro.' },
+          t_archivista: { nombre: '📝 O Arquivista', desc: 'Salve sua primeira nota pessoal.' },
+          t_equilibrio: { nombre: '🎨 Vida Equilibrada', desc: 'Adicione um hobby à sua semana.' },
+          t_maestro_rutina: { nombre: '🏆 Mestre da Rotina', desc: 'Acumule pelo menos 120 minutos focados.' },
+          t_min90: { nombre: '⏱️ Minuto 90', desc: 'Registre um evento nas próximas 24 horas.' },
+          t_cazador: { nombre: '🎯 Caçador de Metas', desc: 'Adicione seu primeiro objetivo diário.' },
+          t_profeta: { nombre: '🔮 Profeta do Sucesso', desc: 'Faça sua média corresponder à sua meta.' },
+          t_optimista: { nombre: '✨ Otimista Incorrigível', desc: 'Defina uma meta exigente (18+).' },
+          t_simulacros: { nombre: '🎓 Planejador Especialista', desc: 'Registre pelo menos 5 eventos/exames.' },
+          t_calculadora: { nombre: '🧮 Controle Total', desc: 'Acumule mais de 10 registros.' },
+          t_fenix: { nombre: '🔥 A Fênix', desc: 'Supere uma nota complicada.' },
+          unlocked: '✅ Desbloqueado!',
+          locked: '🔒 Bloqueado'
+        }
+      };
+
+      const langDict = trophiesDict[idiomaGlobal] || trophiesDict.en;
+
       const listaLogros = [
-        { id: 't_primer_paso', nivel: 'bronze', nombre: '🌱 First Step', desc: 'Save your first project, note, or event.', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
-        { id: 't_foco_estudio', nivel: 'bronze', nombre: '⏱️ Unwavering Focus', desc: 'Complete your first timer session.', desbloqueado: totalMinutos > 0 },
-        { id: 't_archivista', nivel: 'silver', nombre: '📝 The Archivist', desc: 'Save your first personal note.', desbloqueado: apuntes.length >= 1 },
-        { id: 't_equilibrio', nivel: 'silver', nombre: '🎨 Balanced Life', desc: 'Add a hobby to your week.', desbloqueado: hobbies.length >= 1 },
-        { id: 't_maestro_rutina', nivel: 'gold', nombre: '🏆 Routine Master', desc: 'Accumulate at least 120 focused minutes.', desbloqueado: totalMinutos >= 120 },
-        { id: 't_min90', nivel: 'bronze', nombre: '⏱️ Minute 90', desc: 'Register an event within the next 24 hours.', desbloqueado: tieneMinuto90 },
-        { id: 't_cazador', nivel: 'silver', nombre: '🎯 Goal Hunter', desc: 'Add your first daily goal.', desbloqueado: objetosDiarios.length >= 1 },
-        { id: 't_profeta', nivel: 'gold', nombre: '🔮 Success Prophet', desc: 'Make your average match your goal.', desbloqueado: tieneProfeta },
-        { id: 't_optimista', nivel: 'bronze', nombre: '✨ Incorrigible Optimist', desc: 'Set a demanding goal (18+).', desbloqueado: tieneOptimista },
-        { id: 't_simulacros', nivel: 'gold', nombre: '🎓 Expert Planner', desc: 'Register at least 5 events/exams.', desbloqueado: examenes.length >= 5 },
-        { id: 't_calculadora', nivel: 'diamond', nombre: '🧮 Total Control', desc: 'Accumulate more than 10 records.', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
-        { id: 't_fenix', nivel: 'diamond', nombre: '🔥 The Phoenix', desc: 'Overcome a complicated grade.', desbloqueado: tieneFenix }
+        { id: 't_primer_paso', nivel: 'bronze', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
+        { id: 't_foco_estudio', nivel: 'bronze', desbloqueado: totalMinutos > 0 },
+        { id: 't_archivista', nivel: 'silver', desbloqueado: apuntes.length >= 1 },
+        { id: 't_equilibrio', nivel: 'silver', desbloqueado: hobbies.length >= 1 },
+        { id: 't_maestro_rutina', nivel: 'gold', desbloqueado: totalMinutos >= 120 },
+        { id: 't_min90', nivel: 'bronze', desbloqueado: tieneMinuto90 },
+        { id: 't_cazador', nivel: 'silver', desbloqueado: objetosDiarios.length >= 1 },
+        { id: 't_profeta', nivel: 'gold', desbloqueado: tieneProfeta },
+        { id: 't_optimista', nivel: 'bronze', desbloqueado: tieneOptimista },
+        { id: 't_simulacros', nivel: 'gold', desbloqueado: examenes.length >= 5 },
+        { id: 't_calculadora', nivel: 'diamond', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
+        { id: 't_fenix', nivel: 'diamond', desbloqueado: tieneFenix }
       ];
 
       const prevDesbloqueados = JSON.parse(localStorage.getItem("trofeosDesbloqueadosNotificados")) || {};
 
       listaLogros.forEach(tr => {
+        const info = langDict[tr.id];
         if (tr.desbloqueado && !prevDesbloqueados[tr.id]) {
-          mostrarNotificacionTrofeo(tr.nombre);
+          mostrarNotificacionTrofeo(info.nombre);
           prevDesbloqueados[tr.id] = true;
         }
       });
@@ -2569,14 +2622,16 @@
       const grid = document.getElementById("grid-trofeos");
       if (!grid) return;
       grid.innerHTML = "";
+      
       listaLogros.forEach(tr => {
+        const info = langDict[tr.id];
         const card = document.createElement("div");
         card.className = `trophy-card ${tr.desbloqueado ? 'unlocked' : ''}`;
         card.innerHTML = `
           <span class="badge-nivel ${tr.desbloqueado ? 'badge-oro' : 'badge-bronce'}">${tr.nivel.toUpperCase()}</span>
-          <h3 style="margin:6px 0;">${tr.nombre}</h3>
-          <p style="font-size:0.85rem; margin-bottom:8px;">${tr.desc}</p>
-          <div style="font-size:0.85rem; font-weight:600;">${tr.desbloqueado ? '✅ Unlocked!' : '🔒 Locked'}</div>
+          <h3 style="margin:6px 0;">${info.nombre}</h3>
+          <p style="font-size:0.85rem; margin-bottom:8px;">${info.desc}</p>
+          <div style="font-size:0.85rem; font-weight:600;">${tr.desbloqueado ? langDict.unlocked : langDict.locked}</div>
         `;
         grid.appendChild(card);
       });
@@ -2742,7 +2797,6 @@
         cargarInterfazSegunRol();
         aplicarTraduccionesUI(idiomaGlobal);
       } else {
-        // Cargar por defecto en inglés si no hay perfil creado
         aplicarTraduccionesUI("en");
         const pantalla = document.getElementById("pantalla-bienvenida");
         const app = document.getElementById("app-principal");
