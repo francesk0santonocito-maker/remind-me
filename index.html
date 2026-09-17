@@ -241,6 +241,72 @@
       from { transform: translateY(-50px) scale(0.8); opacity: 0; }
       to { transform: translateY(0) scale(1); opacity: 1; }
     }
+
+    /* Contenedor flotante en la esquina superior derecha */
+.floating-study-menu {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.study-dropdown-btn {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  color: var(--primary);
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.study-dropdown-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.study-dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  width: 180px;
+  overflow: hidden;
+  z-index: 1100;
+}
+
+.study-dropdown-content button {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.study-dropdown-content button:last-child {
+  border-bottom: none;
+}
+
+.study-dropdown-content button:hover {
+  background: var(--primary);
+  color: white;
+}
   </style>
 </head>
 <body>
@@ -303,6 +369,16 @@
       </div>
     </div>
   </div>
+
+  <div class="floating-study-menu">
+  <button class="study-dropdown-btn" onclick="toggleStudyMenu()">
+    📚 Sección de Estudio ▾
+  </button>
+  <div id="study-menu-dropdown" class="study-dropdown-content">
+    <button onclick="navegarA('estudio')">🍅 Pomodoro</button>
+    <button onclick="navegarA('blurting')">🧠 Blurting Mode</button>
+  </div>
+</div>
 
   <!-- APP PRINCIPAL -->
   <div id="app-principal" style="display: none;">
@@ -2804,6 +2880,21 @@
         if (app) app.style.display = "none";
       }
     });
+
+    function toggleStudyMenu() {
+  const menu = document.getElementById("study-menu-dropdown");
+  if (!menu) return;
+  const isOpen = menu.style.display === "block";
+  menu.style.display = isOpen ? "none" : "block";
+}
+
+// Cierra el menú si haces clic fuera de él
+window.addEventListener("click", function(e) {
+  if (!e.target.closest('.floating-study-menu')) {
+    const menu = document.getElementById("study-menu-dropdown");
+    if (menu) menu.style.display = "none";
+  }
+});
   </script>
 </body>
 </html>
