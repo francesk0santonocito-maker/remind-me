@@ -310,8 +310,6 @@
       </div>
     </div>
 
-
-
     <!-- PANEL DE CONTROL -->
     <div id="page-panel" class="section-page section-active">
 
@@ -591,14 +589,13 @@
       </div>
     </div>
 
-  
     <!-- AJUSTES -->
     <div id="page-ajustes" class="section-page">
+      <!-- Tarjeta 1: Apariencia y Modo Oscuro/Claro -->
       <div class="card" id="card-panel-colores">
-        <h2>🎨 Personalizar Colores del Tema</h2>
-        <p style="font-size: 0.85rem; color: #64748b;">Elige el color principal que prefieras para personalizar la interfaz:</p>
+        <h2>🎨 Personalizar Apariencia y Tema</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Alterna el modo de visualización y personaliza los colores principales:</p>
         
-        <!-- BOTÓN DE CAMBIO DE TEMA MOVIDO AQUÍ -->
         <div style="margin: 15px 0; display: flex; justify-content: space-between; align-items: center; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
           <div>
             <h3 style="margin: 0; font-size: 1rem;">Modo Oscuro / Claro</h3>
@@ -606,12 +603,6 @@
           </div>
           <button onclick="alternarTema()" id="btn-cambiar-tema" class="btn-action" style="padding: 8px 16px;">🌓 Cambiar Tema</button>
         </div>
-
-        
-
-        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
-          <!-- (Tus botones de colores existentes siguen aquí...) -->
-        
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
           <button onclick="cambiarColorTema('#6c5ce7', '#00cec9')" class="btn-small" style="background: #6c5ce7; border: none; color: white;">💜 Morado RemindEd</button>
@@ -627,6 +618,30 @@
         </div>
       </div>
 
+      <!-- Tarjeta 2: Cambiar Nombre (Independiente) -->
+      <div class="card">
+        <h2>✏️ Cambiar Nombre de Usuario</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Actualiza cómo te saluda la aplicación:</p>
+        <div class="form-group" style="margin-top: 15px;">
+          <input type="text" id="ajustes-input-nombre" class="input-form" placeholder="Escribe tu nuevo nombre" style="flex:1;" />
+          <button onclick="guardarNombreDesdeAjustes()" class="btn-action">Guardar Nombre</button>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3: Cambiar Rol (Independiente) -->
+      <div class="card">
+        <h2>💼 Cambiar Rol (Estudiante / Trabajador)</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Modifica tu actividad principal actual:</p>
+        <div class="form-group" style="margin-top: 15px;">
+          <select id="ajustes-select-rol" class="input-form" style="flex:1;">
+            <option value="estudiante">🎓 Estudiante</option>
+            <option value="trabajador">💼 Trabajador</option>
+          </select>
+          <button onclick="guardarRolDesdeAjustes()" class="btn-action">Guardar Rol</button>
+        </div>
+      </div>
+
+      <!-- Tarjeta 4: Copia de seguridad -->
       <div class="card">
         <h2>⚙️ Copia de Seguridad y Guías</h2>
         <button onclick="exportarDatos()" class="btn-action">Exportar Copia de Seguridad</button>
@@ -639,20 +654,6 @@
     </div>
 
   </div>
-
-  <!-- NUEVA TARJETA PARA CAMBIAR PERFIL EN AJUSTES -->
-      <div class="card">
-        <h2>👤 Perfil de Usuario</h2>
-        <p style="font-size: 0.85rem; color: #64748b;">Actualiza tu nombre o cambia tu rol actual:</p>
-        <div class="form-group" style="margin-top: 15px;">
-          <input type="text" id="ajustes-input-nombre" class="input-form" placeholder="Nuevo nombre" style="flex:1;" />
-          <select id="ajustes-select-rol" class="input-form">
-            <option value="estudiante">🎓 Estudiante</option>
-            <option value="trabajador">💼 Trabajador</option>
-          </select>
-          <button onclick="guardarPerfilDesdeAjustes()" class="btn-action">Actualizar Perfil</button>
-        </div>
-      </div>
 
   <!-- TUTORIAL INTERACTIVO -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
@@ -874,6 +875,24 @@
     let userTasks = [];
     let workerTimerInterval = null;
     let chartInstance = null;
+
+    // --- FUNCIÓN DE MODO OSCURO / CLARO ---
+    function alternarTema() {
+      document.body.classList.toggle("dark-mode");
+      const esOscuro = document.body.classList.contains("dark-mode");
+      localStorage.setItem("modoOscuroActivo", esOscuro ? "true" : "false");
+    }
+
+    function cargarModoOscuroGuardado() {
+      const oscuroGuardado = localStorage.getItem("modoOscuroActivo");
+      if (oscuroGuardado === "true") {
+        document.body.classList.add("dark-mode");
+      } else if (oscuroGuardado === "false") {
+        document.body.classList.remove("dark-mode");
+      } else {
+        aplicarModoOscuroAuto();
+      }
+    }
 
     // --- PERSONALIZACIÓN DE COLOR ---
     function cambiarColorTema(primaryColor, accentColor) {
@@ -1343,7 +1362,7 @@
         if(cExamenes) cExamenes.style.display = "none";
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "none";
         if(cGraficoNotas) cGraficoNotas.style.display = "block";
-        if(menuEstudio) menuEstudio.style.display = "none"; // Oculta el modo pomodoro del menú para trabajadores
+        if(menuEstudio) menuEstudio.style.display = "none";
 
         if(menuEventos) menuEventos.innerText = "📅 Eventos y Reuniones";
         if(tMatGestor) tMatGestor.innerText = "💼 Gestor de Proyectos / Áreas";
@@ -2143,9 +2162,32 @@
       }
     }
 
+    // Funciones independientes para actualizar nombre o rol desde Ajustes
+    function guardarNombreDesdeAjustes() {
+      const nuevoNombre = document.getElementById("ajustes-input-nombre").value.trim();
+      if (!nuevoNombre) {
+        alert("Escribe un nombre válido.");
+        return;
+      }
+      const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
+      perfilActual.nombre = nuevoNombre;
+      localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
+      alert("¡Nombre actualizado con éxito!");
+      location.reload();
+    }
+
+    function guardarRolDesdeAjustes() {
+      const nuevoRol = document.getElementById("ajustes-select-rol").value;
+      const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
+      perfilActual.rol = nuevoRol;
+      localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
+      alert("¡Rol actualizado con éxito!");
+      location.reload();
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       cargarColorGuardado();
-      aplicarModoOscuroAuto();
+      cargarModoOscuroGuardado();
       cargarHobbies();
       cargarObjetivos();
       cargarConfigPomodoro();
@@ -2160,21 +2202,6 @@
         if (app) app.style.display = "none";
       }
     });
-
-    function guardarPerfilDesdeAjustes() {
-      const nuevoNombre = document.getElementById("ajustes-input-nombre").value.trim();
-      const nuevoRol = document.getElementById("ajustes-select-rol").value;
-      const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
-      
-      if (nuevoNombre) {
-        perfilActual.nombre = nuevoNombre;
-      }
-      perfilActual.rol = nuevoRol;
-      
-      localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
-      alert("¡Perfil actualizado con éxito!");
-      location.reload();
-    }
   </script>
 </body>
 </html>
