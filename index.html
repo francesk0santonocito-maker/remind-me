@@ -25,6 +25,7 @@
       --glow-red: 0 0 15px rgba(255, 118, 117, 0.6), inset 0 0 10px rgba(255, 118, 117, 0.2);
       --glow-yellow: 0 0 15px rgba(253, 203, 110, 0.7), inset 0 0 10px rgba(253, 203, 110, 0.25);
       --glow-green: 0 0 18px rgba(0, 184, 148, 0.8), inset 0 0 12px rgba(0, 184, 148, 0.3);
+      --neon-today: rgba(108, 92, 231, 0.12);
     }
 
     body.dark-mode {
@@ -44,6 +45,7 @@
       --glow-red: 0 0 18px rgba(248, 113, 113, 0.7), inset 0 0 10px rgba(248, 113, 113, 0.25);
       --glow-yellow: 0 0 18px rgba(251, 191, 36, 0.8), inset 0 0 10px rgba(251, 191, 36, 0.3);
       --glow-green: 0 0 22px rgba(52, 211, 153, 0.9), inset 0 0 12px rgba(52, 211, 153, 0.35);
+      --neon-today: rgba(129, 140, 248, 0.22);
     }
 
     body { font-family: 'Poppins', sans-serif; padding: 20px; background: var(--bg-color); color: var(--text-color); margin: 0; transition: var(--transition); }
@@ -67,9 +69,8 @@
     .card { background: var(--card-bg); padding: 24px; border-radius: 20px; margin-bottom: 20px; box-shadow: var(--shadow); border: 2px solid var(--border-color); transition: var(--transition); position: relative; }
     .card:hover { transform: translateY(-3px); }
     
-    .glow-border-red { border-color: var(--danger) !important; box-shadow: var(--glow-red) !important; }
-    .glow-border-yellow { border-color: var(--warning) !important; box-shadow: var(--glow-yellow) !important; }
-    .glow-border-green { border-color: var(--success) !important; box-shadow: var(--glow-green) !important; }
+    .flash-neon-light { border-color: #6c5ce7 !important; box-shadow: 0 0 25px rgba(108, 92, 231, 0.8), inset 0 0 10px rgba(108, 92, 231, 0.3) !important; transform: scale(1.02); }
+    .flash-neon-dark { border-color: #818cf8 !important; box-shadow: 0 0 25px rgba(129, 140, 248, 0.9), inset 0 0 10px rgba(129, 140, 248, 0.4) !important; transform: scale(1.02); }
 
     h2, h3 { margin-top: 0; color: var(--primary); font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     p, li { font-size: 1rem; line-height: 1.6; }
@@ -85,11 +86,10 @@
     tr:last-child td { border-bottom: none; }
     th { background: var(--primary); color: white; font-weight: 600; }
     
-    #pantalla-bienvenida input { padding: 14px 20px; font-size: 1.1rem; border-radius: 12px; border: 1px solid var(--border-color); margin: 15px 0; text-align: center; outline: none; width: 100%; max-width: 280px; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    #pantalla-bienvenida button, .btn-action, .btn { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
-    #pantalla-bienvenida button:hover, .btn-action:hover, .btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
-    
-    .btn-secondary { background: var(--accent) !important; }
+    .col-hoy { background-color: var(--neon-today) !important; border-left: 2px solid var(--accent); border-right: 2px solid var(--accent); font-weight: 600; }
+
+    .btn-action, .btn { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+    .btn-action:hover, .btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
     .btn-small { padding: 6px 12px !important; font-size: 0.85rem !important; }
 
     .input-form { padding: 10px 14px; font-size: 0.95rem; border: 2px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-color); outline: none; font-family: 'Poppins', sans-serif; transition: var(--transition); }
@@ -101,8 +101,7 @@
     .btn-del { background: var(--danger); color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: 500; font-size: 0.85rem; transition: var(--transition); }
     .btn-del:hover { opacity: 0.85; transform: scale(1.05); }
     
-    .form-group { margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-
+    .form-group { margin-bottom: 15px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .section-page { display: none; animation: fadeIn 0.3s ease; }
     .section-active { display: block; }
 
@@ -148,170 +147,103 @@
     
     .tutorial-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); z-index: 9998; }
     .tutorial-card { 
-      position: fixed; 
-      bottom: 20px; 
-      left: 50%; 
-      transform: translateX(-50%); 
-      z-index: 10000; 
-      background: var(--card-bg); 
-      color: var(--text-color);
-      border: 2px solid var(--border-color);
-      padding: 20px; 
-      border-radius: 12px; 
-      max-width: 90%; 
-      width: 400px; 
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; 
+      background: var(--card-bg); color: var(--text-color); border: 2px solid var(--border-color);
+      padding: 20px; border-radius: 12px; max-width: 90%; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
     }
     .hidden { display: none !important; }
 
-    /* ONBOARDING */
     .welcome-screen {
       position: fixed; inset: 0; z-index: 9999;
       display: flex; align-items: center; justify-content: center;
-      padding: 20px; background: var(--background, #f8fafc);
+      padding: 20px; background: #0f172a !important; color: #f1f5f9 !important;
     }
     .welcome-card {
       width: min(460px, 100%); padding: 40px; text-align: center;
-      background: var(--card-bg, white); border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.12);
+      background: #1e293b !important; color: #f1f5f9 !important; border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4); border: 2px solid #334155;
     }
-    .welcome-card h2 { margin: 0 0 10px; font-size: 2rem; }
-    .welcome-subtitle { margin-bottom: 30px; color: #64748b; }
+    .welcome-card h2 { margin: 0 0 10px; font-size: 2rem; color: #f1f5f9 !important; }
+    .welcome-subtitle { margin-bottom: 30px; color: #94a3b8 !important; }
     .onboarding-step { animation: onboardingFade .25s ease; }
     @keyframes onboardingFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .onboarding-step label { display:block; margin-bottom:12px; font-weight:600; font-size:1.05rem; }
+    .onboarding-step label { display:block; margin-bottom:12px; font-weight:600; font-size:1.05rem; color: #f1f5f9 !important; }
     .onboarding-step input {
       width:100%; box-sizing:border-box; padding:14px 16px; margin-bottom:18px;
-      border:1px solid var(--border-color, #cbd5e1); border-radius:12px; font-size:1rem; outline:none;
-      background: var(--card-bg, white); color: var(--text-color, #1f2937);
+      border:1px solid #334155 !important; border-radius:12px; font-size:1rem; outline:none;
+      background: #0f172a !important; color: #f1f5f9 !important;
     }
-    .onboarding-step input:focus { border-color:var(--primary,#6c5ce7); box-shadow:0 0 0 3px rgba(108,92,231,.12); }
+    .onboarding-step input:focus { border-color:#818cf8 !important; box-shadow:0 0 0 3px rgba(129,140,248,.2); }
     .onboarding-options { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
     .role-option {
       display:flex; flex-direction:column; align-items:center; gap:5px; padding:20px 12px;
-      background:var(--card-bg,white); color:var(--text-color,#1f2937);
-      border:2px solid var(--border-color,#e2e8f0); border-radius:16px; cursor:pointer;
-      transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      background:#0f172a !important; color:#f1f5f9 !important;
+      border:2px solid #334155 !important; border-radius:16px; cursor:pointer;
+      transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
-    .role-option:hover { transform:translateY(-2px); border-color:var(--primary,#6c5ce7); }
+    .role-option:hover { transform:translateY(-2px); border-color:#818cf8 !important; }
     .role-option.selected {
-      border-color:var(--primary,#6c5ce7) !important;
-      background:rgba(108,92,231,.14) !important;
-      box-shadow:0 0 0 4px rgba(108,92,231,.18), 0 8px 26px rgba(108,92,231,.24) !important;
-      transform:translateY(-2px) scale(1.01);
+      border-color:#818cf8 !important; background:rgba(129,140,248,.2) !important;
+      box-shadow:0 0 0 4px rgba(129,140,248,.25) !important; transform:translateY(-2px) scale(1.01);
     }
-    .role-option.selected strong { color:var(--primary,#6c5ce7); }
-    .role-option.selected .role-icon { transform:scale(1.08); }
-    .role-icon { font-size:32px; margin-bottom:5px; transition:transform .2s ease; }
-    .role-option small { color:#64748b; }
-    .onboarding-help { margin:-3px 0 18px; font-size:.9rem; line-height:1.5; color:#64748b; }
+    .role-option.selected strong { color:#818cf8 !important; }
+    .role-icon { font-size:32px; margin-bottom:5px; }
+    .role-option small { color:#94a3b8 !important; }
+    .onboarding-help { margin:-3px 0 18px; font-size:.9rem; line-height:1.5; color:#94a3b8 !important; }
     @media (max-width:500px) { .welcome-card { padding:28px 20px; } .onboarding-options { grid-template-columns:1fr; } }
+    
     .tutorial-highlight { 
-      position: relative !important; 
-      z-index: 9999 !important; 
+      position: relative !important; z-index: 9999 !important; 
       box-shadow: 0 0 20px rgba(0, 229, 255, 0.8), 0 0 40px rgba(0, 229, 255, 0.4) !important; 
-      border: 2px solid #00e5ff !important; 
-      background-color: var(--card-bg) !important; 
-      color: var(--text-color) !important; 
-      border-radius: 12px !important; 
-      transition: all 0.3s ease !important; 
+      border: 2px solid #00e5ff !important; background-color: var(--card-bg) !important; color: var(--text-color) !important; border-radius: 12px !important; 
     }
 
     .trophy-popup {
-      position: fixed;
-      top: 30px;
-      right: 30px;
-      z-index: 20000;
-      background: var(--card-bg);
-      border: 2px solid var(--warning);
-      box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
-      border-radius: 16px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: fixed; top: 30px; right: 30px; z-index: 20000;
+      background: var(--card-bg); border: 2px solid var(--warning); box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+      border-radius: 16px; padding: 16px 20px; display: flex; align-items: center; gap: 15px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .trophy-popup-icon { font-size: 2.2rem; }
     .trophy-popup-title { font-weight: 700; font-size: 1rem; color: var(--text-color); margin: 0; }
     .trophy-popup-desc { font-size: 0.85rem; color: #64748b; margin: 2px 0 0 0; }
-
-    @keyframes popIn {
-      from { transform: translateY(-50px) scale(0.8); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    /* Contenedor flotante en la esquina superior derecha */
-.floating-study-menu {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.study-dropdown-btn {
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  color: var(--primary);
-  padding: 8px 14px;
-  border-radius: 12px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: var(--transition);
-}
-
-.study-dropdown-btn:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.study-dropdown-content {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: 45px;
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  border-radius: 14px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-  width: 180px;
-  overflow: hidden;
-  z-index: 1100;
-}
-
-.study-dropdown-content button {
-  width: 100%;
-  text-align: left;
-  padding: 12px 16px;
-  background: none;
-  border: none;
-  color: var(--text-color);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-bottom: 1px solid var(--border-color);
-  transition: var(--transition);
-}
-
-.study-dropdown-content button:last-child {
-  border-bottom: none;
-}
-
-.study-dropdown-content button:hover {
-  background: var(--primary);
-  color: white;
-}
+    @keyframes popIn { from { transform: translateY(-50px) scale(0.8); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
 
-  <!-- Pop-Up Notificación de Trofeo -->
+  <div id="splash-screen" style="
+    position: fixed; inset: 0; background: #0f172a; z-index: 99999; 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s ease;
+  ">
+    <style>
+      @keyframes pulseGlow {
+        0% { transform: scale(0.95); opacity: 0.4; filter: blur(20px); }
+        50% { transform: scale(1.05); opacity: 0.8; filter: blur(30px); }
+        100% { transform: scale(0.95); opacity: 0.4; filter: blur(20px); }
+      }
+      @keyframes fadeInUp {
+        from { transform: translateY(15px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .splash-glow {
+        position: absolute; width: 180px; height: 180px;
+        background: linear-gradient(135deg, #818cf8, #2dd4bf);
+        border-radius: 50%; animation: pulseGlow 3s infinite ease-in-out; z-index: 1;
+      }
+      .splash-content { position: relative; z-index: 2; text-align: center; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+    <div class="splash-glow"></div>
+    <div class="splash-content">
+      <div style="font-size: 2.3rem; font-weight: 700; color: #f1f5f9; letter-spacing: -1px;">
+        FS Studio <span style="color: #2dd4bf;">& Co.</span>
+      </div>
+      <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 6px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;">
+        RemindEd Engine
+      </p>
+    </div>
+  </div>
+
   <div id="trophy-popup" class="trophy-popup hidden">
     <div class="trophy-popup-icon">🏆</div>
     <div>
@@ -320,29 +252,25 @@
     </div>
   </div>
 
-  <!-- PANTALLA DE BIENVENIDA / ONBOARDING (Corregido: se eliminó el style position: relative conflictivo) -->
   <div id="pantalla-bienvenida" class="welcome-screen">
-    <!-- Selector de idioma exclusivo de la pantalla de inicio (Arriba a la derecha) -->
     <div style="position: absolute; top: 20px; right: 20px;">
-      <select id="top-select-idioma" class="lang-selector-top" onchange="cambiarIdiomaDesdeTop(this.value)">
+      <select id="top-select-idioma" class="lang-selector-top" style="background:#1e293b; color:#f1f5f9; border-color:#334155;" onchange="cambiarIdiomaDesdeTop(this.value)">
         <option value="en">🇬🇧 EN</option>
         <option value="es">🇪🇸 ES</option>
-        <option value="pt">🇧🇷 PT</option>
+        <option value="pt">🇵🇹 PT</option>
       </select>
     </div>
 
     <div class="welcome-card">
-      <h2 style="font-size: 1.5rem; margin-bottom: 10px; text-align: center; width: 100%; display: block;" data-i18n="welcome_title">Welcome to <span style="color: var(--primary);">Remind<span style="color: var(--accent);">Ed</span></span>!</h2>
+      <h2 style="font-size: 1.5rem; margin-bottom: 10px; text-align: center; width: 100%; display: block;" data-i18n="welcome_title">Welcome to <span style="color: #818cf8;">Remind<span style="color: #2dd4bf;">Ed</span></span>!</h2>
       <p class="welcome-subtitle" data-i18n="welcome_subtitle">Let's personalize your experience.</p>
       
-      <!-- PASO 1: NOMBRE -->
       <div id="onboarding-paso-1" class="onboarding-step">
         <label id="lbl-q-te-llamas" for="onboarding-nombre" data-i18n="lbl_what_is_your_name">What is your name?</label>
         <input type="text" id="onboarding-nombre" data-i18n-placeholder="placeholder_your_name" placeholder="Type your name" autocomplete="name">
         <button type="button" class="btn" id="btn-cont-1" onclick="onboardingContinuarNombre()" data-i18n="btn_continue">Continue →</button>
       </div>
 
-      <!-- PASO 2: ROL -->
       <div id="onboarding-paso-2" class="onboarding-step" style="display:none;">
         <label id="lbl-q-haces" data-i18n="lbl_what_do_you_do">What do you currently do?</label>
         <div class="onboarding-options">
@@ -360,7 +288,6 @@
         <button type="button" class="btn" id="btn-cont-2" onclick="onboardingContinuarRol()" data-i18n="btn_continue">Continue →</button>
       </div>
 
-      <!-- PASO 3: NOTA MÁXIMA -->
       <div id="onboarding-paso-3" class="onboarding-step" style="display:none;">
         <label id="lbl-nota-max-pregunta" for="onboarding-nota-max" data-i18n="lbl_max_grade">What is the maximum grade of your educational system?</label>
         <p class="onboarding-help" id="lbl-nota-max-help" data-i18n="lbl_max_grade_help">RemindEd will use this scale to adapt your charts and stats.</p>
@@ -370,74 +297,29 @@
     </div>
   </div>
 
-  <div class="floating-study-menu">
-  <button class="study-dropdown-btn" onclick="toggleStudyMenu()">
-    📚 Sección de Estudio ▾
-  </button>
-  <div id="study-menu-dropdown" class="study-dropdown-content">
-    <button onclick="navegarA('estudio')">🍅 Pomodoro</button>
-    <button onclick="navegarA('blurting')">🧠 Blurting Mode</button>
-  </div>
-</div>
-
-<!-- MODO BLURTING (TÉCNICA DE ESTUDIO) -->
-<div id="page-blurting" class="section-page">
-  <div class="card">
-    <h2>🧠 Blurting Mode (Active Recall)</h2>
-    <p style="text-align: center; color: #64748b; font-size: 0.95rem;">
-      Escribe todo lo que recuerdes sobre el tema sin mirar tus apuntes antes de que el tiempo acabe.
-    </p>
-    
-    <!-- Controles de tiempo ajustables (3, 4 o 5 minutos) -->
-    <div style="display: flex; justify-content: center; gap: 10px; margin: 15px 0;">
-      <button class="btn btn-small" onclick="ajustarBlurtingTime(3)">3 Min</button>
-      <button class="btn btn-small" onclick="ajustarBlurtingTime(4)">4 Min</button>
-      <button class="btn btn-small" onclick="ajustarBlurtingTime(5)">5 Min</button>
-    </div>
-
-    <!-- Visualizador del temporizador -->
-    <div id="blurting-timer-display" style="font-size: 3rem; font-weight: 700; text-align: center; margin: 15px 0; color: var(--primary);">
-      03:00
-    </div>
-
-    <!-- Botones de control -->
-    <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 20px;">
-      <button onclick="iniciarBlurtingTimer()" class="btn-action">Iniciar Blurting</button>
-      <button onclick="pausarBlurtingTimer()" class="btn-action" style="background: var(--warning); color: #2b2d42;">Pausar</button>
-      <button onclick="reiniciarBlurtingTimer()" class="btn-action" style="background: var(--danger);">Reiniciar</button>
-    </div>
-
-    <!-- Área de escritura libre -->
-    <textarea id="blurting-text-area" class="input-form" placeholder="Escribe aquí todo lo que recuerdes del tema..." style="width: 100%; height: 200px; resize: vertical; box-sizing: border-box;"></textarea>
-  </div>
-</div>
-
-  <!-- APP PRINCIPAL -->
   <div id="app-principal" style="display: none;">
 
     <div class="top-bar">
       <button class="hamburger" onclick="toggleMenu()">☰</button>
       <div class="brand-logo" id="greeting-header">Remind<span>Ed</span></div>
-      <div class="top-bar-right">
-        <!-- El selector de idioma ya no aparece aquí en el panel principal -->
-      </div>
-      <div id="nav-menu" class="nav-menu">
-        <button onclick="navegarA('panel')" data-i18n="menu_panel">📌 Control Panel</button>
-        <button id="menu-estudio" onclick="navegarA('estudio')" data-i18n="menu_pomodoro">🍅 Pomodoro Mode</button>
-        <button id="menu-eventos" onclick="navegarA('examenes')" data-i18n="menu_eventos">📅 Events & Meetings</button>
-        <button onclick="navegarA('hobbies')" data-i18n="menu_hobbies">🎨 My Hobbies</button>
-        <button onclick="navegarA('sueno')" data-i18n="menu_sueno">💤 Sleep Tracker</button>
-        <button onclick="navegarA('objetivos')" data-i18n="menu_objetivos">🎯 My Goals</button>
-        <button onclick="navegarA('notas')" data-i18n="menu_notas">📝 Notes & Memos</button>
-        <button onclick="navegarA('trofeos')" data-i18n="menu_trofeos">🏆 Trophies & Achievements</button>
-        <button onclick="navegarA('ajustes')" data-i18n="menu_ajustes">⚙️ Settings</button>
-      </div>
+      <div class="top-bar-right"></div>
+    </div>
+    
+    <div id="nav-menu" class="nav-menu">
+      <button onclick="navegarA('panel')" data-i18n="menu_panel">📌 Control Panel</button>
+      <button id="menu-estudio" onclick="navegarA('estudio')" data-i18n="menu_pomodoro">🍅 Pomodoro Mode</button>
+      <button id="menu-eventos" onclick="navegarA('examenes')" data-i18n="menu_eventos">📅 Events & Meetings</button>
+      <button onclick="navegarA('hobbies')" data-i18n="menu_hobbies">🎨 My Hobbies</button>
+      <button onclick="navegarA('sueno')" data-i18n="menu_sueno">💤 Sleep Tracker</button>
+      <button onclick="navegarA('objetivos')" data-i18n="menu_objetivos">🎯 My Goals</button>
+      <button onclick="navegarA('notas')" data-i18n="menu_notas">📝 Notes & Memos</button>
+      <button onclick="navegarA('notificaciones')" data-i18n="menu_reminders">🔔 Reminders & Notifications</button>
+      <button id="menu-trofeos-btn" onclick="navegarA('trofeos')" data-i18n="menu_trofeos">🏆 Trophies & Achievements</button>
+      <button onclick="navegarA('ajustes')" data-i18n="menu_ajustes">⚙️ Settings</button>
     </div>
 
-    <!-- PANEL DE CONTROL -->
     <div id="page-panel" class="section-page section-active">
 
-      <!-- DASHBOARD EXCLUSIVO TRABAJADOR -->
       <div id="bloques-trabajador" class="dashboard-container" style="display: none;">
         <section class="row top-row">
           <div class="card widget-activity" id="card-actividad-actual">
@@ -457,12 +339,11 @@
               <p class="event-title" id="event-title" data-i18n="no_hay_eventos">No upcoming events or meetings</p>
               <p class="event-time" id="event-time" style="font-weight:600; color:var(--accent);">--:--</p>
             </div>
-            <button class="btn btn-small" onclick="navegarA('examenes')" style="margin-top: 10px;" data-i18n="agendar_evento">+ Schedule Event</button>
+            <button class="btn btn-small" onclick="desplazarAEventosYEventosFlash()" style="margin-top: 10px;" data-i18n="agendar_evento">+ Schedule Event</button>
           </div>
         </section>
       </div>
 
-      <!-- BLOQUE OBJETIVOS TRABAJADOR -->
       <div id="bloque-objetivos-trabajador" class="card" style="display: none;">
         <h3 data-i18n="objetivos_diarios_trabajo">🎯 Daily Work Goals</h3>
         <div class="progress-bar-container">
@@ -478,9 +359,8 @@
         </div>
       </div>
 
-      <!-- SECCIONES ESTUDIANTE -->
       <div class="countdown-box" id="box-cuenta-atras" style="display: none;">
-        <span style="font-weight: 600;" data-i18n="proximo_examen_cercano">⏳ Closest Exam / Deadline:</span>
+        <span style="font-weight: 600;" data-i18n="proximo_examen_cercano">⏳ Closest Event / Deadline:</span>
         <div id="nombre-examen-cercano" style="font-size: 1.15rem; margin-top: 6px; font-weight: 600;">-</div>
         <div class="countdown-timer" id="timer-cuenta-atras">00d 00h 00m 00s</div>
       </div>
@@ -497,7 +377,7 @@
       </div>
 
       <div class="card tarjeta-tutorial" id="card-examenes-destacados">
-        <h2 id="titulo-bloque-eventos" data-i18n="proximos_examenes_destacados">📅 Upcoming Featured Exams</h2>
+        <h2 id="titulo-bloque-eventos" data-i18n="proximos_examenes_destacados">📅 Upcoming Featured Events</h2>
         <div id="lista-examenes-resumen"></div>
       </div>
 
@@ -509,27 +389,38 @@
 
       <div class="card tarjeta-tutorial" id="card-horario-semanal">
         <h2 data-i18n="horario_semanal_completo">🗓️ Full Weekly Schedule</h2>
-        <div style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
+        <div id="bloque-tutorial-selector-oficio" style="margin-bottom: 15px; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
           <h3 style="margin-top:0; font-size:1rem; color:var(--primary);" data-i18n="anadir_horas_horario">Add Hours to Schedule</h3>
-          <div class="form-group">
-            <select id="horario-dia-select" class="input-form">
-              <option value="1" data-i18n="dia_lunes">Monday</option>
-              <option value="2" data-i18n="dia_martes">Tuesday</option>
-              <option value="3" data-i18n="dia_miercoles">Wednesday</option>
-              <option value="4" data-i18n="dia_jueves">Thursday</option>
-              <option value="5" data-i18n="dia_viernes">Friday</option>
-              <option value="6" data-i18n="dia_sabado">Saturday</option>
-              <option value="0" data-i18n="dia_domingo">Sunday</option>
-            </select>
+          <div class="form-group" style="flex-direction: column; align-items: stretch;">
             
-            <label style="font-size: 0.85rem; font-weight:600;" data-i18n="desde">From:</label>
-            <input type="time" id="horario-inicio-time" class="input-form" value="08:00" />
-            <label style="font-size: 0.85rem; font-weight:600;" data-i18n="hasta">To:</label>
-            <input type="time" id="horario-fin-time" class="input-form" value="09:00" />
+            <div class="dropdown-dias-wrapper" style="position: relative; margin-bottom: 8px;">
+              <button type="button" class="input-form" onclick="toggleDesplegableDias()" style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                <span id="label-dias-seleccionados" data-i18n="seleccionar_dias_semana">📅 Select weekdays...</span>
+                <span>▼</span>
+              </button>
+              
+              <div id="dropdown-dias-content" style="display: none; overflow: hidden; max-height: 0; transition: max-height 0.4s ease-in-out, padding 0.3s ease; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; margin-top: 4px; padding: 0 10px; position: absolute; width: 100%; z-index: 10; box-sizing: border-box;">
+                <div class="days-checkboxes" style="padding: 10px 0; display: flex; flex-direction: column; gap: 8px;">
+                  <label><input type="checkbox" value="1" class="chk-dia-laboral" onchange="actualizarTextoDias()"> <span data-i18n="dia_lunes">Monday</span></label>
+                  <label><input type="checkbox" value="2" class="chk-dia-laboral" onchange="actualizarTextoDias()"> <span data-i18n="dia_martes">Tuesday</span></label>
+                  <label><input type="checkbox" value="3" class="chk-dia-laboral" onchange="actualizarTextoDias()"> <span data-i18n="dia_miercoles">Wednesday</span></label>
+                  <label><input type="checkbox" value="4" class="chk-dia-laboral" onchange="actualizarTextoDias()"> <span data-i18n="dia_jueves">Thursday</span></label>
+                  <label><input type="checkbox" value="5" class="chk-dia-laboral" onchange="actualizarTextoDias()"> <span data-i18n="dia_viernes">Friday</span></label>
+                  <label><input type="checkbox" value="6" class="chk-dia-laboral" onchange="actualizarTextoDias()"> <span data-i18n="dia_sabado">Saturday</span></label>
+                  <label><input type="checkbox" value="0" class="chk-dia-laboral" onchange="actualizarTextoDias()"> <span data-i18n="dia_domingo">Sunday</span></label>
+                </div>
+              </div>
+            </div>
 
-            <select id="horario-materia-select" class="input-form"></select>
-            <input type="text" id="horario-aula-input" class="input-form" data-i18n-placeholder="placeholder_lugar_aula" placeholder="Location / Room" style="width: 120px;" />
-            <button onclick="agregarHorarioBloque()" class="btn-action" data-i18n="guardar_bloque">Save Block</button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px;">
+              <label style="font-size: 0.85rem; font-weight:600;" data-i18n="desde">From:</label>
+              <input type="time" id="horario-inicio-time" class="input-form" value="08:00" />
+              <label style="font-size: 0.85rem; font-weight:600;" data-i18n="hasta">To:</label>
+              <input type="time" id="horario-fin-time" class="input-form" value="09:00" />
+              <select id="horario-materia-select" class="input-form"></select>
+              <input type="text" id="horario-aula-input" class="input-form" data-i18n-placeholder="placeholder_lugar_aula" placeholder="Location / Room" style="width: 120px;" />
+              <button onclick="agregarHorarioBloque()" class="btn-action" data-i18n="guardar_bloque">Save Block</button>
+            </div>
           </div>
         </div>
 
@@ -538,13 +429,13 @@
             <thead>
               <tr>
                 <th data-i18n="th_hora">Time</th>
-                <th data-i18n="dia_lunes">Monday</th>
-                <th data-i18n="dia_martes">Tuesday</th>
-                <th data-i18n="dia_miercoles">Wednesday</th>
-                <th data-i18n="dia_jueves">Thursday</th>
-                <th data-i18n="dia_viernes">Friday</th>
-                <th data-i18n="dia_sabado">Saturday</th>
-                <th data-i18n="dia_domingo">Sunday</th>
+                <th id="th-dia-1" data-i18n="dia_lunes">Monday</th>
+                <th id="th-dia-2" data-i18n="dia_martes">Tuesday</th>
+                <th id="th-dia-3" data-i18n="dia_miercoles">Wednesday</th>
+                <th id="th-dia-4" data-i18n="dia_jueves">Thursday</th>
+                <th id="th-dia-5" data-i18n="dia_viernes">Friday</th>
+                <th id="th-dia-6" data-i18n="dia_sabado">Saturday</th>
+                <th id="th-dia-0" data-i18n="dia_domingo">Sunday</th>
               </tr>
             </thead>
             <tbody id="tabla-horario-body"></tbody>
@@ -553,11 +444,10 @@
       </div>
     </div>
 
-    <!-- MODO ESTUDIO (POMODORO) -->
     <div id="page-estudio" class="section-page">
       <div class="card">
         <h2 data-i18n="modo_concentracion">⏱️ Focus Mode (Pomodoro)</h2>
-        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy">Focused time today: 0 min</p>
+        <p style="text-align: center; font-size: 1.1rem; color: var(--success); font-weight: 600;" id="tiempo-estudiado-hoy" data-i18n="tiempo_enfocado_hoy">Focused time today: 0 min</p>
         <p style="text-align: center; font-weight: 500;" id="timer-mode">Block 1 / 4 - Study/Work Session</p>
         <div class="timer-display" id="timer-display" style="font-size: 3.5rem; font-weight: 700; text-align: center; margin: 20px 0; color: var(--primary); letter-spacing: -2px;">25:00</div>
         <div class="timer-controls" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
@@ -575,10 +465,9 @@
       </div>
     </div>
 
-    <!-- EVENTOS Y REUNIONES / EXÁMENES -->
     <div id="page-examenes" class="section-page">
       <div class="card" id="card-gestion-materias">
-        <h2 id="titulo-materia-gestor" data-i18n="gestor_asignaturas_proyectos">📚 Subjects & Projects Manager</h2>
+        <h2 id="titulo-materia-gestor" data-i18n="gestor_asignaturas_proyectos">📚 Projects and Areas Manager</h2>
         <div class="form-group">
           <input type="text" id="nueva-asignatura-nombre" class="input-form" data-i18n-placeholder="placeholder_nombre_asig" placeholder="Name (e.g. Project X / History)" style="flex:1;" />
           <button onclick="agregarNuevaAsignatura()" class="btn-action" data-i18n="anadir">Add</button>
@@ -587,11 +476,10 @@
       </div>
 
       <div class="card" id="card-nuevo-examen">
-        <h2 id="titulo-agendar-evento" data-i18n="agendar_proximo_evento">📅 Schedule Next Event / Exam</h2>
+        <h2 id="titulo-agendar-evento" data-i18n="agendar_proximo_evento">📅 Schedule Next Event</h2>
         <div class="form-group">
           <select id="examen-materia-select" class="input-form"></select>
           <input type="datetime-local" id="examen-fecha" class="input-form" />
-          <input type="text" id="examen-objetivo-nota" class="input-form" data-i18n-placeholder="placeholder_meta_clave" placeholder="Grade or Key Goal" style="width:160px;" />
           <button onclick="agregarExamen()" class="btn-action" data-i18n="guardar">Save</button>
         </div>
         <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;" data-i18n="eventos_programados">Scheduled Events</h3>
@@ -604,7 +492,6 @@
         <div id="contenedor-asignaturas"></div>
       </div>
 
-      <!-- GRÁFICO DE EVOLUCIÓN -->
       <div class="card" id="card-grafico-notas">
         <h2 id="titulo-grafico-desempeno" data-i18n="grafico_evolucion_academica">📈 Academic Evolution Chart</h2>
         <div class="canvas-container">
@@ -613,7 +500,6 @@
       </div>
     </div>
 
-    <!-- HOBBIES -->
     <div id="page-hobbies" class="section-page">
       <div class="card">
         <h2 data-i18n="mis_hobbies_actividades">🎨 My Hobbies & Free Activities</h2>
@@ -638,7 +524,6 @@
       </div>
     </div>
 
-    <!-- CONTROL DE SUEÑO -->
     <div id="page-sueno" class="section-page">
       <div class="card">
         <h2 data-i18n="config_control_sueno">💤 Sleep Tracker Configuration</h2>
@@ -658,7 +543,6 @@
       </div>
     </div>
 
-    <!-- MIS OBJETIVOS -->
     <div id="page-objetivos" class="section-page">
       <div class="card">
         <h2 data-i18n="administrar_objetivos_diarios">🎯 Manage Daily Goals</h2>
@@ -670,13 +554,21 @@
       </div>
 
       <div class="card">
-        <h2 data-i18n="constancia_exito_mes">📈 Monthly Consistency & Success</h2>
-        <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">0% Success</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <h2 style="margin: 0;" data-i18n="constancia_exito_mes">📈 Monthly Consistency & Success</h2>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="btn btn-small" onclick="cambiarMesHistorial(-1)">◄</button>
+            <span id="label-mes-actual" style="font-weight: 600; font-size: 1rem; color: var(--primary);">Current Month</span>
+            <button class="btn btn-small" onclick="cambiarMesHistorial(1)">►</button>
+          </div>
+        </div>
+        <p id="porcentaje-exito" style="font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 10px;">0% Success</p>
         <div class="progress-bar-container">
           <div id="progress-bar" class="progress-bar"></div>
         </div>
+        <p id="comparativa-mes-anterior" style="font-size: 0.95rem; font-weight: 500; margin-top: 8px; color: var(--accent);"></p>
         <br>
-        <h3 style="color:var(--primary); font-size:1.1rem;" data-i18n="registro_mensual">Monthly Log (Last 30 days)</h3>
+        <h3 style="color:var(--primary); font-size:1.1rem;" data-i18n="registro_mensual">Monthly Log</h3>
         <div style="overflow-x:auto;">
           <table>
             <thead>
@@ -688,7 +580,6 @@
       </div>
     </div>
 
-    <!-- NOTAS Y APUNTES -->
     <div id="page-notas" class="section-page">
       <div class="card">
         <h2 data-i18n="anadir_apunte_nota">📝 Add Note / Memo</h2>
@@ -714,7 +605,52 @@
       </div>
     </div>
 
-    <!-- TROFEOS -->
+    <div id="page-notificaciones" class="section-page">
+      <div class="card">
+        <h2 data-i18n="reminders_section_title">🔔 Reminders & Notifications</h2>
+        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="reminders_section_desc">Manage your alerts, hydration habits, and quick desktop widgets from here:</p>
+        
+        <div style="background: var(--item-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-top: 15px;">
+          <h3 style="font-size: 1.05rem; color: var(--primary); margin-top: 0;" data-i18n="block_freq_title">📊 Alert Frequency Level</h3>
+          <p style="font-size: 0.85rem; color: #64748b; margin-top: -4px;" data-i18n="block_freq_desc">Configure how often you receive proactive system notifications:</p>
+          <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+            <select id="select-nivel-notif" class="input-form" style="flex: 1;" onchange="actualizarTextoDescripcionFrecuencia()">
+              <option value="desactivadas" data-i18n="opt_desac">❌ Disabled (Total silence)</option>
+              <option value="relajado" data-i18n="opt_relaj">🌿 Relaxed (Every 3-4 hours)</option>
+              <option value="moderado" data-i18n="opt_mod">⚖️ Moderated (Every 1-2 hours)</option>
+              <option value="intenso" data-i18n="opt_int">🔥 Intense (Every 30-45 minutes)</option>
+              <option value="extremo" data-i18n="opt_ext">⚡ Extreme (Continuous focus reminders)</option>
+            </select>
+            <button onclick="guardarConfigNotificaciones()" class="btn-action btn-small" data-i18n="btn_save">Save</button>
+          </div>
+          <p id="desc-nivel-notif" style="font-size: 0.85rem; color: var(--accent); margin-top: 8px; margin-bottom: 0;"></p>
+        </div>
+
+        <div style="background: var(--item-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-top: 15px;">
+          <h3 style="font-size: 1.05rem; color: var(--primary); margin-top: 0;" data-i18n="block_water_title">💧 Water Drinking Reminder</h3>
+          <p style="font-size: 0.85rem; color: #64748b; margin-top: -4px;" data-i18n="block_water_desc">Set the time interval to remind you to stay hydrated:</p>
+          <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+            <label style="font-size: 0.9rem; font-weight: 500;" data-i18n="lbl_time_water">Time:</label>
+            <input type="time" id="input-agua-hora" class="input-form" value="10:00" style="width: 130px;" />
+            <button onclick="guardarConfigAgua()" class="btn-action btn-small" data-i18n="btn_save">Save</button>
+          </div>
+          <p id="status-agua-msg" style="font-size: 0.85rem; color: var(--success); margin-top: 6px; font-weight: 600;"></p>
+        </div>
+
+        <div style="background: var(--item-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-top: 15px;">
+          <h3 style="font-size: 1.05rem; color: var(--primary); margin-top: 0;" data-i18n="block_widget_title">📱 Home Screen Widget</h3>
+          <p style="font-size: 0.85rem; color: #64748b; margin-top: -4px;" data-i18n="block_widget_desc">Add a quick-access shortcut widget to your mobile or desktop device screen:</p>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <strong data-i18n="lbl_widget_status">Widget Status:</strong> <span id="widget-status-text" style="color: var(--warning);" data-i18n="widget_unpinned">Not pinned</span>
+            </div>
+            <button onclick="activarWidgetTelefono()" class="btn-action btn-small" data-i18n="btn_add_widget">➕ Add to Home Screen</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <div id="page-trofeos" class="section-page">
       <div class="card">
         <h2 data-i18n="sala_trofeos">🏆 RemindEd Trophy Room</h2>
@@ -722,12 +658,10 @@
       </div>
     </div>
 
-    <!-- AJUSTES -->
     <div id="page-ajustes" class="section-page">
-      <!-- Tarjeta 1: Apariencia y Modo Oscuro/Claro -->
       <div class="card" id="card-panel-colores">
         <h2 data-i18n="personalizar_apariencia">🎨 Customize Appearance & Theme</h2>
-        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="alterna_modo_visualizacion">Toggle display mode and customize primary colors:</p>
+        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="alterna_modo_visualizacion">Toggle display mode:</p>
         
         <div style="margin: 15px 0; display: flex; justify-content: space-between; align-items: center; background: var(--item-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
           <div>
@@ -736,22 +670,14 @@
           </div>
           <button onclick="alternarTema()" id="btn-cambiar-tema" class="btn-action" style="padding: 8px 16px;" data-i18n="btn_cambiar_tema">🌓 Change Theme</button>
         </div>
-
-        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 15px;">
-          <button onclick="cambiarColorTema('#6c5ce7', '#00cec9')" class="btn-small" style="background: #6c5ce7; border: none; color: white;" data-i18n="tema_morado">💜 RemindEd Purple</button>
-          <button onclick="cambiarColorTema('#0984e3', '#74b9ff')" class="btn-small" style="background: #0984e3; border: none; color: white;" data-i18n="tema_azul">💙 Ocean Blue</button>
-          <button onclick="cambiarColorTema('#00b894', '#55efc4')" class="btn-small" style="background: #00b894; border: none; color: white;" data-i18n="tema_verde">💚 Emerald Green</button>
-          <button onclick="cambiarColorTema('#e17055', '#ffeaa7')" class="btn-small" style="background: #e17055; border: none; color: white;" data-i18n="tema_terracota">🧡 Terracotta / Warm</button>
-          <button onclick="cambiarColorTema('#d63031', '#ff7675')" class="btn-small" style="background: #d63031; border: none; color: white;" data-i18n="tema_rojo">🔴 Carmine Red</button>
-        </div>
-
-        <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
-          <label style="font-size: 0.9rem; font-weight: 600;" data-i18n="elige_color_personalizado">Or choose a custom color:</label>
-          <input type="color" id="picker-color-primary" value="#6c5ce7" onchange="aplicarColorPersonalizado(this.value)" style="border: none; background: none; cursor: pointer; width: 40px; height: 40px;">
-        </div>
       </div>
 
-      <!-- Tarjeta 2: Idioma -->
+      <div class="card">
+        <h2 data-i18n="gestion_horarios_semanales">🗓️ Weekly Schedules Management</h2>
+        <p style="font-size: 0.85rem; color: #64748b;" data-i18n="visualiza_elimina_bloque">View and delete any registered block in your weekly schedule:</p>
+        <div id="contenedor-gestion-horarios-ajustes" style="margin-top: 15px;"></div>
+      </div>
+
       <div class="card">
         <h2 data-i18n="idioma_aplicacion">🌐 Application Language</h2>
         <p style="font-size: 0.85rem; color: #64748b;" data-i18n="selecciona_idioma_interfaz">Select the language you want for the interface:</p>
@@ -759,13 +685,12 @@
           <select id="ajustes-select-idioma" class="input-form" style="flex:1;">
             <option value="en">🇬🇧 English</option>
             <option value="es">🇪🇸 Español</option>
-            <option value="pt">🇧🇷 Português</option>
+            <option value="pt">🇵🇹 Português (Portugal)</option>
           </select>
           <button onclick="guardarIdiomaDesdeAjustes()" class="btn-action" data-i18n="cambiar_idioma">Change Language</button>
         </div>
       </div>
 
-      <!-- Tarjeta 3: Cambiar Nombre -->
       <div class="card">
         <h2 data-i18n="cambiar_nombre_usuario">✏️ Change Username</h2>
         <p style="font-size: 0.85rem; color: #64748b;" data-i18n="actualiza_nombre_saludo">Update how the app greets you:</p>
@@ -775,7 +700,6 @@
         </div>
       </div>
 
-      <!-- Tarjeta 4: Cambiar Rol -->
       <div class="card">
         <h2 data-i18n="cambiar_rol">💼 Change Role (Student / Worker)</h2>
         <p style="font-size: 0.85rem; color: #64748b;" data-i18n="modifica_actividad_actual">Modify your current main activity:</p>
@@ -788,7 +712,6 @@
         </div>
       </div>
 
-      <!-- Tarjeta 5: Copia de seguridad -->
       <div class="card">
         <h2 data-i18n="copia_seguridad_guias">⚙️ Backup & Guides</h2>
         <button onclick="exportarDatos()" class="btn-action" data-i18n="exportar_copia">Export Backup</button>
@@ -796,13 +719,12 @@
         <input type="file" id="import-file" style="display: none;" onchange="importarDatos(event)" />
         <button onclick="document.getElementById('import-file').click()" class="btn-action" style="background: var(--success);" data-i18n="restaurar_datos">Restore Data</button>
         <br><br>
-        <button onclick="reiniciarTutoriales()" class="btn-action" style="background: var(--warning); color: #2b2d42;" data-i18n="reactivar_guias">🔄 Reset Context Guides</button>
+        <button onclick="reiniciarTutoriales()" class="btn-action" style="background: var(--warning); color: var(--text-color);" data-i18n="reactivar_guias">🔄 Reset Context Guides</button>
       </div>
     </div>
 
   </div>
 
-  <!-- TUTORIAL INTERACTIVO -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
   <div id="tutorial-card" class="tutorial-card hidden">
     <p id="tutorial-text"></p>
@@ -813,10 +735,20 @@
   </div>
 
   <script>
-    // --- DICCIONARIO DE TRADUCCIONES COMPLETO ---
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        const splash = document.getElementById("splash-screen");
+        if (splash) {
+          splash.style.transform = "translateY(-100%)";
+          splash.style.opacity = "0";
+          setTimeout(() => { splash.remove(); }, 600);
+        }
+      }, 1200);
+    });
+
     const i18n = {
       en: {
-        welcome_title: "Welcome to <span style='color: var(--primary);'>Remind<span style='color: var(--accent);'>Ed</span></span>!",
+        welcome_title: "Welcome to <span style='color: #818cf8;'>Remind<span style='color: #2dd4bf;'>Ed</span></span>!",
         welcome_subtitle: "Let's personalize your experience.",
         lbl_what_is_your_name: "What is your name?",
         lbl_what_do_you_do: "What do you currently do?",
@@ -828,13 +760,34 @@
         lbl_max_grade_help: "RemindEd will use this scale to adapt your charts and stats.",
         btn_start: "Start with RemindEd 🚀",
         menu_panel: "📌 Control Panel",
+        menu_pomodoro: "🍅 Pomodoro Mode",
         menu_eventos: "📅 Events & Meetings",
         menu_hobbies: "🎨 My Hobbies",
         menu_sueno: "💤 Sleep Tracker",
         menu_objetivos: "🎯 My Goals",
         menu_notas: "📝 Notes & Memos",
+        menu_reminders: "🔔 Reminders & Notifications",
         menu_trofeos: "🏆 Trophies & Achievements",
         menu_ajustes: "⚙️ Settings",
+        reminders_section_title: "🔔 Reminders & Notifications",
+        reminders_section_desc: "Manage your alerts, hydration habits, and quick desktop widgets from here:",
+        block_freq_title: "📊 Alert Frequency Level",
+        block_freq_desc: "Configure how often you receive proactive system notifications:",
+        opt_desac: "❌ Disabled (Total silence)",
+        opt_relaj: "🌿 Relaxed (Every 3-4 hours)",
+        opt_mod: "⚖️ Moderated (Every 1-2 hours)",
+        opt_int: "🔥 Intense (Every 30-45 minutes)",
+        opt_ext: "⚡ Extreme (Continuous focus reminders)",
+        block_water_title: "💧 Water Drinking Reminder",
+        block_water_desc: "Set the time interval to remind you to stay hydrated:",
+        lbl_time_water: "Time:",
+        btn_save: "Save",
+        block_widget_title: "📱 Home Screen Widget",
+        block_widget_desc: "Add a quick-access shortcut widget to your mobile or desktop device screen:",
+        lbl_widget_status: "Widget Status:",
+        widget_unpinned: "Not pinned",
+        widget_pinned: "Pinned to Home Screen! 📱",
+        btn_add_widget: "➕ Add to Home Screen",
         actividad_actual: "⚡ Current Activity",
         llevas_transcurrido: "Elapsed time:",
         proxima_actividad_en: "Next activity in:",
@@ -843,15 +796,16 @@
         agendar_evento: "+ Schedule Event",
         objetivos_diarios_trabajo: "🎯 Daily Work Goals",
         agregar: "Add",
-        proximo_examen_cercano: "⏳ Closest Exam / Deadline:",
+        proximo_examen_cercano: "⏳ Closest Event / Deadline:",
         proxima_clase_actividad: "🎓 Next Class / Activity",
         objetivos_tareas_diarias: "🎯 Daily Goals / Tasks",
         borde_cambia_verde: "The border turns green when you complete your daily tasks.",
-        proximos_examenes_destacados: "📅 Upcoming Featured Exams",
+        proximos_examenes_destacados: "📅 Upcoming Featured Events",
         estado_sueno: "🌙 Sleep Status",
         registrar_sueno: "Log Last Night's Sleep",
         horario_semanal_completo: "🗓️ Full Weekly Schedule",
         anadir_horas_horario: "Add Hours to Schedule",
+        seleccionar_dias_semana: "📅 Select weekdays...",
         dia_lunes: "Monday",
         dia_martes: "Tuesday",
         dia_miercoles: "Wednesday",
@@ -864,15 +818,16 @@
         guardar_bloque: "Save Block",
         th_hora: "Time",
         modo_concentracion: "⏱️ Focus Mode (Pomodoro)",
+        tiempo_enfocado_hoy: "Focused time today: 0 min",
         btn_iniciar: "Start",
         btn_pausar: "Pause",
         btn_reiniciar: "Reset",
         btn_config_bloques: "⚙️ Configure Blocks",
         personalizar_duracion: "Customize Block Duration",
         guardar_config: "Save Configuration",
-        gestor_asignaturas_proyectos: "📚 Subjects & Projects Manager",
+        gestor_asignaturas_proyectos: "📚 Projects and Areas Manager",
         anadir: "Add",
-        agendar_proximo_evento: "📅 Schedule Next Event / Exam",
+        agendar_proximo_evento: "📅 Schedule Next Event",
         guardar: "Save",
         eventos_programados: "Scheduled Events",
         registro_notas_calificaciones: "📊 Grades & Ratings Record",
@@ -892,7 +847,7 @@
         administrar_objetivos_diarios: "🎯 Manage Daily Goals",
         anadir_objetivo: "Add Goal",
         constancia_exito_mes: "📈 Monthly Consistency & Success",
-        registro_mensual: "Monthly Log (Last 30 days)",
+        registro_mensual: "Monthly Log",
         th_dia: "Day",
         th_estado: "Status",
         anadir_apunte_nota: "📝 Add Note / Memo",
@@ -901,16 +856,12 @@
         todas_categorias: "All categories",
         sala_trofeos: "🏆 RemindEd Trophy Room",
         personalizar_apariencia: "🎨 Customize Appearance & Theme",
-        alterna_modo_visualizacion: "Toggle display mode and customize primary colors:",
+        alterna_modo_visualizacion: "Toggle display mode:",
         modo_oscuro_claro: "Dark / Light Mode",
         alterna_apariencia_visual: "Toggle visual appearance.",
         btn_cambiar_tema: "🌓 Change Theme",
-        tema_morado: "💜 RemindEd Purple",
-        tema_azul: "💙 Ocean Blue",
-        tema_verde: "💚 Emerald Green",
-        tema_terracota: "🧡 Terracotta / Warm",
-        tema_rojo: "🔴 Carmine Red",
-        elige_color_personalizado: "Or choose a custom color:",
+        gestion_horarios_semanales: "🗓️ Weekly Schedules Management",
+        visualiza_elimina_bloque: "View and delete any registered block in your weekly schedule:",
         idioma_aplicacion: "🌐 Application Language",
         selecciona_idioma_interfaz: "Select the language you want for the interface:",
         cambiar_idioma: "Change Language",
@@ -928,6 +879,7 @@
         reactivar_guias: "🔄 Reset Context Guides",
         btn_omitir: "Skip",
         btn_entendido: "Got it",
+        btn_next: "Next",
         btn_continue: "Continue →",
         loading: "Loading...",
         loading_schedule: "Loading schedule...",
@@ -936,7 +888,6 @@
         placeholder_nuevo_objetivo: "New work goal...",
         placeholder_lugar_aula: "Location / Room",
         placeholder_nombre_asig: "Name (e.g., Project X / History)",
-        placeholder_meta_clave: "Grade or Key Goal",
         placeholder_hobby: "Hobby or Sport...",
         placeholder_nuevo_objetivo_gral: "New goal...",
         placeholder_titulo_nota: "Title...",
@@ -945,7 +896,7 @@
         placeholder_nuevo_nombre: "Type your new name"
       },
       es: {
-        welcome_title: "¡Bienvenido a <span style='color: var(--primary);'>Remind<span style='color: var(--accent);'>Ed</span></span>!",
+        welcome_title: "¡Bienvenido a <span style='color: #818cf8;'>Remind<span style='color: #2dd4bf;'>Ed</span></span>!",
         welcome_subtitle: "Vamos a personalizar tu experiencia.",
         lbl_what_is_your_name: "¿Cómo te llamas?",
         lbl_what_do_you_do: "¿Qué haces actualmente?",
@@ -957,13 +908,34 @@
         lbl_max_grade_help: "RemindEd utilizará esta escala para adaptar tus gráficos y estadísticas.",
         btn_start: "Empezar con RemindEd 🚀",
         menu_panel: "📌 Panel de Control",
+        menu_pomodoro: "🍅 Modo pomodoro",
         menu_eventos: "📅 Eventos y Reuniones",
         menu_hobbies: "🎨 Mis Hobbies",
         menu_sueno: "💤 Control del Sueño",
         menu_objetivos: "🎯 Mis Objetivos",
         menu_notas: "📝 Notas y Apuntes",
+        menu_reminders: "🔔 Notificaciones y Recordatorios",
         menu_trofeos: "🏆 Trofeos y Logros",
         menu_ajustes: "⚙️ Ajustes",
+        reminders_section_title: "🔔 Notificaciones y Recordatorios",
+        reminders_section_desc: "Administra tus alertas, hábitos de hidratación y widgets de acceso rápido desde aquí:",
+        block_freq_title: "📊 Nivel de Frecuencia de Alertas",
+        block_freq_desc: "Configura la frecuencia con la que recibes notificaciones proactivas:",
+        opt_desac: "❌ Desactivadas (Silencio total)",
+        opt_relaj: "🌿 Relajado (1 vez cada 3-4 horas)",
+        opt_mod: "⚖️ Moderado (Cada 1-2 horas)",
+        opt_int: "🔥 Intenso (Cada 30-45 minutos)",
+        opt_ext: "⚡ Extremo (Recordatorios continuos de enfoque)",
+        block_water_title: "💧 Recordatorio de Beber Agua",
+        block_water_desc: "Establece el intervalo de tiempo para tus avisos de hidratación:",
+        lbl_time_water: "Hora:",
+        btn_save: "Guardar",
+        block_widget_title: "📱 Widget para la Pantalla Principal",
+        block_widget_desc: "Agrega un widget de acceso rápido en el escritorio de tu teléfono o dispositivo:",
+        lbl_widget_status: "Estado del Widget:",
+        widget_unpinned: "No anclado",
+        widget_pinned: "¡Anclado en la pantalla de inicio! 📱",
+        btn_add_widget: "➕ Añadir a Pantalla de Inicio",
         actividad_actual: "⚡ Actividad Actual",
         llevas_transcurrido: "Llevas transcurrido:",
         proxima_actividad_en: "Próxima actividad en:",
@@ -972,15 +944,16 @@
         agendar_evento: "+ Agendar Evento",
         objetivos_diarios_trabajo: "🎯 Objetivos Diarios de Trabajo",
         agregar: "Agregar",
-        proximo_examen_cercano: "⏳ Próximo Examen Más Cercano:",
+        proximo_examen_cercano: "⏳ Próximo Evento Más Cercano:",
         proxima_clase_actividad: "🎓 Próxima Clase / Actividad",
         objetivos_tareas_diarias: "🎯 Objetivos / Tareas Diarias",
         borde_cambia_verde: "El borde cambia a verde cuando completas tus tareas diarias.",
-        proximos_examenes_destacados: "📅 Próximos Exámenes Destacados",
+        proximos_examenes_destacados: "📅 Próximos Eventos Destacados",
         estado_sueno: "🌙 Estado del Sueño",
         registrar_sueno: "Registrar Sueño de Anoche",
         horario_semanal_completo: "🗓️ Horario Semanal Completo",
         anadir_horas_horario: "Añadir Horas al Horario",
+        seleccionar_dias_semana: "📅 Seleccionar días de la semana...",
         dia_lunes: "Lunes",
         dia_martes: "Martes",
         dia_miercoles: "Miércoles",
@@ -993,15 +966,16 @@
         guardar_bloque: "Guardar Bloque",
         th_hora: "Hora",
         modo_concentracion: "⏱️ Modo Concentración (Pomodoro)",
+        tiempo_enfocado_hoy: "Tiempo enfocado hoy: 0 min",
         btn_iniciar: "Iniciar",
         btn_pausar: "Pausar",
         btn_reiniciar: "Reiniciar",
         btn_config_bloques: "⚙️ Configurar Bloques",
         personalizar_duracion: "Personalizar Duración de Bloques",
         guardar_config: "Guardar Configuración",
-        gestor_asignaturas_proyectos: "📚 Gestor de Asignaturas y Proyectos",
+        gestor_asignaturas_proyectos: "📚 Gestor de Proyectos y Áreas",
         anadir: "Añadir",
-        agendar_proximo_evento: "📅 Agendar Próximo Evento / Examen",
+        agendar_proximo_evento: "📅 Agendar Próximo Evento",
         guardar: "Guardar",
         eventos_programados: "Eventos Programados",
         registro_notas_calificaciones: "📊 Registro de Notas y Calificaciones",
@@ -1021,7 +995,7 @@
         administrar_objetivos_diarios: "🎯 Administrar Objetivos Diarios",
         anadir_objetivo: "Añadir Objetivo",
         constancia_exito_mes: "📈 Constancia y Éxito del Mes",
-        registro_mensual: "Registro Mensual (Últimos 30 días)",
+        registro_mensual: "Registro Mensual",
         th_dia: "Día",
         th_estado: "Estado",
         anadir_apunte_nota: "📝 Añadir Apunte / Nota",
@@ -1030,16 +1004,12 @@
         todas_categorias: "Todas las categorías",
         sala_trofeos: "🏆 Sala de Trofeos RemindEd",
         personalizar_apariencia: "🎨 Personalizar Apariencia y Tema",
-        alterna_modo_visualizacion: "Alterna el modo de visualización y personaliza los colores principales:",
+        alterna_modo_visualizacion: "Alterna el modo de visualización:",
         modo_oscuro_claro: "Modo Oscuro / Claro",
         alterna_apariencia_visual: "Alterna la apariencia visual.",
         btn_cambiar_tema: "🌓 Cambiar Tema",
-        tema_morado: "💜 Morado RemindEd",
-        tema_azul: "💙 Azul Océano",
-        tema_verde: "💚 Verde Esmeralda",
-        tema_terracota: "🧡 Terracota / Cálido",
-        tema_rojo: "🔴 Rojo Carmín",
-        elige_color_personalizado: "O elige un color personalizado:",
+        gestion_horarios_semanales: "🗓️ Gestión de Horarios Semanales",
+        visualiza_elimina_bloque: "Visualiza y elimina cualquier bloque registrado en tu horario semanal:",
         idioma_aplicacion: "🌐 Idioma de la Aplicación",
         selecciona_idioma_interfaz: "Selecciona el idioma con el que deseas ver la interfaz:",
         cambiar_idioma: "Cambiar Idioma",
@@ -1057,6 +1027,7 @@
         reactivar_guias: "🔄 Reactivar Guías Contextuales",
         btn_omitir: "Omitir",
         btn_entendido: "Entendido",
+        btn_next: "Siguiente",
         btn_continue: "Continuar →",
         loading: "Cargando...",
         loading_schedule: "Cargando horario...",
@@ -1065,7 +1036,6 @@
         placeholder_nuevo_objetivo: "Nuevo objetivo laboral...",
         placeholder_lugar_aula: "Lugar / Aula",
         placeholder_nombre_asig: "Nombre (ej. Proyecto X / Historia)",
-        placeholder_meta_clave: "Nota o Meta clave",
         placeholder_hobby: "Hobby o Deporte...",
         placeholder_nuevo_objetivo_gral: "Nuevo objetivo...",
         placeholder_titulo_nota: "Título...",
@@ -1074,26 +1044,46 @@
         placeholder_nuevo_nombre: "Escribe tu nuevo nombre"
       },
       pt: {
-        welcome_title: "Bem-vindo ao <span style='color: var(--primary);'>Remind<span style='color: var(--accent);'>Ed</span></span>!",
-        welcome_subtitle: "Vamos personalizar sua experiência.",
+        welcome_title: "Bem-vindo ao <span style='color: #818cf8;'>Remind<span style='color: #2dd4bf;'>Ed</span></span>!",
+        welcome_subtitle: "Vamos personalizar a sua experiência.",
         lbl_what_is_your_name: "Qual é o seu nome?",
-        lbl_what_do_you_do: "O que você faz atualmente?",
+        lbl_what_do_you_do: "O que faz atualmente?",
         role_study: "Estudo",
-        role_studying: "Estou estudando",
+        role_studying: "Estou a estudar",
         role_work: "Trabalho",
-        role_working: "Estou trabalhando",
-        lbl_max_grade: "Qual é a nota máxima do seu sistema educacional?",
-        lbl_max_grade_help: "O RemindEd usará esta escala para adaptar seus gráficos e estatísticas.",
-        btn_start: "Começar com RemindEd 🚀",
-        menu_panel: "📌 Painel de Controle",
-        
+        role_working: "Estou a trabalhar",
+        lbl_max_grade: "Qual é a nota máxima do seu sistema educativo?",
+        lbl_max_grade_help: "O RemindEd utilizará esta escala para adaptar os seus gráficos e estatísticas.",
+        btn_start: "Começar com o RemindEd 🚀",
+        menu_panel: "📌 Painel de Controlo",
+        menu_pomodoro: "🍅 Modo Pomodoro",
         menu_eventos: "📅 Eventos e Reuniões",
-        menu_hobbies: "🎨 Meus Hobbies",
-        menu_sueno: "💤 Controle de Sono",
-        menu_objetivos: "🎯 Meus Objetivos",
+        menu_hobbies: "🎨 Os Meus Hobbies",
+        menu_sueno: "💤 Registo de Sono",
+        menu_objetivos: "🎯 Os Meus Objetivos",
         menu_notas: "📝 Notas e Apontamentos",
+        menu_reminders: "🔔 Lembretes e Notificações",
         menu_trofeos: "🏆 Troféus e Conquistas",
-        menu_ajustes: "⚙️ Ajustes",
+        menu_ajustes: "⚙️ Definições",
+        reminders_section_title: "🔔 Lembretes e Notificações",
+        reminders_section_desc: "Gerencie os seus alertas, hábitos de hidratação e widgets de acesso rápido a partir daqui:",
+        block_freq_title: "📊 Nível de Frequência de Alertas",
+        block_freq_desc: "Configure com que frequência recebe notificações proativas:",
+        opt_desac: "❌ Desativadas (Silêncio total)",
+        opt_relaj: "🌿 Relaxado (A cada 3-4 horas)",
+        opt_mod: "⚖️ Moderado (A cada 1-2 horas)",
+        opt_int: "🔥 Intenso (A cada 30-45 minutos)",
+        opt_ext: "⚡ Extremo (Lembretes contínuos de foco)",
+        block_water_title: "💧 Lembrete para Beber Água",
+        block_water_desc: "Defina o intervalo de tempo para os seus avisos de hidratação:",
+        lbl_time_water: "Hora:",
+        btn_save: "Guardar",
+        block_widget_title: "📱 Widget para o Ecrã Inicial",
+        block_widget_desc: "Adicione um widget de atalho rápido ao ecrã principal do seu dispositivo:",
+        lbl_widget_status: "Estado do Widget:",
+        widget_unpinned: "Não fixado",
+        widget_pinned: "Fixado no ecrã inicial! 📱",
+        btn_add_widget: "➕ Adicionar ao Ecrã Inicial",
         actividad_actual: "⚡ Atividade Atual",
         llevas_transcurrido: "Tempo decorrido:",
         proxima_actividad_en: "Próxima atividade em:",
@@ -1102,15 +1092,16 @@
         agendar_evento: "+ Agendar Evento",
         objetivos_diarios_trabajo: "🎯 Objetivos Diários de Trabalho",
         agregar: "Adicionar",
-        proximo_examen_cercano: "⏳ Próximo Exame Mais Próximo:",
+        proximo_examen_cercano: "⏳ Próximo Evento / Prazo Limite:",
         proxima_clase_actividad: "🎓 Próxima Aula / Atividade",
         objetivos_tareas_diarias: "🎯 Objetivos / Tarefas Diárias",
-        borde_cambia_verde: "A borda fica verde quando você completa suas tarefas diárias.",
-        proximos_examenes_destacados: "📅 Próximos Exames em Destaque",
+        borde_cambia_verde: "A margem fica verde quando conclui as suas tarefas diárias.",
+        proximos_examenes_destacados: "📅 Próximos Eventos em Destaque",
         estado_sueno: "🌙 Estado do Sono",
-        registrar_sueno: "Registrar Sono de Ontem",
+        registrar_sueno: "Registar Sono de Ontem",
         horario_semanal_completo: "🗓️ Horário Semanal Completo",
         anadir_horas_horario: "Adicionar Horas ao Horário",
+        seleccionar_dias_semana: "📅 Seleccionar dias da semana...",
         dia_lunes: "Segunda-feira",
         dia_martes: "Terça-feira",
         dia_miercoles: "Quarta-feira",
@@ -1120,94 +1111,94 @@
         dia_domingo: "Domingo",
         desde: "De:",
         hasta: "Até:",
-        guardar_bloque: "Salvar Bloco",
+        guardar_bloque: "Guardar Bloco",
         th_hora: "Hora",
         modo_concentracion: "⏱️ Modo Concentração (Pomodoro)",
+        tiempo_enfocado_hoy: "Tempo focado hoje: 0 min",
         btn_iniciar: "Iniciar",
         btn_pausar: "Pausar",
         btn_reiniciar: "Reiniciar",
         btn_config_bloques: "⚙️ Configurar Blocos",
         personalizar_duracion: "Personalizar Duração dos Blocos",
-        guardar_config: "Salvar Configuração",
-        gestor_asignaturas_proyectos: "📚 Gerenciador de Matérias e Projetos",
+        guardar_config: "Guardar Configuração",
+        gestor_asignaturas_proyectos: "📚 Gestor de Projetos e Áreas",
         anadir: "Adicionar",
-        agendar_proximo_evento: "📅 Agendar Próximo Evento / Exame",
-        guardar: "Salvar",
-        eventos_programados: "Eventos Programados",
-        registro_notas_calificaciones: "📊 Registro de Notas e Avaliações",
-        registra_calificaciones_desc: "Registre suas notas ou progresso para calcular médias automaticamente e ver sua evolução.",
-        grafico_evolucion_academica: "📈 Gráfico de Evolução Acadêmica",
-        mis_hobbies_actividades: "🎨 Meus Hobbies e Atividades Livres",
+        agendar_proximo_evento: "📅 Agendar Próximo Evento",
+        guardar: "Guardar",
+        eventos_programados: "Eventos Agendados",
+        registro_notas_calificaciones: "📊 Registo de Notas e Avaliações",
+        registra_calificaciones_desc: "Registe as suas avaliações ou progressos para calcular médias automaticamente e ver a sua evolução.",
+        grafico_evolucion_academica: "📈 Gráfico de Evolução Académica",
+        mis_hobbies_actividades: "🎨 Os Meus Hobbies e Atividades Livres",
         dias_repeticion: "Dias de repetição:",
         anadir_hobby: "Adicionar Hobby",
-        hobbies_registrados: "Hobbies Registrados",
-        config_control_sueno: "💤 Configuração do Controle de Sono",
+        hobbies_registrados: "Hobbies Registados",
+        config_control_sueno: "💤 Configuração do Registo de Sono",
         horas_sueno_deseadas: "Horas de sono desejadas:",
-        hora_dormir: "Hora de Dormir:",
+        hora_dormir: "Hora de Deitar:",
         hora_despertar: "Hora de Acordar:",
-        guardar_habitos: "Salvar Hábitos",
+        guardar_habitos: "Guardar Hábitos",
         resumen_descanso: "🌙 Resumo de Descanso",
-        cargando_sueno: "Carregando dados de sono...",
-        administrar_objetivos_diarios: "🎯 Administrar Objetivos Diários",
+        cargando_sueno: "A carregar dados de sono...",
+        administrar_objetivos_diarios: "🎯 Gerir Objetivos Diários",
         anadir_objetivo: "Adicionar Objetivo",
         constancia_exito_mes: "📈 Constância e Sucesso do Mês",
-        registro_mensual: "Registro Mensal (Últimos 30 dias)",
+        registro_mensual: "Registo Mensal",
         th_dia: "Dia",
         th_estado: "Estado",
         anadir_apunte_nota: "📝 Adicionar Nota / Apontamento",
-        guardar_apunte: "Salvar Nota",
-        buscar_apuntes: "🔍 Buscar Notas",
+        guardar_apunte: "Guardar Nota",
+        buscar_apuntes: "🔍 Pesquisar Notas",
         todas_categorias: "Todas as categorias",
         sala_trofeos: "🏆 Sala de Troféus RemindEd",
         personalizar_apariencia: "🎨 Personalizar Aparência e Tema",
-        alterna_modo_visualizacion: "Alterne o modo de visualização e personalize as cores principais:",
+        alterna_modo_visualizacion: "Alterne o modo de visualização:",
         modo_oscuro_claro: "Modo Escuro / Claro",
         alterna_apariencia_visual: "Alterne a aparência visual.",
         btn_cambiar_tema: "🌓 Mudar Tema",
-        tema_morado: "💜 Roxo RemindEd",
-        tema_azul: "💙 Azul Oceano",
-        tema_verde: "💚 Verde Esmeralda",
-        tema_terracota: "🧡 Terracota / Quente",
-        tema_rojo: "🔴 Vermelho Carmim",
-        elige_color_personalizado: "Ou escolha uma cor personalizada:",
-        idioma_aplicacion: "🌐 Idioma do Aplicativo",
-        selecciona_idioma_interfaz: "Selecione o idioma em que deseja ver a interface:",
+        gestion_horarios_semanales: "🗓️ Gestão de Horários Semanais",
+        visualiza_elimina_bloque: "Visualize e elimine qualquer bloco registado no seu horário semanal:",
+        idioma_aplicacion: "🌐 Idioma da Aplicação",
+        selecciona_idioma_interfaz: "Selecione o idioma pretendido para a interface:",
         cambiar_idioma: "Mudar Idioma",
-        cambiar_nombre_usuario: "✏️ Alterar Nome de Usuário",
-        actualiza_nombre_saludo: "Atualize como o aplicativo te saúda:",
-        guardar_nombre: "Salvar Nome",
+        cambiar_nombre_usuario: "✏️ Alterar Nome de Utilizador",
+        actualiza_nombre_saludo: "Atualize a forma como a aplicação o(a) saúda:",
+        guardar_nombre: "Guardar Nome",
         cambiar_rol: "💼 Alterar Função (Estudante / Trabalhador)",
-        modifica_actividad_actual: "Modifique sua principal atividade atual:",
+        modifica_actividad_actual: "Modifique a sua atividade principal atual:",
         opt_estudiante: "🎓 Estudante",
         opt_trabajador: "💼 Trabalhador",
-        guardar_rol: "Salvar Função",
-        copia_seguridad_guias: "⚙️ Backup e Guias",
-        exportar_copia: "Exportar Backup",
+        guardar_rol: "Guardar Função",
+        copia_seguridad_guias: "⚙️ Cópia de Segurança e Guias",
+        exportar_copia: "Exportar Cópia de Segurança",
         restaurar_datos: "Restaurar Dados",
-        reactivar_guias: "🔄 Reativar Guias Contextuais",
-        btn_omitir: "Pular",
+        reactivar_guias: "🔄 Reiniciar Guias Contextuais",
+        btn_omitir: "Ignorar",
         btn_entendido: "Entendido",
+        btn_next: "Seguinte",
         btn_continue: "Continuar →",
-        loading: "Carregando...",
-        loading_schedule: "Carregando horário...",
-        loading_sleep: "Carregando hábitos de descanso...",
-        placeholder_your_name: "Digite seu nome",
-        placeholder_nuevo_objetivo: "Novo objetivo de trabalho...",
+        loading: "A carregar...",
+        loading_schedule: "A carregar horário...",
+        loading_sleep: "A carregar hábitos de descanso...",
+        placeholder_your_name: "Escreva o seu nome",
+        placeholder_nuevo_objetivo: "Novo objetivo profissional...",
         placeholder_lugar_aula: "Local / Sala",
         placeholder_nombre_asig: "Nome (ex. Projeto X / História)",
-        placeholder_meta_clave: "Nota ou Meta-chave",
-        placeholder_hobby: "Hobby ou Esporte...",
+        placeholder_hobby: "Hobby ou Desporto...",
         placeholder_nuevo_objetivo_gral: "Novo objetivo...",
         placeholder_titulo_nota: "Título...",
-        placeholder_contenido_nota: "Escreva sua nota ou ata de reunião aqui...",
-        placeholder_buscar: "Buscar...",
-        placeholder_nuevo_nombre: "Digite seu novo nome"
+        placeholder_contenido_nota: "Escreva aqui a sua nota ou ata de reunião...",
+        placeholder_buscar: "Pesquisar...",
+        placeholder_nuevo_nombre: "Escreva o seu novo nome"
       }
     };
 
     let rolSeleccionado = null;
     window.rolSeleccionado = null;
-    let idiomaGlobal = "en"; // Predeterminado inglés
+    let idiomaGlobal = "en";
+    let offsetMesActual = 0;
+    let aguaTimerId = null;
+    let notifFreqTimerId = null;
 
     function obtenerTutorialesConfig() {
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
@@ -1222,7 +1213,7 @@
               { target: "#card-proximo-evento", texto: "📌 <strong>Eventos y Reuniones</strong>: Mantén visibilidad completa de tus compromisos de trabajo próximos." },
               { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diarios</strong>: Marca tus hitos clave diarios para visualizar el porcentaje de avance." },
               { target: "#card-estado-sueno", texto: "🌙 <strong>Estado del Sueño</strong>: Monitorea tus hábitos de descanso para un rendimiento laboral óptimo." },
-              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus jornadas de trabajo y bloques libres de la semana.</strong>" }
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal</strong>: Visualiza aquí el cuadro completo de tus jornadas de trabajo de la semana." }
             ],
             examenes: [{ target: "#card-gestion-materias", texto: "💼 <strong>Proyectos y Categorías</strong>: Administra tus distintas áreas profesionales o clientes." }],
             hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planifica tus hobbies para asegurar una vida balanceada fuera del trabajo." }],
@@ -1234,16 +1225,16 @@
           return {
             panel: [
               { target: null, texto: "Bem-vindo ao seu Painel de Trabalho no RemindEd! Vamos guiá-lo pelas suas ferramentas ativas." },
-              { target: "#card-actividad-actual", texto: "⚡ <strong>Atividade Atual</strong>: Acompanhe em tempo real as tarefas ou reuniões de acordo com sua agenda." },
+              { target: "#card-actividad-actual", texto: "⚡ <strong>Atividade Atual</strong>: Acompanhe em tempo real as tarefas ou reuniões de acordo com a sua agenda." },
               { target: "#card-proximo-evento", texto: "📌 <strong>Eventos e Reuniões</strong>: Mantenha visibilidade total dos seus próximos compromissos." },
-              { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diários</strong>: Marque seus marcos principais para acompanhar o progresso." },
-              { target: "#card-estado-sueno", texto: "🌙 <strong>Estado do Sono</strong>: Monitore seus hábitos de descanso." },
-              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horário Semanal: Planeje seus dias de trabalho e blocos livres.</strong>" }
+              { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Objetivos Diários</strong>: Marque os seus marcos principais para acompanhar o progresso." },
+              { target: "#card-estado-sueno", texto: "🌙 <strong>Estado do Sono</strong>: Monitore os seus hábitos de descanso." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horário Semanal</strong>: Visualize aqui o quadro completo dos seus dias de trabalho." }
             ],
-            examenes: [{ target: "#card-gestion-materias", texto: "💼 <strong>Projetos e Categorias</strong>: Gerencie suas áreas profissionais." }],
-            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planeje seus hobbies para uma vida equilibrada." }],
-            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configure suas metas de sono." }],
-            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitore seus hábitos do mês." }],
+            examenes: [{ target: "#card-gestion-materias", texto: "💼 <strong>Projetos e Categorias</strong>: Gerencie as suas áreas profissionais." }],
+            hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Planeie os seus hobbies para uma vida equilibrada." }],
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Configure as suas metas de sono." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitore os seus hábitos do mês." }],
             notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Escreva atas de reuniões e notas de trabalho." }]
           };
         } else {
@@ -1254,7 +1245,7 @@
               { target: "#card-proximo-evento", texto: "📌 <strong>Events & Meetings</strong>: Maintain full visibility of upcoming work commitments." },
               { target: "#bloque-objetivos-trabajador", texto: "🎯 <strong>Daily Goals</strong>: Check off key daily milestones to visualize your progress." },
               { target: "#card-estado-sueno", texto: "🌙 <strong>Sleep Status</strong>: Monitor your rest habits for optimal work performance." },
-              { target: "#card-horario-semanal", texto: "🗓️ <strong>Weekly Schedule: Plan your work shifts and free blocks for the week.</strong>" }
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Weekly Schedule</strong>: View your complete weekly work shifts here." }
             ],
             examenes: [{ target: "#card-gestion-materias", texto: "💼 <strong>Projects & Categories</strong>: Manage your different professional areas or clients." }],
             hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Plan your hobbies to ensure a balanced life outside of work." }],
@@ -1270,12 +1261,12 @@
               { target: null, texto: "¡Bienvenido a RemindEd! Vamos a dar un vistazo rápido a tu Panel de Estudiante." },
               { target: "#card-proxima-clase", texto: "🎓 Aquí verás tu próxima clase o hobby de la jornada." },
               { target: "#card-objetivos-contenedor", texto: "🎯 Revisa y completa tus metas diarias para cambiar el borde a verde resplandeciente." },
-              { target: "#card-examenes-destacados", texto: "📅 Revisa tus próximos exámenes y cuentas regresivas." },
+              { target: "#card-examenes-destacados", texto: "📅 Revisa tus próximos eventos y cuentas regresivas." },
               { target: "#card-estado-sueno", texto: "🌙 Registra tu descanso de la noche anterior." },
-              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal: Planifica tus clases y bloques libres de la semana.</strong>" }
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horario Semanal</strong>: Visualiza aquí el cuadro completo de tus clases y actividades." }
             ],
             estudio: [{ target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Administra tus bloques de estudio." }],
-            examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Asignaturas</strong>: Administra tus materias activas." }],
+            examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Áreas</strong>: Administra tus materias activas." }],
             hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Añade actividades extracurriculares a tu agenda." }],
             sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Define tus hábitos de descanso diario." }],
             objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitorea tus hábitos académicos diarios." }],
@@ -1284,19 +1275,19 @@
         } else if (idiomaGlobal === 'pt') {
           return {
             panel: [
-              { target: null, texto: "Bem-vindo ao RemindEd! Vamos dar uma olhada rápida no seu Painel de Estudante." },
-              { target: "#card-proxima-clase", texto: "🎓 Aqui você verá sua próxima aula ou hobby." },
-              { target: "#card-objetivos-contenedor", texto: "🎯 Revise e complete suas metas diárias." },
-              { target: "#card-examenes-destacados", texto: "📅 Revise seus próximos exames e contagens regressivas." },
-              { target: "#card-estado-sueno", texto: "🌙 Registre seu descanso da noite anterior." },
-              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horário Semanal: Planeje suas aulas e blocos livres.</strong>" }
+              { target: null, texto: "Bem-vindo ao RemindEd! Vamos dar uma vista de olhos rápida pelo seu Painel de Estudante." },
+              { target: "#card-proxima-clase", texto: "🎓 Aqui verá a sua próxima aula ou hobby do dia." },
+              { target: "#card-objetivos-contenedor", texto: "🎯 Revise e complete as suas metas diárias." },
+              { target: "#card-examenes-destacados", texto: "📅 Reveja os seus próximos eventos e contagens decrescentes." },
+              { target: "#card-estado-sueno", texto: "🌙 Registe o seu descanso da noite anterior." },
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Horário Semanal</strong>: Visualize aqui o quadro completo das suas aulas." }
             ],
-            estudio: [{ target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Gerencie seus blocos de estudo." }],
-            examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Matérias</strong>: Gerencie suas matérias ativas." }],
+            estudio: [{ target: ".timer-display", texto: "⏱️ <strong>Modo Pomodoro</strong>: Gerencie os seus blocos de estudo." }],
+            examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Matérias</strong>: Gerencie as suas matérias ativas." }],
             hobbies: [{ target: "#page-hobbies .card", texto: "🎨 Adicione atividades extracurriculares." }],
-            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Defina seus hábitos de descanso diário." }],
-            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitore seus hábitos acadêmicos." }],
-            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Salve e organize suas anotações de aula." }]
+            sueno: [{ target: "#page-sueno .card:nth-of-type(1)", texto: "💤 Defina os seus hábitos de descanso diário." }],
+            objetivos: [{ target: "#page-objetivos .card:nth-of-type(1)", texto: "🎯 Monitore os seus hábitos académicos." }],
+            notas: [{ target: "#page-notas .card:nth-of-type(1)", texto: "📝 Guarde e organize as suas notas de aula." }]
           };
         } else {
           return {
@@ -1304,9 +1295,9 @@
               { target: null, texto: "Welcome to RemindEd! Let's take a quick look at your Student Panel." },
               { target: "#card-proxima-clase", texto: "🎓 Here you will see your next class or hobby for the day." },
               { target: "#card-objetivos-contenedor", texto: "🎯 Review and complete your daily goals to turn the border glowing green." },
-              { target: "#card-examenes-destacados", texto: "📅 Check your upcoming exams and countdowns." },
+              { target: "#card-examenes-destacados", texto: "📅 Check your upcoming events and countdowns." },
               { target: "#card-estado-sueno", texto: "🌙 Record your rest from last night." },
-              { target: "#card-horario-semanal", texto: "🗓️ <strong>Weekly Schedule: Plan your classes and free blocks for the week.</strong>" }
+              { target: "#card-horario-semanal", texto: "🗓️ <strong>Weekly Schedule</strong>: View your complete schedule table here." }
             ],
             estudio: [{ target: ".timer-display", texto: "⏱️ <strong>Pomodoro Mode</strong>: Manage your study blocks to improve retention." }],
             examenes: [{ target: "#card-gestion-materias", texto: "📚 <strong>Subjects</strong>: Manage your active subjects." }],
@@ -1322,11 +1313,9 @@
     function cambiarIdiomaDesdeTop(nuevoIdioma) {
       idiomaGlobal = nuevoIdioma;
       aplicarTraduccionesUI(nuevoIdioma);
-      
       const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
       perfilActual.idioma = nuevoIdioma;
       localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
-
       const selectAjustes = document.getElementById("ajustes-select-idioma");
       if (selectAjustes) selectAjustes.value = nuevoIdioma;
     }
@@ -1334,26 +1323,19 @@
     function aplicarTraduccionesUI(lang) {
       if (!i18n[lang]) return;
       const dict = i18n[lang];
-
       document.querySelectorAll("[data-i18n]").forEach(el => {
         const key = el.getAttribute("data-i18n");
-        if (dict[key]) {
-          el.innerHTML = dict[key];
-        }
+        if (dict[key]) el.innerHTML = dict[key];
       });
-
       document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
         const key = el.getAttribute("data-i18n-placeholder");
-        if (dict[key]) {
-          el.setAttribute("placeholder", dict[key]);
-        }
+        if (dict[key]) el.setAttribute("placeholder", dict[key]);
       });
-
       const topSelect = document.getElementById("top-select-idioma");
       if (topSelect) topSelect.value = lang;
-
       const ajustesSelect = document.getElementById("ajustes-select-idioma");
       if (ajustesSelect) ajustesSelect.value = lang;
+      actualizarTextoDescripcionFrecuencia();
     }
 
     function onboardingContinuarNombre() {
@@ -1361,7 +1343,7 @@
       if (!input) return;
       const nombre = input.value.trim();
       if (!nombre) {
-        alert(idiomaGlobal === 'es' ? "Por favor, escribe tu nombre antes de continuar." : idiomaGlobal === 'pt' ? "Por favor, digite seu nome antes de continuar." : "Please type your name before continuing.");
+        alert(idiomaGlobal === 'es' ? "Por favor, escribe tu nombre antes de continuar." : idiomaGlobal === 'pt' ? "Por favor, digite o seu nome antes de continuar." : "Please type your name before continuing.");
         input.focus();
         return;
       }
@@ -1373,32 +1355,21 @@
     function seleccionarRol(rol) {
       rolSeleccionado = rol;
       window.rolSeleccionado = rol;
-
       const btnEst = document.getElementById("btn-rol-estudiante");
       const btnTrab = document.getElementById("btn-rol-trabajador");
-
-      if (btnEst) {
-        btnEst.classList.toggle("selected", rol === "estudiante");
-        btnEst.setAttribute("aria-pressed", rol === "estudiante" ? "true" : "false");
-      }
-
-      if (btnTrab) {
-        btnTrab.classList.toggle("selected", rol === "trabajador");
-        btnTrab.setAttribute("aria-pressed", rol === "trabajador" ? "true" : "false");
-      }
+      if (btnEst) btnEst.classList.toggle("selected", rol === "estudiante");
+      if (btnTrab) btnTrab.classList.toggle("selected", rol === "trabajador");
     }
 
     function onboardingContinuarRol() {
       if (!rolSeleccionado) {
-        alert(idiomaGlobal === 'es' ? "Selecciona si estudias o trabajas." : idiomaGlobal === 'pt' ? "Selecione se você estuda ou trabalha." : "Select whether you study or work.");
+        alert(idiomaGlobal === 'es' ? "Selecciona si estudias o trabajas." : idiomaGlobal === 'pt' ? "Selecione se estuda ou trabalha." : "Select whether you study or work.");
         return;
       }
-
       if (rolSeleccionado === "trabajador") {
         guardarPerfilInicial();
         return;
       }
-
       document.getElementById("onboarding-paso-2").style.display = "none";
       document.getElementById("onboarding-paso-3").style.display = "block";
       document.getElementById("onboarding-nota-max").focus();
@@ -1422,22 +1393,14 @@
     function guardarPerfilInicial() {
       const nombre = window.nombreOnboarding || document.getElementById("onboarding-nombre")?.value.trim();
       const rol = rolSeleccionado || window.rolSeleccionado;
-
-      if (!nombre) {
-        alert(idiomaGlobal === 'es' ? "Por favor, escribe tu nombre." : idiomaGlobal === 'pt' ? "Por favor, digite seu nome." : "Please type your name.");
-        return;
-      }
-      if (!rol) {
-        alert(idiomaGlobal === 'es' ? "Selecciona si estudias o trabajas." : idiomaGlobal === 'pt' ? "Selecione se você estuda ou trabalha." : "Select whether you study or work.");
-        return;
-      }
+      if (!nombre || !rol) return;
 
       let notaMaxima = 100;
       if (rol === "estudiante") {
         const input = document.getElementById("onboarding-nota-max");
         const valor = parseFloat(input?.value);
         if (!valor || valor <= 0) {
-          alert(idiomaGlobal === 'es' ? "Introduce una nota máxima válida." : idiomaGlobal === 'pt' ? "Insira uma nota máxima válida." : "Enter a valid maximum grade.");
+          alert("Introduce una nota máxima válida.");
           input?.focus();
           return;
         }
@@ -1446,12 +1409,8 @@
 
       const perfil = { nombre, rol, notaMaxima, idioma: idiomaGlobal };
       localStorage.setItem("perfilUsuario", JSON.stringify(perfil));
-
-      const pantalla = document.getElementById("pantalla-bienvenida");
-      const app = document.getElementById("app-principal");
-      if (pantalla) pantalla.style.display = "none";
-      if (app) app.style.display = "block";
-
+      document.getElementById("pantalla-bienvenida").style.display = "none";
+      document.getElementById("app-principal").style.display = "block";
       cargarInterfazSegunRol();
       aplicarTraduccionesUI(idiomaGlobal);
     }
@@ -1462,14 +1421,12 @@
       const contenedor = document.getElementById("contenedor-asignaturas");
       if (!contenedor) return;
       contenedor.innerHTML = "";
-
       const escala = obtenerConfigEscala();
 
       obtenerAsignaturas().forEach((asig) => {
         const datosAsig = notasGuardadas[asig] || { lista: [], metaFinal: metasGuardadas[asig] || "" };
         const listaNotas = Array.isArray(datosAsig) ? datosAsig : (datosAsig.lista || []);
         const metaFinalVal = !Array.isArray(datosAsig) && datosAsig.metaFinal ? datosAsig.metaFinal : (metasGuardadas[asig] || "");
-
         const suma = listaNotas.reduce((a, b) => a + b, 0);
         const promedioNum = listaNotas.length > 0 ? (suma / listaNotas.length) : null;
         const promedioStr = promedioNum !== null ? promedioNum.toFixed(1) : "-";
@@ -1488,26 +1445,24 @@
           </div>
           <div style="margin-top: 10px;" class="form-group">
             <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="${escala.label}" id="input-nota-${asig}" class="input-form" style="width: 130px;" />
-            <button onclick="agregarNota('${asig}')" class="btn-action">${idiomaGlobal === 'es' ? 'Guardar Registro' : idiomaGlobal === 'pt' ? 'Salvar Registro' : 'Save Record'}</button>
+            <button onclick="agregarNota('${asig}')" class="btn-action">${idiomaGlobal === 'es' ? 'Guardar Registro' : idiomaGlobal === 'pt' ? 'Salvar Registo' : 'Save Record'}</button>
             <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
-              <span style="font-size:0.85rem; font-weight:600;">🎯 ${idiomaGlobal === 'es' ? 'Meta Objetivo' : idiomaGlobal === 'pt' ? 'Meta Alvo' : 'Target Goal'}:</span>
+              <span style="font-size:0.85rem; font-weight:600;">🎯 Meta:</span>
               <input type="number" step="${escala.paso}" min="${escala.min}" max="${escala.max}" placeholder="Ex. ${escala.metaEjemplo}" id="input-meta-${asig}" class="input-form" value="${metaFinalVal}" style="width: 90px;" onchange="guardarMetaAsignatura('${asig}')" />
             </div>
           </div>
           <div style="font-size: 0.9rem; color: #64748b; margin-top:8px;">
-            <strong>${idiomaGlobal === 'es' ? 'Registros guardados:' : idiomaGlobal === 'pt' ? 'Registros salvos:' : 'Saved records:'}</strong> ${listaNotas.length > 0 ? notasItemsHTML : (idiomaGlobal === 'es' ? 'Sin datos guardados' : idiomaGlobal === 'pt' ? 'Sem dados salvos' : 'No data saved')}
+            <strong>Registros:</strong> ${listaNotas.length > 0 ? notasItemsHTML : 'Sin datos'}
           </div>
         `;
         contenedor.appendChild(div);
       });
-
       renderizarGraficoNotas();
     }
 
     function renderizarGraficoNotas() {
       const ctx = document.getElementById("chart-notas");
       if (!ctx || typeof Chart === "undefined") return;
-
       const asignaturas = obtenerAsignaturas();
       const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
       const escala = obtenerConfigEscala();
@@ -1521,10 +1476,7 @@
         return parseFloat((suma / lista.length).toFixed(1));
       });
 
-      if (window.chartInstance) {
-        window.chartInstance.destroy();
-      }
-
+      if (window.chartInstance) window.chartInstance.destroy();
       const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#6c5ce7';
 
       window.chartInstance = new Chart(ctx, {
@@ -1532,7 +1484,7 @@
         data: {
           labels: labels,
           datasets: [{
-            label: `${idiomaGlobal === 'es' ? 'Promedio / Rendimiento Actual' : idiomaGlobal === 'pt' ? 'Média / Desempenho Atual' : 'Average / Current Performance'} (${escala.label})`,
+            label: `Promedio / Rendimiento (${escala.label})`,
             data: dataPromedios,
             backgroundColor: primaryColor + 'a6',
             borderColor: primaryColor,
@@ -1543,23 +1495,13 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              min: 0,
-              max: escala.max,
-              ticks: {
-                stepSize: escala.max <= 10 ? 1 : (escala.max <= 20 ? 2 : 10)
-              }
-            }
-          }
+          scales: { y: { beginAtZero: true, min: 0, max: escala.max } }
         }
       });
     }
 
     const MATERIAS_PREDETERMINADAS = ["Mathematics", "Portuguese", "English", "Physical Education", "Philosophy"];
     const PROYECTOS_PREDETERMINADOS = ["Project A", "Meetings", "Administration", "Training"];
-
     let userTasks = [];
     let workerTimerInterval = null;
     let chartInstance = null;
@@ -1572,43 +1514,8 @@
 
     function cargarModoOscuroGuardado() {
       const oscuroGuardado = localStorage.getItem("modoOscuroActivo");
-      if (oscuroGuardado === "true") {
-        document.body.classList.add("dark-mode");
-      } else if (oscuroGuardado === "false") {
-        document.body.classList.remove("dark-mode");
-      } else {
-        aplicarModoOscuroAuto();
-      }
-    }
-
-    function cambiarColorTema(primaryColor, accentColor) {
-      document.documentElement.style.setProperty('--primary', primaryColor);
-      if (accentColor) {
-        document.documentElement.style.setProperty('--accent', accentColor);
-      }
-      localStorage.setItem("themePrimaryColor", primaryColor);
-      if (accentColor) localStorage.setItem("themeAccentColor", accentColor);
-      
-      const picker = document.getElementById("picker-color-primary");
-      if (picker) picker.value = primaryColor;
-      if (chartInstance) renderizarGraficoNotas();
-    }
-
-    function aplicarColorPersonalizado(colorHex) {
-      cambiarColorTema(colorHex, null);
-    }
-
-    function cargarColorGuardado() {
-      const colorGuardado = localStorage.getItem("themePrimaryColor");
-      const accentGuardado = localStorage.getItem("themeAccentColor");
-      if (colorGuardado) {
-        document.documentElement.style.setProperty('--primary', colorGuardado);
-        const picker = document.getElementById("picker-color-primary");
-        if (picker) picker.value = colorGuardado;
-      }
-      if (accentGuardado) {
-        document.documentElement.style.setProperty('--accent', accentGuardado);
-      }
+      if (oscuroGuardado === "true") document.body.classList.add("dark-mode");
+      else if (oscuroGuardado === "false") document.body.classList.remove("dark-mode");
     }
 
     function reproducirEfectoSonido(tipo = 'trofeo') {
@@ -1616,7 +1523,6 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const audioCtx = new AudioContext();
-
         if (tipo === 'trofeo') {
           const notas = [523.25, 659.25, 783.99, 1046.50];
           notas.forEach((freq, i) => {
@@ -1624,41 +1530,32 @@
             const gain = audioCtx.createGain();
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
             const tiempo = audioCtx.currentTime + (i * 0.08);
             gain.gain.setValueAtTime(0.15, tiempo);
             gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.25);
-
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start(tiempo);
             osc.stop(tiempo + 0.25);
           });
         }
-      } catch (e) {
-        console.log("Audio not enabled.");
-      }
+      } catch (e) { console.log(e); }
     }
 
     function mostrarNotificacionTrofeo(nombre) {
       const popup = document.getElementById("trophy-popup");
       const desc = document.getElementById("trophy-popup-desc");
       if (!popup || !desc) return;
-
       desc.innerText = nombre;
       popup.classList.remove("hidden");
       reproducirEfectoSonido('trofeo');
-
-      setTimeout(() => {
-        popup.classList.add("hidden");
-      }, 3500);
+      setTimeout(() => { popup.classList.add("hidden"); }, 3500);
     }
 
     function obtenerAsignaturas() {
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
       const esTrabajador = perfil && perfil.rol === 'trabajador';
       const defecto = esTrabajador ? PROYECTOS_PREDETERMINADOS : MATERIAS_PREDETERMINADAS;
-      
       const asignaturas = localStorage.getItem("misAsignaturasPersonalizadas");
       if (!asignaturas) {
         localStorage.setItem("misAsignaturasPersonalizadas", JSON.stringify(defecto));
@@ -1681,10 +1578,7 @@
           guardarAsignaturasLista(lista);
           input.value = "";
           inicializarExamenesYNotas();
-          evaluarTrofeos();
-        } else {
-          alert(idiomaGlobal === 'es' ? "Ya existe este elemento." : idiomaGlobal === 'pt' ? "Este elemento já existe." : "This item already exists.");
-        }
+        } else alert("Ya existe este elemento.");
       }
     }
 
@@ -1692,13 +1586,11 @@
       let lista = obtenerAsignaturas();
       lista = lista.filter(a => a !== nombre);
       guardarAsignaturasLista(lista);
-      
       let horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || {};
       Object.keys(horario).forEach(dia => {
         horario[dia] = horario[dia].filter(h => h.asignatura !== nombre);
       });
       localStorage.setItem("horarioPersonalizado", JSON.stringify(horario));
-      
       inicializarExamenesYNotas();
     }
 
@@ -1707,16 +1599,14 @@
       const cont = document.getElementById("lista-gestion-asignaturas");
       if (!cont) return;
       cont.innerHTML = "";
-      
       if (lista.length === 0) {
-        cont.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'No hay registros creados.' : idiomaGlobal === 'pt' ? 'Nenhum registro criado.' : 'No records created.'}</p>`;
+        cont.innerHTML = `<p style='color:#64748b;'>No hay registros.</p>`;
         return;
       }
-
       lista.forEach(asig => {
         const div = document.createElement("div");
         div.className = "item-list";
-        div.innerHTML = `<span>📖 <strong>${asig}</strong></span> <button class="btn-del" onclick="borrarAsignatura('${asig}')">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
+        div.innerHTML = `<span>📖 <strong>${asig}</strong></span> <button class="btn-del" onclick="borrarAsignatura('${asig}')">Eliminar</button>`;
         cont.appendChild(div);
       });
     }
@@ -1729,7 +1619,7 @@
       
       if (select) select.innerHTML = ""; 
       if (notaSel) notaSel.innerHTML = "";
-      if (filtroSel) filtroSel.innerHTML = `<option value="TODAS">${idiomaGlobal === 'es' ? 'Todas las categorías' : idiomaGlobal === 'pt' ? 'Todas as categorias' : 'All categories'}</option>`;
+      if (filtroSel) filtroSel.innerHTML = `<option value="TODAS">All categories</option>`;
       if (horarioSel) horarioSel.innerHTML = "";
 
       obtenerAsignaturas().forEach(asig => {
@@ -1744,37 +1634,128 @@
       cargarAsignaturasYNotas();
       cargarApuntes();
       renderizarHorarioTabla();
+      renderizarGestionHorariosAjustes();
+      cargarConfiguracionAjustesExtra();
+    }
+
+    function toggleDesplegableDias() {
+      const content = document.getElementById("dropdown-dias-content");
+      if (!content) return;
+
+      if (content.style.display === "block" && content.style.maxHeight !== "0px" && content.style.maxHeight !== "") {
+        content.style.maxHeight = "0px";
+        setTimeout(() => {
+          content.style.display = "none";
+        }, 400);
+      } else {
+        content.style.display = "block";
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    }
+
+    function actualizarTextoDias() {
+      const checkboxes = document.querySelectorAll(".chk-dia-laboral:checked");
+      const label = document.getElementById("label-dias-seleccionados");
+      if (!label) return;
+
+      if (checkboxes.length === 0) {
+        label.innerText = i18n[idiomaGlobal].seleccionar_dias_semana || "📅 Select weekdays...";
+      } else if (checkboxes.length === 1) {
+        const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+        label.innerText = `📅 1 selected day (${nombresDias[checkboxes[0].value]})`;
+      } else {
+        label.innerText = `📅 ${checkboxes.length} selected days`;
+      }
+    }
+
+    function eliminarBloqueHorario(diaIndex, indexEnDia) {
+      let horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || {};
+      if (horario[diaIndex] && horario[diaIndex][indexEnDia]) {
+        horario[diaIndex].splice(indexEnDia, 1);
+        if (horario[diaIndex].length === 0) {
+          delete horario[diaIndex];
+        }
+        localStorage.setItem("horarioPersonalizado", JSON.stringify(horario));
+        renderizarHorarioTabla();
+        renderizarGestionHorariosAjustes();
+        actualizarPanel();
+      }
+    }
+
+    function renderizarGestionHorariosAjustes() {
+      const contenedor = document.getElementById("contenedor-gestion-horarios-ajustes");
+      if (!contenedor) return;
+      contenedor.innerHTML = "";
+
+      const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || {};
+      const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      let totalBloques = 0;
+
+      Object.keys(horario).forEach(diaKey => {
+        const diaNum = parseInt(diaKey);
+        const bloquesDia = horario[diaKey];
+        if (Array.isArray(bloquesDia) && bloquesDia.length > 0) {
+          bloquesDia.forEach((bloque, idx) => {
+            totalBloques++;
+            const div = document.createElement("div");
+            div.className = "item-list";
+            div.innerHTML = `
+              <span>🗓️ <strong>${nombresDias[diaNum]}</strong> (${bloque.inicio || bloque.hora}): <strong>${bloque.asignatura}</strong> ${bloque.sala && bloque.sala !== "Hobby" ? '(' + bloque.sala + ')' : ''}</span>
+              <button class="btn-del" onclick="eliminarBloqueHorario(${diaNum}, ${idx})">×</button>
+            `;
+            contenedor.appendChild(div);
+          });
+        }
+      });
+
+      if (totalBloques === 0) {
+        contenedor.innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">No schedule blocks currently registered.</p>`;
+      }
     }
 
     function agregarHorarioBloque() {
-      const dia = document.getElementById("horario-dia-select").value;
+      const checkboxes = document.querySelectorAll(".chk-dia-laboral:checked");
       const hInicio = document.getElementById("horario-inicio-time").value;
       const hFin = document.getElementById("horario-fin-time").value;
       const materia = document.getElementById("horario-materia-select").value;
       const aula = document.getElementById("horario-aula-input").value.trim();
 
-      if (hInicio && hFin && materia) {
+      if (hInicio && hFin && materia && checkboxes.length > 0) {
         const horaTexto = `${hInicio}-${hFin}`;
         const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: [] };
-        if (!horario[dia]) horario[dia] = [];
-        
-        horario[dia].push({ inicio: horaTexto, hInicio: hInicio, hFin: hFin, asignatura: materia, sala: aula, horaSola: hInicio });
+
+        checkboxes.forEach(chk => {
+          const dia = chk.value;
+          if (!horario[dia]) horario[dia] = [];
+          horario[dia].push({
+            hora: horaTexto,
+            inicio: horaTexto,
+            hInicio: hInicio,
+            hFin: hFin,
+            asignatura: materia,
+            sala: aula,
+            horaSola: hInicio
+          });
+        });
+
         localStorage.setItem("horarioPersonalizado", JSON.stringify(horario));
-        
         document.getElementById("horario-aula-input").value = "";
+        checkboxes.forEach(chk => chk.checked = false);
+        actualizarTextoDias();
+
         renderizarHorarioTabla();
+        renderizarGestionHorariosAjustes();
         actualizarPanel();
+        alert("Schedule block(s) successfully added!");
       } else {
-        alert(idiomaGlobal === 'es' ? "Por favor completa las horas e indica una categoría." : idiomaGlobal === 'pt' ? "Por favor, preencha os horários e selecione uma categoria." : "Please complete the times and select a category.");
+        alert("Please complete all fields and select at least one day.");
       }
     }
 
     function normalizarHoraParaOrdenar(horaStr) {
       if (!horaStr) return "00:00";
       let baseHora = horaStr.split("-")[0].trim();
-      if (baseHora.length === 4 && baseHora.includes(":")) {
-        baseHora = "0" + baseHora;
-      }
+      if (baseHora.length === 4 && baseHora.includes(":")) baseHora = "0" + baseHora;
       return baseHora;
     }
 
@@ -1786,7 +1767,6 @@
       tbody.innerHTML = "";
 
       let horarioCombinado = JSON.parse(JSON.stringify(horario));
-      
       hobbies.forEach(hb => {
         if (!horarioCombinado[hb.dia]) horarioCombinado[hb.dia] = [];
         horarioCombinado[hb.dia].push({ inicio: hb.hora, asignatura: `🎨 ${hb.nombre}`, sala: "Hobby" });
@@ -1797,25 +1777,42 @@
         horarioCombinado[d].forEach(item => horasSet.add(item.inicio));
       });
 
-      const horasOrdenadas = Array.from(horasSet).sort((a, b) => {
-        return normalizarHoraParaOrdenar(a).localeCompare(normalizarHoraParaOrdenar(b));
+      const horasOrdenadas = Array.from(horasSet).sort((a, b) => normalizarHoraParaOrdenar(a).localeCompare(normalizarHoraParaOrdenar(b)));
+
+      const diaHoyNum = new Date().getDay();
+      const mapaDias = [1, 2, 3, 4, 5, 6, 0];
+
+      mapaDias.forEach((d, index) => {
+        const thEl = document.getElementById(`th-dia-${d}`);
+        if (thEl) {
+          if (d === diaHoyNum) thEl.classList.add("col-hoy");
+          else thEl.classList.remove("col-hoy");
+        }
       });
 
       if (horasOrdenadas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">${idiomaGlobal === 'es' ? 'No hay horarios programados aún.' : idiomaGlobal === 'pt' ? 'Nenhum horário programado ainda.' : 'No schedules programmed yet.'}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">No scheduled times.</td></tr>`;
         return;
       }
 
-      const mapaDias = [1, 2, 3, 4, 5, 6, 0];
       horasOrdenadas.forEach(h => {
         const tr = document.createElement("tr");
         let html = `<td><strong>${h}</strong></td>`;
         mapaDias.forEach(d => {
           const item = (horarioCombinado[d] || []).find(i => i.inicio === h);
+          const esHoyClase = (d === diaHoyNum) ? 'col-hoy' : '';
           if (item) {
-            html += `<td>${item.asignatura} ${item.sala && item.sala !== "Hobby" ? '(' + item.sala + ')' : ''}</td>`;
+            const indexReal = (horario[d] || []).indexOf(item);
+            let botonBorrar = (item.sala !== "Hobby" && indexReal !== -1) ? `<button onclick="eliminarBloqueHorario(${d}, ${indexReal})" style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer; margin-left:5px;" title="Delete block">×</button>` : '';
+            
+            html += `<td class="${esHoyClase}">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <span>${item.asignatura} ${item.sala && item.sala !== "Hobby" ? '(' + item.sala + ')' : ''}</span>
+                ${botonBorrar}
+              </div>
+            </td>`;
           } else {
-            html += `<td>-</td>`;
+            html += `<td class="${esHoyClase}">-</td>`;
           }
         });
         tr.innerHTML = html;
@@ -1823,23 +1820,14 @@
       });
     }
 
-    function aplicarModoOscuroAuto() {
-      const hora = new Date().getHours();
-      if (hora >= 20 || hora < 6) document.body.classList.add("dark-mode");
-      else document.body.classList.remove("dark-mode");
-    }
-
     function toggleMenu() {
       const menu = document.getElementById("nav-menu");
       if (!menu) return;
-
       const isOpen = getComputedStyle(menu).display !== "none";
       if (isOpen) {
         menu.style.setProperty("display", "none", "important");
-        menu.setAttribute("aria-hidden", "true");
       } else {
         menu.style.setProperty("display", "block", "important");
-        menu.setAttribute("aria-hidden", "false");
       }
     }
 
@@ -1848,40 +1836,49 @@
 
     function navegarA(pagina) {
       document.querySelectorAll(".section-page").forEach(p => p.classList.remove("section-active"));
-      
       const mapaPaginas = {
-        'panel': 'page-panel',
-        'estudio': 'page-estudio',
-        'examenes': 'page-examenes',
-        'hobbies': 'page-hobbies',
-        'sueno': 'page-sueno',
-        'objetivos': 'page-objetivos',
-        'notas': 'page-notas',
-        'trofeos': 'page-trofeos',
-        'ajustes': 'page-ajustes'
+        'panel': 'page-panel', 'estudio': 'page-estudio', 'examenes': 'page-examenes',
+        'hobbies': 'page-hobbies', 'sueno': 'page-sueno', 'objetivos': 'page-objetivos',
+        'notas': 'page-notas', 'notificaciones': 'page-notificaciones', 'trofeos': 'page-trofeos', 'ajustes': 'page-ajustes'
       };
-
-      if (mapaPaginas[pagina]) {
-        document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
-      }
+      if (mapaPaginas[pagina]) document.getElementById(mapaPaginas[pagina]).classList.add("section-active");
       
       if (pagina === 'trofeos') evaluarTrofeos();
       if (pagina === 'sueno') cargarControlSueno();
-      if (pagina === 'examenes') renderizarGraficoNotas();
+      if (pagina === 'examenes') {
+        renderizarGraficoNotas();
+        const cardNuevoExamen = document.getElementById("card-nuevo-examen");
+        if (cardNuevoExamen) {
+          const esOscuro = document.body.classList.contains("dark-mode");
+          const claseFlash = esOscuro ? "flash-neon-dark" : "flash-neon-light";
+          cardNuevoExamen.classList.add(claseFlash);
+          setTimeout(() => { cardNuevoExamen.classList.remove(claseFlash); }, 3000);
+        }
+      }
       
       const menu = document.getElementById("nav-menu");
-      if (menu) {
-        menu.style.setProperty("display", "none", "important");
-        menu.setAttribute("aria-hidden", "true");
-      }
+      if (menu) menu.style.setProperty("display", "none", "important");
 
       comprobarTutorialSeccion(pagina);
+    }
+
+    function desplazarAEventosYEventosFlash() {
+      navegarA('examenes');
+      setTimeout(() => {
+        const cardNuevoExamen = document.getElementById("card-nuevo-examen");
+        if (cardNuevoExamen) {
+          cardNuevoExamen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const esOscuro = document.body.classList.contains("dark-mode");
+          const claseFlash = esOscuro ? "flash-neon-dark" : "flash-neon-light";
+          cardNuevoExamen.classList.add(claseFlash);
+          setTimeout(() => { cardNuevoExamen.classList.remove(claseFlash); }, 3000);
+        }
+      }, 150);
     }
 
     function comprobarTutorialSeccion(seccion) {
       const vistos = JSON.parse(localStorage.getItem("tutorialesVistos")) || {};
       const tuts = obtenerTutorialesConfig();
-
       if (!vistos[seccion] && tuts[seccion]) {
         seccionActualTutorial = seccion;
         pasoTutorialActual = 0;
@@ -1892,10 +1889,8 @@
     function lanzarTutorialModulo() {
       const overlay = document.getElementById('tutorial-overlay');
       const card = document.getElementById('tutorial-card');
-      
       if (overlay) overlay.classList.remove('hidden');
       if (card) card.classList.remove('hidden');
-      
       mostrarPasoModulo();
     }
 
@@ -1905,16 +1900,17 @@
       if (!pasos || !pasos[pasoTutorialActual]) return;
 
       const paso = pasos[pasoTutorialActual];
-      
       document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
       
       const textEl = document.getElementById('tutorial-text');
-      const btnEl = document.getElementById('tutorial-btn-next');
+      const btnNextEl = document.getElementById('tutorial-btn-next');
+      const btnSkipEl = document.getElementById('tutorial-btn-skip');
       
       if (textEl) textEl.innerHTML = paso.texto;
-      if (btnEl) {
-        btnEl.innerText = (pasoTutorialActual === pasos.length - 1) ? (idiomaGlobal === 'es' ? "¡Entendido!" : idiomaGlobal === 'pt' ? "Entendido!" : "Got it!") : (idiomaGlobal === 'es' ? "Siguiente" : idiomaGlobal === 'pt' ? "Próximo" : "Next");
-      }
+      
+      const dict = i18n[idiomaGlobal] || i18n.en;
+      if (btnNextEl) btnNextEl.innerText = (pasoTutorialActual === pasos.length - 1) ? (dict.btn_entendido || "Got it") : (dict.btn_next || "Next");
+      if (btnSkipEl) btnSkipEl.innerText = dict.btn_omitir || "Skip";
 
       if (paso.target) {
         const elTarget = document.querySelector(paso.target);
@@ -1929,7 +1925,6 @@
       const tuts = obtenerTutorialesConfig();
       const pasos = tuts[seccionActualTutorial];
       pasoTutorialActual++;
-      
       if (pasos && pasoTutorialActual < pasos.length) {
         mostrarPasoModulo();
       } else {
@@ -1940,12 +1935,9 @@
     function cerrarTutorialModulo() {
       const overlay = document.getElementById('tutorial-overlay');
       const card = document.getElementById('tutorial-card');
-      
       if (overlay) overlay.classList.add('hidden');
       if (card) card.classList.add('hidden');
-      
       document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-      
       const vistos = JSON.parse(localStorage.getItem("tutorialesVistos")) || {};
       vistos[seccionActualTutorial] = true;
       localStorage.setItem("tutorialesVistos", JSON.stringify(vistos));
@@ -1954,7 +1946,7 @@
     function reiniciarTutoriales() {
       cerrarTutorialModulo();
       localStorage.removeItem("tutorialesVistos");
-      alert(idiomaGlobal === 'es' ? "¡Guías restablecidas con éxito!" : idiomaGlobal === 'pt' ? "Guias redefinidas com sucesso!" : "Guides successfully reset!");
+      alert("Guides successfully reset!");
       navegarA("panel");
     }
 
@@ -1971,27 +1963,22 @@
       }
 
       const header = document.getElementById("greeting-header");
-      if (header) {
-        header.innerHTML = `Remind<span>Ed</span> — ${perfil.nombre}`;
-      }
+      if (header) header.innerHTML = `Remind<span>Ed</span> — ${perfil.nombre}`;
 
       const esTrabajador = perfil.rol === 'trabajador';
+
+      const menuTrofeosBtn = document.getElementById("menu-trofeos-btn");
+      if (menuTrofeosBtn) {
+        menuTrofeosBtn.style.display = esTrabajador ? "none" : "block";
+      }
 
       const bTrabajador = document.getElementById("bloques-trabajador");
       const bObjTrabajador = document.getElementById("bloque-objetivos-trabajador");
       const cProximaClase = document.getElementById("card-proxima-clase");
       const cExamenes = document.getElementById("card-examenes-destacados");
       const cObjetivosEstudiante = document.getElementById("card-objetivos-contenedor");
-      const menuEventos = document.getElementById("menu-eventos");
       const menuEstudio = document.getElementById("menu-estudio");
-      
       const cGraficoNotas = document.getElementById("card-grafico-notas");
-      const tProxAct = document.getElementById("titulo-proxima-actividad");
-      const tBloqEv = document.getElementById("titulo-bloque-eventos");
-      const tMatGestor = document.getElementById("titulo-materia-gestor");
-      const tAgendarEv = document.getElementById("titulo-agendar-evento");
-      const tRendimientoNotas = document.getElementById("titulo-rendimiento-notas");
-      const tGraficoDesempeno = document.getElementById("titulo-grafico-desempeno");
 
       if (esTrabajador) {
         if(bTrabajador) bTrabajador.style.display = "flex";
@@ -2001,13 +1988,6 @@
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "none";
         if(cGraficoNotas) cGraficoNotas.style.display = "block";
         if(menuEstudio) menuEstudio.style.display = "none";
-
-        if(menuEventos) menuEventos.innerText = idiomaGlobal === 'es' ? "📅 Eventos y Reuniones" : idiomaGlobal === 'pt' ? "📅 Eventos e Reuniões" : "📅 Events & Meetings";
-        if(tMatGestor) tMatGestor.innerText = idiomaGlobal === 'es' ? "💼 Gestor de Proyectos / Áreas" : idiomaGlobal === 'pt' ? "💼 Gerenciador de Projetos / Áreas" : "💼 Projects & Areas Manager";
-        if(tAgendarEv) tAgendarEv.innerText = idiomaGlobal === 'es' ? "📅 Agendar Evento o Reunión" : idiomaGlobal === 'pt' ? "📅 Agendar Evento ou Reunião" : "📅 Schedule Event or Meeting";
-        if(tRendimientoNotas) tRendimientoNotas.innerText = idiomaGlobal === 'es' ? "📊 Métricas y Objetivos del Proyecto" : idiomaGlobal === 'pt' ? "📊 Métricas e Objetivos do Projeto" : "📊 Project Metrics & Goals";
-        if(tGraficoDesempeno) tGraficoDesempeno.innerText = idiomaGlobal === 'es' ? "📈 Gráfico de Desempeño Laboral" : idiomaGlobal === 'pt' ? "📈 Gráfico de Desempenho de Trabalho" : "📈 Work Performance Chart";
-
         iniciarTimerTrabajadorAutomatico();
       } else {
         if(bTrabajador) bTrabajador.style.display = "none";
@@ -2017,15 +1997,6 @@
         if(cObjetivosEstudiante) cObjetivosEstudiante.style.display = "block";
         if(cGraficoNotas) cGraficoNotas.style.display = "block";
         if(menuEstudio) menuEstudio.style.display = "block";
-
-        if(menuEventos) menuEventos.innerText = idiomaGlobal === 'es' ? "📅 Eventos y Exámenes" : idiomaGlobal === 'pt' ? "📅 Eventos e Exames" : "📅 Events & Exams";
-        if(tProxAct) tProxAct.innerText = idiomaGlobal === 'es' ? "🎓 Próxima Clase / Actividad" : idiomaGlobal === 'pt' ? "🎓 Próxima Aula / Atividade" : "🎓 Next Class / Activity";
-        if(tBloqEv) tBloqEv.innerText = idiomaGlobal === 'es' ? "📅 Próximos Exámenes Destacados" : idiomaGlobal === 'pt' ? "📅 Próximos Exámenes em Destaque" : "📅 Upcoming Featured Exams";
-        if(tMatGestor) tMatGestor.innerText = idiomaGlobal === 'es' ? "📚 Gestor de Asignaturas" : idiomaGlobal === 'pt' ? "📚 Gerenciador de Matérias" : "📚 Subjects Manager";
-        if(tAgendarEv) tAgendarEv.innerText = idiomaGlobal === 'es' ? "📅 Añadir Próximo Exame" : idiomaGlobal === 'pt' ? "📅 Adicionar Próximo Exame" : "📅 Add Upcoming Exam";
-        if(tRendimientoNotas) tRendimientoNotas.innerText = idiomaGlobal === 'es' ? "📊 Registro de Notas y Calificaciones" : idiomaGlobal === 'pt' ? "📊 Registro de Notas e Avaliações" : "📊 Grades & Ratings Record";
-        if(tGraficoDesempeno) tGraficoDesempeno.innerText = idiomaGlobal === 'es' ? "📈 Gráfico de Evolución Académica" : idiomaGlobal === 'pt' ? "📈 Gráfico de Evolução Acadêmica" : "📈 Academic Evolution Chart";
-
         if (workerTimerInterval) clearInterval(workerTimerInterval);
       }
 
@@ -2035,7 +2006,6 @@
 
     function iniciarTimerTrabajadorAutomatico() {
       if (workerTimerInterval) clearInterval(workerTimerInterval);
-
       actualizarTiempoTrabajador();
       workerTimerInterval = setInterval(actualizarTiempoTrabajador, 1000);
     }
@@ -2045,32 +2015,19 @@
       const diaSemana = ahora.getDay();
       const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || {};
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
-      
       let actividadesHoy = [];
 
       if (horario[diaSemana]) {
         horario[diaSemana].forEach(item => {
           let hI = item.hInicio || item.inicio.split("-")[0];
           let hF = item.hFin || item.inicio.split("-")[1];
-          if (hI && hF) {
-            actividadesHoy.push({
-              nombre: item.asignatura,
-              inicioStr: hI.trim(),
-              finStr: hF.trim(),
-              lugar: item.sala
-            });
-          }
+          if (hI && hF) actividadesHoy.push({ nombre: item.asignatura, inicioStr: hI.trim(), finStr: hF.trim(), lugar: item.sala });
         });
       }
 
       hobbies.filter(h => h.dia === diaSemana).forEach(h => {
         let finH = String(parseInt(h.hora.split(":")[0]) + 1).padStart(2, '0') + ":" + h.hora.split(":")[1];
-        actividadesHoy.push({
-          nombre: `🎨 ${h.nombre}`,
-          inicioStr: h.hora,
-          finStr: finH,
-          lugar: "Hobby"
-        });
+        actividadesHoy.push({ nombre: `🎨 ${h.nombre}`, inicioStr: h.hora, finStr: finH, lugar: "Hobby" });
       });
 
       const convertirAFecha = (horaStr) => {
@@ -2082,18 +2039,13 @@
 
       let actividadEnCurso = null;
       let proximaActividad = null;
-
       actividadesHoy.sort((a,b) => convertirAFecha(a.inicioStr) - convertirAFecha(b.inicioStr));
 
       for (let act of actividadesHoy) {
         const fInicio = convertirAFecha(act.inicioStr);
         const fFin = convertirAFecha(act.finStr);
-
-        if (ahora >= fInicio && ahora < fFin) {
-          actividadEnCurso = { ...act, fInicio, fFin };
-        } else if (ahora < fInicio && !proximaActividad) {
-          proximaActividad = { ...act, fInicio, fFin };
-        }
+        if (ahora >= fInicio && ahora < fFin) actividadEnCurso = { ...act, fInicio, fFin };
+        else if (ahora < fInicio && !proximaActividad) proximaActividad = { ...act, fInicio, fFin };
       }
 
       const elNombreAct = document.getElementById("current-activity");
@@ -2112,22 +2064,19 @@
 
       if (actividadEnCurso) {
         if (elNombreAct) elNombreAct.innerText = `💼 ${actividadEnCurso.nombre} ${actividadEnCurso.lugar ? '(' + actividadEnCurso.lugar + ')' : ''}`;
-        
         const transcurrido = ahora - actividadEnCurso.fInicio;
         const faltante = actividadEnCurso.fFin - ahora;
-
         if (elElapsed) elElapsed.innerText = formatDiff(transcurrido);
         if (elRemaining) elRemaining.innerText = formatDiff(faltante);
-        if (elNextInfo) elNextInfo.innerHTML = `${idiomaGlobal === 'es' ? 'Falta para terminar:' : idiomaGlobal === 'pt' ? 'Tempo restante:' : 'Time remaining:'} <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
+        if (elNextInfo) elNextInfo.innerHTML = `Remaining time: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
       } else {
-        if (elNombreAct) elNombreAct.innerText = idiomaGlobal === 'es' ? "Sin actividad laboral activa en este momento" : idiomaGlobal === 'pt' ? "Sem atividade de trabalho ativa no momento" : "No active work activity at this moment";
+        if (elNombreAct) elNombreAct.innerText = "No active work activity at the moment";
         if (elElapsed) elElapsed.innerText = "--:--:--";
-
         if (proximaActividad) {
           const faltante = proximaActividad.fInicio - ahora;
-          if (elNextInfo) elNextInfo.innerHTML = `${idiomaGlobal === 'es' ? 'Próxima actividad' : idiomaGlobal === 'pt' ? 'Próxima atividade' : 'Next activity'} (<strong>${proximaActividad.nombre}</strong>) in: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
+          if (elNextInfo) elNextInfo.innerHTML = `Next activity (<strong>${proximaActividad.nombre}</strong>) in: <span id="worker-time-remaining" style="font-weight:700; color:var(--warning);">${formatDiff(faltante)}</span>`;
         } else {
-          if (elNextInfo) elNextInfo.innerHTML = `<span style="color:var(--success); font-weight:600;">${idiomaGlobal === 'es' ? '¡Libre por el resto del día! 🎉' : idiomaGlobal === 'pt' ? 'Livre pelo resto do dia! 🎉' : 'Free for the rest of the day! 🎉'}</span>`;
+          if (elNextInfo) elNextInfo.innerHTML = `<span style="color:var(--success); font-weight:600;">Free for the rest of the day! 🎉</span>`;
         }
       }
     }
@@ -2136,67 +2085,33 @@
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       const fechaHoy = new Date().toISOString().split('T')[0];
       const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
-      
       if (!estados[fechaHoy]) estados[fechaHoy] = {};
 
       const contDiario = document.getElementById("lista-objetivos-diarios");
       const contAdmin = document.getElementById("lista-objetivos-admin");
-      const cardContenedor = document.getElementById("card-objetivos-contenedor");
-      
       if(contDiario) contDiario.innerHTML = "";
       if(contAdmin) contAdmin.innerHTML = "";
 
       let totalTareas = guardados.length;
       let tareasCompletadas = 0;
 
-      if (totalTareas === 0) {
-        if(contDiario) contDiario.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'Añade tareas en tus objetivos.' : idiomaGlobal === 'pt' ? 'Adicione tarefas nos seus objetivos.' : 'Add tasks in your goals.'}</p>`;
-        if(contAdmin) contAdmin.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'Sin tareas cargadas.' : idiomaGlobal === 'pt' ? 'Sem tarefas carregadas.' : 'No tasks loaded.'}</p>`;
-        if(cardContenedor) cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
-      } else {
-        guardados.forEach((obj, index) => {
-          const cumplido = estados[fechaHoy][index] || false;
-          if (cumplido) tareasCompletadas++;
+      guardados.forEach((obj, index) => {
+        const cumplido = estados[fechaHoy][index] || false;
+        if (cumplido) tareasCompletadas++;
 
-          if(contDiario) {
-            const divDiario = document.createElement("div");
-            divDiario.className = "item-list";
-            divDiario.innerHTML = `
-              <div>
-                <span class="dot ${cumplido ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${index})"></span>
-                <span style="${cumplido ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${obj}</span>
-              </div>
-            `;
-            contDiario.appendChild(divDiario);
-          }
-
-          if(contAdmin) {
-            const divAdmin = document.createElement("div");
-            divAdmin.className = "item-list";
-            divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
-            contAdmin.appendChild(divAdmin);
-          }
-        });
-
-        if(cardContenedor) {
-          cardContenedor.classList.remove("glow-border-red", "glow-border-yellow", "glow-border-green");
-
-          if (totalTareas === 1) {
-            if (tareasCompletadas === 1) cardContenedor.classList.add("glow-border-green");
-            else cardContenedor.classList.add("glow-border-red");
-          } else {
-            const proporcion = tareasCompletadas / totalTareas;
-            if (tareasCompletadas === totalTareas) {
-              cardContenedor.classList.add("glow-border-green");
-            } else if (proporcion >= 0.5) {
-              cardContenedor.classList.add("glow-border-yellow");
-            } else {
-              cardContenedor.classList.add("glow-border-red");
-            }
-          }
+        if(contDiario) {
+          const divDiario = document.createElement("div");
+          divDiario.className = "item-list";
+          divDiario.innerHTML = `<div><span class="dot ${cumplido ? 'dot-green' : 'dot-red'}" onclick="toggleObjetivo(${index})"></span><span style="${cumplido ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${obj}</span></div>`;
+          contDiario.appendChild(divDiario);
         }
-      }
-
+        if(contAdmin) {
+          const divAdmin = document.createElement("div");
+          divAdmin.className = "item-list";
+          divAdmin.innerHTML = `<span>• ${obj}</span> <button class="btn-del" onclick="borrarObjetivo(${index})">Delete</button>`;
+          contAdmin.appendChild(divAdmin);
+        }
+      });
       calcularPorcentajeExito();
     }
 
@@ -2204,7 +2119,6 @@
       const fechaHoy = new Date().toISOString().split('T')[0];
       const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
       if (!estados[fechaHoy]) estados[fechaHoy] = {};
-
       estados[fechaHoy][index] = !estados[fechaHoy][index];
       localStorage.setItem("estadosObjetivos", JSON.stringify(estados));
       cargarObjetivos();
@@ -2236,12 +2150,12 @@
       const contLista = document.getElementById("lista-hobbies");
       if(!contLista) return;
       contLista.innerHTML = "";
-      const diasNombres = idiomaGlobal === 'es' ? ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"] : idiomaGlobal === 'pt' ? ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"] : ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
       hobbies.forEach((hb, idx) => {
         const div = document.createElement("div");
         div.className = "item-list";
-        div.innerHTML = `<span>• <strong>${hb.name || hb.nombre}</strong> — ${diasNombres[hb.dia]} at ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
+        div.innerHTML = `<span>• <strong>${hb.nombre}</strong> — ${diasNombres[hb.dia]} at ${hb.hora}</span> <button class="btn-del" onclick="borrarHobby(${idx})">Delete</button>`;
         contLista.appendChild(div);
       });
       renderizarHorarioTabla();
@@ -2254,16 +2168,14 @@
 
       if (nombre !== "" && checkboxes.length > 0) {
         const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
-        checkboxes.forEach(chk => {
-          hobbies.push({ nombre, dia: parseInt(chk.value), hora });
-        });
+        checkboxes.forEach(chk => hobbies.push({ nombre, dia: parseInt(chk.value), hora }));
         localStorage.setItem("misHobbies", JSON.stringify(hobbies));
         document.getElementById("hobby-nombre").value = "";
         checkboxes.forEach(chk => chk.checked = false);
         cargarHobbies();
         actualizarPanel();
         evaluarTrofeos();
-      } else alert(idiomaGlobal === 'es' ? "Introduce el nombre e indica al menos un día." : idiomaGlobal === 'pt' ? "Insira o nome e indique pelo menos um dia." : "Enter the name and select at least one day.");
+      } else alert("Please enter the name and select at least one day.");
     }
 
     function borrarHobby(idx) {
@@ -2284,9 +2196,8 @@
       if (contCompleto) contCompleto.innerHTML = "";
 
       if (guardados.length === 0) {
-        const msg = idiomaGlobal === 'es' ? "Sin compromisos o exámenes agendados." : idiomaGlobal === 'pt' ? "Sem compromissos ou exames agendados." : "No scheduled commitments or exams.";
-        if(contResumen) contResumen.innerHTML = `<p style='color:#64748b;'>${msg}</p>`;
-        if(contCompleto) contCompleto.innerHTML = `<p style='color:#64748b;'>${msg}</p>`;
+        if(contResumen) contResumen.innerHTML = `<p style='color:#64748b;'>No upcoming events.</p>`;
+        if(contCompleto) contCompleto.innerHTML = `<p style='color:#64748b;'>No upcoming events.</p>`;
         const box = document.getElementById("box-cuenta-atras");
         if(box) box.style.display = "none";
         actualizarProximoEventoTrabajador(null);
@@ -2299,35 +2210,28 @@
       guardados.forEach((ex, index) => {
         const fechaEx = new Date(ex.fecha);
         const diff = Math.ceil((fechaEx - ahora) / (1000 * 60 * 60 * 24));
-        const objetivoStr = ex.objetivo ? ` | 🎯 Goal: ${ex.objetivo}` : "";
-        
         const div = document.createElement("div");
         div.className = "item-list";
-        let texto = diff > 0 ? `${diff} days left for ${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}` : `${ex.asignatura} (${ex.fecha.replace('T', ' ')})${objetivoStr}`;
-        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>`;
-        
+        let texto = diff > 0 ? `${diff} days remaining for ${ex.asignatura} (${ex.fecha.replace('T', ' ')})` : `${ex.asignatura} (${ex.fecha.replace('T', ' ')})`;
+        div.innerHTML = `<span>• ${texto}</span> <button class="btn-del" onclick="borrarExamen(${index})">Delete</button>`;
         if(contCompleto) contCompleto.appendChild(div.cloneNode(true));
         if(contResumen) contResumen.appendChild(div);
       });
 
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
-      if (perfil && perfil.rol !== 'trabajador') {
-        iniciarCuentaAtras(guardados[0]);
-      } else {
-        actualizarProximoEventoTrabajador(guardados[0]);
-      }
+      if (perfil && perfil.rol !== 'trabajador') iniciarCuentaAtras(guardados[0]);
+      else actualizarProximoEventoTrabajador(guardados[0]);
     }
 
     function actualizarProximoEventoTrabajador(evento) {
       const titleEl = document.getElementById("event-title");
       const timeEl = document.getElementById("event-time");
       if (!titleEl || !timeEl) return;
-
       if (evento) {
-        titleEl.innerText = `${evento.asignatura} ${evento.objetivo ? '(' + evento.objetivo + ')' : ''}`;
+        titleEl.innerText = `${evento.asignatura}`;
         timeEl.innerText = evento.fecha.replace('T', ' ');
       } else {
-        titleEl.innerText = idiomaGlobal === 'es' ? "No hay eventos ni reuniones próximas" : idiomaGlobal === 'pt' ? "Não há eventos ou reuniões próximas" : "No upcoming events or meetings";
+        titleEl.innerText = i18n[idiomaGlobal].no_hay_eventos || "No upcoming events or meetings";
         timeEl.innerText = "--:--";
       }
     }
@@ -2336,26 +2240,22 @@
       if (!examenCercano) return;
       const box = document.getElementById("box-cuenta-atras");
       if(box) box.style.display = "block";
-      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')}) ${examenCercano.objetivo ? '— Goal: ' + examenCercano.objetivo : ''}`;
-
+      document.getElementById("nombre-examen-cercano").innerText = `${examenCercano.asignatura} (${examenCercano.fecha.replace('T', ' ')})`;
       if (countdownInterval) clearInterval(countdownInterval);
       const targetDate = new Date(examenCercano.fecha).getTime();
 
       countdownInterval = setInterval(() => {
         const now = new Date().getTime();
         const distance = targetDate - now;
-
         if (distance < 0) {
           clearInterval(countdownInterval);
-          document.getElementById("timer-cuenta-atras").innerText = idiomaGlobal === 'es' ? "¡Ha llegado la fecha!" : idiomaGlobal === 'pt' ? "A data chegou!" : "The date has arrived!";
+          document.getElementById("timer-cuenta-atras").innerText = "The date has arrived!";
           return;
         }
-
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
         document.getElementById("timer-cuenta-atras").innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
       }, 1000);
     }
@@ -2363,17 +2263,14 @@
     function agregarExamen() {
       const materia = document.getElementById("examen-materia-select").value;
       const fecha = document.getElementById("examen-fecha").value;
-      const objetivo = document.getElementById("examen-objetivo-nota").value.trim();
-
       if (materia !== "" && fecha !== "") {
         const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-        guardados.push({ asignatura: materia, fecha: fecha, objetivo: objetivo });
+        guardados.push({ asignatura: materia, fecha: fecha });
         localStorage.setItem("misExamenes", JSON.stringify(guardados));
         document.getElementById("examen-fecha").value = "";
-        document.getElementById("examen-objetivo-nota").value = "";
         cargarExamenes();
         evaluarTrofeos();
-      } else alert(idiomaGlobal === 'es' ? "Selecciona la categoría y la fecha." : idiomaGlobal === 'pt' ? "Selecione a categoria e a data." : "Select the category and date.");
+      } else alert("Select category and date.");
     }
 
     function borrarExamen(index) {
@@ -2387,38 +2284,23 @@
       const horas = parseFloat(document.getElementById("sueno-horas").value) || 8;
       const acostar = document.getElementById("sueno-acostar").value;
       const despertar = document.getElementById("sueno-despertar").value;
-
       localStorage.setItem("configSueno", JSON.stringify({ horas, acostar, despertar }));
-      alert(idiomaGlobal === 'es' ? "¡Hábitos guardados!" : idiomaGlobal === 'pt' ? "Hábitos salvos!" : "Habits saved!");
+      alert("Habits saved!");
       cargarControlSueno();
     }
 
     function cargarControlSueno() {
       const cfg = JSON.parse(localStorage.getItem("configSueno")) || { horas: 8, acostar: "23:00", despertar: "07:00" };
-      const sh = document.getElementById("sueno-horas");
-      const sa = document.getElementById("sueno-acostar");
-      const sd = document.getElementById("sueno-despertar");
-      if(sh) sh.value = cfg.horas;
-      if(sa) sa.value = cfg.acostar;
-      if(sd) sd.value = cfg.despertar;
-
       const rBox = document.getElementById("resumen-sueno-box");
-      if(rBox) {
-        rBox.innerHTML = `
-          <p>🛌 <strong>Goal:</strong> ${cfg.horas}h daily.</p>
-          <p>🌙 <strong>Bedtime:</strong> ${cfg.acostar} | ⏰ <strong>Wake-up:</strong> ${cfg.despertar}</p>
-        `;
-      }
-
+      if(rBox) rBox.innerHTML = `<p>🛌 Goal: ${cfg.horas}h daily.</p><p>🌙 Sleep: ${cfg.acostar} | ⏰ Wake-up: ${cfg.despertar}</p>`;
       const infoSuenoPanel = document.getElementById("info-sueno");
-      if (infoSuenoPanel) infoSuenoPanel.innerText = `💤 Goal: Sleep ${cfg.horas}h (Bedtime at ${cfg.acostar}).`;
+      if (infoSuenoPanel) infoSuenoPanel.innerText = `💤 Goal: Sleep ${cfg.horas}h.`;
     }
 
     function guardarApunte() {
       const asignatura = document.getElementById("nota-asig-select").value;
       const titulo = document.getElementById("nota-titulo").value.trim();
       const contenido = document.getElementById("nota-contenido").value.trim();
-
       if (titulo !== "" && contenido !== "") {
         const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
         apuntes.push({ asignatura, titulo, contenido, fecha: new Date().toISOString().split('T')[0] });
@@ -2443,7 +2325,7 @@
       const filtrados = apuntes.filter(ap => (filtroAsig === "TODAS" || ap.asignatura === filtroAsig) && (ap.titulo.toLowerCase().includes(busqueda) || ap.contenido.toLowerCase().includes(busqueda)));
 
       if (filtrados.length === 0) {
-        contenedor.innerHTML = `<p style='color:#64748b;'>${idiomaGlobal === 'es' ? 'No hay elementos que coincidan.' : idiomaGlobal === 'pt' ? 'Nenhum item correspondia.' : 'No matching items.'}</p>`;
+        contenedor.innerHTML = `<p style='color:#64748b;'>No matching items found.</p>`;
         return;
       }
 
@@ -2454,7 +2336,7 @@
         div.innerHTML = `
           <div class="note-header">
             <span>📚 <strong>${ap.asignatura}</strong> | 📅 ${ap.fecha}</span>
-            <button class="btn-del" onclick="borrarApunte(${idxOrig})" style="padding:4px 8px; font-size:0.75rem;">${idiomaGlobal === 'es' ? 'Eliminar' : idiomaGlobal === 'pt' ? 'Excluir' : 'Delete'}</button>
+            <button class="btn-del" onclick="borrarApunte(${idxOrig})" style="padding:4px 8px; font-size:0.75rem;">Delete</button>
           </div>
           <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">${ap.titulo}</div>
           <div style="white-space: pre-wrap; font-size: 0.95rem;">${ap.contenido}</div>
@@ -2474,34 +2356,106 @@
       const estados = JSON.parse(localStorage.getItem("estadosObjetivos")) || {};
       const guardados = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       const tabla = document.getElementById("tabla-historico");
+      const labelMes = document.getElementById("label-mes-actual");
+      const elComparativa = document.getElementById("comparativa-mes-anterior");
       if(!tabla) return;
       tabla.innerHTML = "";
 
       if (guardados.length === 0) {
-        if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `0% ${idiomaGlobal === 'es' ? 'de Éxito' : idiomaGlobal === 'pt' ? 'de Sucesso' : 'Success'}`;
+        if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `0% Success`;
         if(document.getElementById("progress-bar")) document.getElementById("progress-bar").style.width = "0%";
+        if(labelMes) labelMes.innerText = obtenerNombreMes(offsetMesActual);
+        if(elComparativa) elComparativa.innerText = "";
         return;
       }
 
-      let totalPuntos = 0, puntosVerdes = 0;
-      for (let i = 0; i < 30; i++) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const fechaStr = d.toISOString().split('T')[0];
+      const fechaBase = new Date();
+      fechaBase.setMonth(fechaBase.getMonth() + offsetMesActual);
+      const year = fechaBase.getFullYear();
+      const month = fechaBase.getMonth();
+      if(labelMes) labelMes.innerText = fechaBase.toLocaleString(idiomaGlobal === 'es' ? 'es-ES' : idiomaGlobal === 'pt' ? 'pt-PT' : 'en-US', { month: 'long', year: 'numeric' });
+
+      const primerDiaMes = new Date(year, month, 1);
+      const ultimoDiaMes = new Date(year, month + 1, 0);
+      const diasEnMes = ultimoDiaMes.getDate();
+
+      let totalPuntosMes = 0, puntosVerdesMes = 0;
+      let fechasDelMes = [];
+
+      for (let d = 1; d <= diasEnMes; d++) {
+        const fechaObj = new Date(year, month, d);
+        if (fechaObj > new Date()) break;
+        const fechaStr = fechaObj.toISOString().split('T')[0];
+        fechasDelMes.push(fechaStr);
+
         let verdesDia = 0;
         guardados.forEach((_, idx) => {
-          totalPuntos++;
-          if (estados[fechaStr] && estados[fechaStr][idx]) { puntosVerdes++; verdesDia++; }
+          totalPuntosMes++;
+          if (estados[fechaStr] && estados[fechaStr][idx]) { puntosVerdesMes++; verdesDia++; }
         });
 
         const tr = document.createElement("tr");
-        const exitoDia = verdesDia === guardados.length;
-        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">${exitoDia ? (idiomaGlobal === 'es' ? 'Completado' : idiomaGlobal === 'pt' ? 'Concluído' : 'Completed') : (idiomaGlobal === 'es' ? 'Incompleto' : idiomaGlobal === 'pt' ? 'Incompleto' : 'Incomplete')}</td>`;
+        const exitoDia = guardados.length > 0 && verdesDia === guardados.length;
+        tr.innerHTML = `<td>${fechaStr}</td><td style="color: ${exitoDia ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">${exitoDia ? 'Completed' : 'Incomplete'}</td>`;
         tabla.appendChild(tr);
       }
 
-      const porcentaje = Math.round((puntosVerdes / totalPuntos) * 100);
-      if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `${porcentaje}% ${idiomaGlobal === 'es' ? 'de Éxito y Constancia' : idiomaGlobal === 'pt' ? 'de Sucesso e Constância' : 'Success & Consistency'}`;
-      if(document.getElementById("progress-bar")) document.getElementById("progress-bar").style.width = `${porcentaje}%`;
+      const porcentajeMes = totalPuntosMes === 0 ? 0 : Math.round((puntosVerdesMes / totalPuntosMes) * 100);
+      if(document.getElementById("porcentaje-exito")) document.getElementById("porcentaje-exito").innerText = `${porcentajeMes}% Success & Consistency`;
+      if(document.getElementById("progress-bar")) document.getElementById("progress-bar").style.width = `${porcentajeMes}%`;
+
+      const porcentajeMesAnterior = calcularPorcentajeMesEspecifico(year, month - 1, guardados, estados);
+      if (elComparativa) {
+        if (porcentajeMesAnterior !== null) {
+          const diff = porcentajeMes - porcentajeMesAnterior;
+          if (diff > 0) {
+            elComparativa.innerHTML = `🟢 Improved by ${diff}% compared to last month!`;
+            elComparativa.style.color = "var(--success)";
+          } else if (diff < 0) {
+            elComparativa.innerHTML = `🔴 Declined by ${Math.abs(diff)}% compared to last month.`;
+            elComparativa.style.color = "var(--danger)";
+          } else {
+            elComparativa.innerHTML = `⚪ Performance remains the same as last month (0%).`;
+            elComparativa.style.color = "var(--warning)";
+          }
+        } else {
+          elComparativa.innerHTML = `✨ First month with recorded logs.`;
+          elComparativa.style.color = "var(--accent)";
+        }
+      }
+    }
+
+    function calcularPorcentajeMesEspecifico(year, month, guardados, estados) {
+      const primerDia = new Date(year, month, 1);
+      const ultimoDia = new Date(year, month + 1, 0);
+      const dias = ultimoDia.getDate();
+      let total = 0, verdes = 0, tieneDatos = false;
+
+      for (let d = 1; d <= dias; d++) {
+        const fechaObj = new Date(year, month, d);
+        const fechaStr = fechaObj.toISOString().split('T')[0];
+        if (estados[fechaStr]) {
+          tieneDatos = true;
+          guardados.forEach((_, idx) => {
+            total++;
+            if (estados[fechaStr][idx]) verdes++;
+          });
+        }
+      }
+      if (!tieneDatos || total === 0) return null;
+      return Math.round((verdes / total) * 100);
+    }
+
+    function cambiarMesHistorial(delta) {
+      offsetMesActual += delta;
+      if (offsetMesActual > 0) offsetMesActual = 0;
+      cargarObjetivos();
+    }
+
+    function obtenerNombreMes(offset) {
+      const d = new Date();
+      d.setMonth(d.getMonth() + offset);
+      return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
     }
 
     let timerInterval = null;
@@ -2523,13 +2477,7 @@
       bloquesConfig.forEach((b, idx) => {
         const row = document.createElement("div");
         row.className = "block-config-row";
-        row.innerHTML = `
-          <span><strong>Block ${idx + 1}</strong></span>
-          <div>
-            <label style="font-size:0.85rem;">Focus (min): <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label>
-            <label style="font-size:0.85rem; margin-left:8px;">Rest (min): <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label>
-          </div>
-        `;
+        row.innerHTML = `<span><strong>Block ${idx + 1}</strong></span><div><label style="font-size:0.85rem;">Focus: <input type="number" id="cfg-estudio-${idx}" class="input-form" value="${b.estudio}" style="width:60px;" /></label><label style="font-size:0.85rem; margin-left:8px;">Rest: <input type="number" id="cfg-descanso-${idx}" class="input-form" value="${b.descanso}" style="width:60px;" /></label></div>`;
         contenedor.appendChild(row);
       });
     }
@@ -2572,7 +2520,7 @@
       const fechaHoy = new Date().toISOString().split('T')[0];
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
       const el = document.getElementById("tiempo-estudiado-hoy");
-      if(el) el.innerText = `${idiomaGlobal === 'es' ? 'Tiempo enfocado hoy' : idiomaGlobal === 'pt' ? 'Tempo focado hoje' : 'Focused time today'}: ${logEstudio[fechaHoy] || 0} min`;
+      if(el) el.innerText = `Focused time today: ${logEstudio[fechaHoy] || 0} min`;
     }
 
     function iniciarTimer() {
@@ -2588,7 +2536,6 @@
             registrarTiempoEstudio(bObj.estudio);
             modoEstudio = false;
             tiempoRestante = bObj.descanso * 60;
-            alert(idiomaGlobal === 'es' ? `¡Bloque completado! Descanso de ${bObj.descanso} min.` : idiomaGlobal === 'pt' ? `Bloco concluído! Descanso de ${bObj.descanso} min.` : `Block completed! Rest of ${bObj.descanso} min.`);
           } else {
             modoEstudio = true;
             if (indiceBloqueActual < bloquesConfig.length - 1) indiceBloqueActual++;
@@ -2603,134 +2550,181 @@
     function pausarTimer() { clearInterval(timerInterval); timerInterval = null; }
     function reiniciarTimer() { pausarTimer(); modoEstudio = true; indiceBloqueActual = 0; tiempoRestante = bloquesConfig[0].estudio * 60; actualizarDisplayTimer(); }
 
-    // --- EVALUAR TROFEOS (Actualizado con soporte multilingüe) ---
+    /* ========================================================
+       SISTEMA DE NOTIFICACIONES REALES INTEGRADO
+       ======================================================== */
+    function solicitarPermisoNotificacionesReal() {
+      if (!("Notification" in window)) {
+        console.warn("Este navegador no soporta notificaciones de escritorio.");
+        return;
+      }
+      if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+        Notification.requestPermission();
+      }
+    }
+
+    function dispararNotificacionReal(titulo, cuerpo) {
+      if (!("Notification" in window)) return;
+      if (Notification.permission === "granted") {
+        try {
+          new Notification(titulo, {
+            body: cuerpo,
+            icon: "https://cdn-icons-png.flaticon.com/512/3105/3105807.png"
+          });
+        } catch (e) {
+          console.error("Error al disparar notificación:", e);
+        }
+      }
+    }
+
+    function actualizarTextoDescripcionFrecuencia() {
+      const select = document.getElementById("select-nivel-notif");
+      const desc = document.getElementById("desc-nivel-notif");
+      if (!select || !desc) return;
+      const nivel = select.value;
+
+      const descripcionesPorIdioma = {
+        en: {
+          desactivadas: "Notifications are completely turned off. You will not receive automatic alerts.",
+          relajado: "Relaxed level: A reminder every 3-4 hours.",
+          moderado: "Moderated level: Alerts every 1-2 hours to review tasks and breaks.",
+          intenso: "Intense level: Notices every 30-45 minutes to maintain maximum concentration.",
+          extremo: "Extreme level: Continuous alerts and strict time reminders."
+        },
+        es: {
+          desactivadas: "Las notificaciones están completamente apagadas. No recibirás alertas automáticas.",
+          relajado: "Nivel relajado: Un recordatorio cada 3-4 horas.",
+          moderado: "Nivel moderado: Alertas cada 1 o 2 horas para revisar tareas y pausas.",
+          intenso: "Nivel intenso: Avisos cada 30-45 minutos para mantener máxima concentración.",
+          extremo: "Nivel extremo: Alertas continuas y recordatorios estrictos de tiempo."
+        },
+        pt: {
+          desactivadas: "As notificações estão completamente desligadas. Não receberá alertas automáticos.",
+          relajado: "Nível relaxado: Um lembrete a cada 3-4 horas.",
+          moderado: "Nível moderado: Alertas a cada 1-2 horas para rever tarefas e pausas.",
+          intenso: "Nível intenso: Avisos a cada 30-45 minutos para manter máxima concentração.",
+          extremo: "Nível extremo: Alertas contínuos e lembretes rigorosos de tempo."
+        }
+      };
+
+      const dictLang = descripcionesPorIdioma[idiomaGlobal] || descripcionesPorIdioma.en;
+      desc.innerText = dictLang[nivel] || "";
+    }
+
+    function guardarConfigNotificaciones() {
+      solicitarPermisoNotificacionesReal();
+      const select = document.getElementById("select-nivel-notif");
+      const nivel = select.value;
+      localStorage.setItem("nivelNotificaciones", nivel);
+      actualizarTextoDescripcionFrecuencia();
+      alert(idiomaGlobal === 'es' ? "¡Frecuencia de alertas guardada correctamente!" : idiomaGlobal === 'pt' ? "Frequência de alertas salva com sucesso!" : "Alert frequency successfully saved!");
+
+      if (notifFreqTimerId) clearInterval(notifFreqTimerId);
+      let msIntervalo = 0;
+      if (nivel === "relajado") msIntervalo = 3 * 60 * 60 * 1000;
+      else if (nivel === "moderado") msIntervalo = 90 * 60 * 1000;
+      else if (nivel === "intenso") msIntervalo = 35 * 60 * 1000;
+      else if (nivel === "extremo") msIntervalo = 15 * 60 * 1000;
+
+      if (msIntervalo > 0) {
+        notifFreqTimerId = setInterval(() => {
+          dispararNotificacionReal("RemindEd ⚡ [Alerta Activa]", "Es momento de revisar tus objetivos y pendientes pendientes del día.");
+        }, msIntervalo);
+      }
+    }
+
+    function guardarConfigAgua() {
+      solicitarPermisoNotificacionesReal();
+      const inputHora = document.getElementById("input-agua-hora");
+      const msg = document.getElementById("status-agua-msg");
+      const horaSeleccionada = inputHora ? inputHora.value : "10:00";
+      
+      if (!horaSeleccionada) {
+        alert(idiomaGlobal === 'es' ? "Introduce una hora válida." : idiomaGlobal === 'pt' ? "Introduza uma hora válida." : "Please enter a valid time.");
+        return;
+      }
+      localStorage.setItem("horaAgua", horaSeleccionada);
+      if (msg) {
+        msg.innerText = idiomaGlobal === 'es' ? `✅ ¡Guardado! Recordatorio programado a las ${horaSeleccionada}.` : idiomaGlobal === 'pt' ? `✅ Salvo! Lembrete agendado para as ${horaSeleccionada}.` : `✅ Saved! Reminder set for ${horaSeleccionada}.`;
+        setTimeout(() => { msg.innerText = ""; }, 4000);
+      }
+    }
+
+    function activarWidgetTelefono() {
+      const statusText = document.getElementById("widget-status-text");
+      localStorage.setItem("widgetActivo", "true");
+      if (statusText) {
+        statusText.innerText = "¡Anclado en la pantalla de inicio! 📱";
+        statusText.style.color = "var(--success)";
+      }
+      alert("Widget añadido correctamente a la pantalla principal de tu teléfono.");
+    }
+
+    function cargarConfiguracionAjustesExtra() {
+      const nivelGuardado = localStorage.getItem("nivelNotificaciones") || "moderado";
+      const selectNotif = document.getElementById("select-nivel-notif");
+      if (selectNotif) {
+        selectNotif.value = nivelGuardado;
+        actualizarTextoDescripcionFrecuencia();
+      }
+
+      const horaAguaGuardada = localStorage.getItem("horaAgua") || "10:00";
+      const inputAguaHora = document.getElementById("input-agua-hora");
+      if (inputAguaHora) inputAguaHora.value = horaAguaGuardada;
+
+      const widgetActivo = localStorage.getItem("widgetActivo");
+      const statusText = document.getElementById("widget-status-text");
+      if (widgetActivo === "true" && statusText) {
+        statusText.innerText = "¡Anclado en la pantalla de inicio! 📱";
+        statusText.style.color = "var(--success)";
+      }
+    }
+
     function evaluarTrofeos() {
       const logEstudio = JSON.parse(localStorage.getItem("logEstudioDiario")) || {};
       let totalMinutos = Object.values(logEstudio).reduce((a, b) => a + b, 0);
       const examenes = JSON.parse(localStorage.getItem("misExamenes")) || [];
       const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
-      const metasGuardadas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
-      const objetosDiarios = JSON.parse(localStorage.getItem("misObjetivos")) || [];
       const apuntes = JSON.parse(localStorage.getItem("misApuntes")) || [];
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
 
-      let tieneMinuto90 = false;
-      const ahora = new Date();
-      examenes.forEach(ex => {
-        const fechaEx = new Date(ex.fecha);
-        const diffHoras = (fechaEx - ahora) / (1000 * 60 * 60);
-        if (diffHoras > 0 && diffHoras <= 24) tieneMinuto90 = true;
-      });
-
-      let tieneProfeta = false;
-      let tieneOptimista = false;
-      let tieneFenix = false;
-
-      Object.keys(notasGuardadas).forEach(asig => {
-        const datos = notasGuardadas[asig];
-        const lista = Array.isArray(datos) ? datos : (datos ? datos.lista : []);
-        const meta = parseFloat(!Array.isArray(datos) && datos.metaFinal ? datos.metaFinal : metasGuardadas[asig]);
-
-        if (lista.length > 0) {
-          const suma = lista.reduce((a, b) => a + b, 0);
-          const prom = suma / lista.length;
-
-          if (!isNaN(meta)) {
-            if (prom === meta) tieneProfeta = true;
-            if (meta >= 18 && prom < meta) tieneOptimista = true;
-          }
-
-          if (lista.includes(4.9)) tieneFenix = true;
-        }
-      });
-
-      // Diccionario de textos de trofeos según el idioma global
       const trophiesDict = {
         en: {
           t_primer_paso: { nombre: '🌱 First Step', desc: 'Save your first project, note, or event.' },
           t_foco_estudio: { nombre: '⏱️ Unwavering Focus', desc: 'Complete your first timer session.' },
           t_archivista: { nombre: '📝 The Archivist', desc: 'Save your first personal note.' },
           t_equilibrio: { nombre: '🎨 Balanced Life', desc: 'Add a hobby to your week.' },
-          t_maestro_rutina: { nombre: '🏆 Routine Master', desc: 'Accumulate at least 120 focused minutes.' },
-          t_min90: { nombre: '⏱️ Minute 90', desc: 'Register an event within the next 24 hours.' },
-          t_cazador: { nombre: '🎯 Goal Hunter', desc: 'Add your first daily goal.' },
-          t_profeta: { nombre: '🔮 Success Prophet', desc: 'Make your average match your goal.' },
-          t_optimista: { nombre: '✨ Incorrigible Optimist', desc: 'Set a demanding goal (18+).' },
-          t_simulacros: { nombre: '🎓 Expert Planner', desc: 'Register at least 5 events/exams.' },
-          t_calculadora: { nombre: '🧮 Total Control', desc: 'Accumulate more than 10 records.' },
-          t_fenix: { nombre: '🔥 The Phoenix', desc: 'Overcome a complicated grade.' },
-          unlocked: '✅ Unlocked!',
-          locked: '🔒 Locked'
+          unlocked: '✅ Unlocked!', locked: '🔒 Locked'
         },
         es: {
           t_primer_paso: { nombre: '🌱 Primer Paso', desc: 'Guarda tu primer proyecto, nota o evento.' },
           t_foco_estudio: { nombre: '⏱️ Enfoque Inquebrantable', desc: 'Completa tu primera sesión de temporizador.' },
           t_archivista: { nombre: '📝 El Archivista', desc: 'Guarda tu primera nota personal.' },
           t_equilibrio: { nombre: '🎨 Vida Equilibrada', desc: 'Añade un hobby a tu semana.' },
-          t_maestro_rutina: { nombre: '🏆 Maestro de la Rutina', desc: 'Acumula al menos 120 minutos enfocados.' },
-          t_min90: { nombre: '⏱️ Minuto 90', desc: 'Registra un evento dentro de las próximas 24 horas.' },
-          t_cazador: { nombre: '🎯 Cazador de Metas', desc: 'Añade tu primer objetivo diario.' },
-          t_profeta: { nombre: '🔮 Profeta del Éxito', desc: 'Haz que tu promedio coincida con tu meta.' },
-          t_optimista: { nombre: '✨ Optimista Incorregible', desc: 'Establece una meta exigente (18+).' },
-          t_simulacros: { nombre: '🎓 Planificador Experto', desc: 'Registra al menos 5 eventos/exámenes.' },
-          t_calculadora: { nombre: '🧮 Control Total', desc: 'Acumula más de 10 registros.' },
-          t_fenix: { nombre: '🔥 El Fénix', desc: 'Supera una calificación complicada.' },
-          unlocked: '✅ ¡Desbloqueado!',
-          locked: '🔒 Bloqueado'
+          unlocked: '✅ ¡Desbloqueado!', locked: '🔒 Bloqueado'
         },
         pt: {
-          t_primer_paso: { nombre: '🌱 Primeiro Passo', desc: 'Salve seu primeiro projeto, nota ou evento.' },
-          t_foco_estudio: { nombre: '⏱️ Foco Inabalável', desc: 'Conclua sua primeira sessão de cronômetro.' },
-          t_archivista: { nombre: '📝 O Arquivista', desc: 'Salve sua primeira nota pessoal.' },
+          t_primer_paso: { nombre: '🌱 Primeiro Passo', desc: 'Guarde o seu primeiro projeto, nota ou evento.' },
+          t_foco_estudio: { nombre: '⏱️ Foco Inabalável', desc: 'Conclua a sua primeira sessão de temporizador.' },
+          t_archivista: { nombre: '📝 O Arquivista', desc: 'Guarde a sua primeira nota pessoal.' },
           t_equilibrio: { nombre: '🎨 Vida Equilibrada', desc: 'Adicione um hobby à sua semana.' },
-          t_maestro_rutina: { nombre: '🏆 Mestre da Rotina', desc: 'Acumule pelo menos 120 minutos focados.' },
-          t_min90: { nombre: '⏱️ Minuto 90', desc: 'Registre um evento nas próximas 24 horas.' },
-          t_cazador: { nombre: '🎯 Caçador de Metas', desc: 'Adicione seu primeiro objetivo diário.' },
-          t_profeta: { nombre: '🔮 Profeta do Sucesso', desc: 'Faça sua média corresponder à sua meta.' },
-          t_optimista: { nombre: '✨ Otimista Incorrigível', desc: 'Defina uma meta exigente (18+).' },
-          t_simulacros: { nombre: '🎓 Planejador Especialista', desc: 'Registre pelo menos 5 eventos/exames.' },
-          t_calculadora: { nombre: '🧮 Controle Total', desc: 'Acumule mais de 10 registros.' },
-          t_fenix: { nombre: '🔥 A Fênix', desc: 'Supere uma nota complicada.' },
-          unlocked: '✅ Desbloqueado!',
-          locked: '🔒 Bloqueado'
+          unlocked: '✅ Desbloqueado!', locked: '🔒 Bloqueado'
         }
       };
 
       const langDict = trophiesDict[idiomaGlobal] || trophiesDict.en;
-
       const listaLogros = [
         { id: 't_primer_paso', nivel: 'bronze', desbloqueado: (examenes.length > 0 || Object.keys(notasGuardadas).length > 0) },
         { id: 't_foco_estudio', nivel: 'bronze', desbloqueado: totalMinutos > 0 },
         { id: 't_archivista', nivel: 'silver', desbloqueado: apuntes.length >= 1 },
-        { id: 't_equilibrio', nivel: 'silver', desbloqueado: hobbies.length >= 1 },
-        { id: 't_maestro_rutina', nivel: 'gold', desbloqueado: totalMinutos >= 120 },
-        { id: 't_min90', nivel: 'bronze', desbloqueado: tieneMinuto90 },
-        { id: 't_cazador', nivel: 'silver', desbloqueado: objetosDiarios.length >= 1 },
-        { id: 't_profeta', nivel: 'gold', desbloqueado: tieneProfeta },
-        { id: 't_optimista', nivel: 'bronze', desbloqueado: tieneOptimista },
-        { id: 't_simulacros', nivel: 'gold', desbloqueado: examenes.length >= 5 },
-        { id: 't_calculadora', nivel: 'diamond', desbloqueado: Object.values(notasGuardadas).reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : (curr.lista ? curr.lista.length : 0)), 0) >= 10 },
-        { id: 't_fenix', nivel: 'diamond', desbloqueado: tieneFenix }
+        { id: 't_equilibrio', nivel: 'silver', desbloqueado: hobbies.length >= 1 }
       ];
-
-      const prevDesbloqueados = JSON.parse(localStorage.getItem("trofeosDesbloqueadosNotificados")) || {};
-
-      listaLogros.forEach(tr => {
-        const info = langDict[tr.id];
-        if (tr.desbloqueado && !prevDesbloqueados[tr.id]) {
-          mostrarNotificacionTrofeo(info.nombre);
-          prevDesbloqueados[tr.id] = true;
-        }
-      });
-
-      localStorage.setItem("trofeosDesbloqueadosNotificados", JSON.stringify(prevDesbloqueados));
 
       const grid = document.getElementById("grid-trofeos");
       if (!grid) return;
       grid.innerHTML = "";
-      
       listaLogros.forEach(tr => {
-        const info = langDict[tr.id];
+        const info = langDict[tr.id] || { nombre: tr.id, desc: '' };
         const card = document.createElement("div");
         card.className = `trophy-card ${tr.desbloqueado ? 'unlocked' : ''}`;
         card.innerHTML = `
@@ -2775,29 +2769,19 @@
       const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || {};
       const hobbies = JSON.parse(localStorage.getItem("misHobbies")) || [];
       const elClase = document.getElementById("info-clase");
-
       let actividadesHoy = [];
       const diaHoy = ahora.getDay();
 
-      if (horario[diaHoy]) {
-        horario[diaHoy].forEach(c => actividadesHoy.push({ inicio: c.inicio, nombre: c.asignatura, tipo: "Class", sala: c.sala }));
-      }
-      hobbies.filter(h => h.dia === diaHoy).forEach(h => {
-        actividadesHoy.push({ inicio: h.hora, nombre: `🎨 ${h.name || h.nombre}`, tipo: "Hobby" });
-      });
-
+      if (horario[diaHoy]) horario[diaHoy].forEach(c => actividadesHoy.push({ inicio: c.inicio, nombre: c.asignatura, sala: c.sala }));
+      hobbies.filter(h => h.dia === diaHoy).forEach(h => actividadesHoy.push({ inicio: h.hora, nombre: `🎨 ${h.nombre}` }));
       actividadesHoy.sort((a, b) => a.inicio.localeCompare(b.inicio));
 
       if (elClase) {
-        if (actividadesHoy.length === 0) {
-          elClase.innerHTML = idiomaGlobal === 'es' ? "¡Sin actividades programadas para hoy!" : idiomaGlobal === 'pt' ? "Nenhuma atividade agendada para hoje!" : "No activities scheduled for today!";
-        } else {
+        if (actividadesHoy.length === 0) elClase.innerHTML = "No activities scheduled for today!";
+        else {
           const proxima = actividadesHoy.find(a => a.inicio > horaStr);
-          if (proxima) {
-            elClase.innerHTML = `${idiomaGlobal === 'es' ? 'Próxima actividad' : idiomaGlobal === 'pt' ? 'Próxima atividade' : 'Next activity'}: <strong>${proxima.nombre}</strong> at ${proxima.inicio} ${proxima.sala ? '(' + proxima.sala + ')' : ''}.`;
-          } else {
-            elClase.innerHTML = idiomaGlobal === 'es' ? "Has completado todas tus actividades de hoy. 📖" : idiomaGlobal === 'pt' ? "Você concluiu todas as atividades de hoje. 📖" : "You have completed all your activities for today. 📖";
-          }
+          if (proxima) elClase.innerHTML = `Next activity: <strong>${proxima.nombre}</strong> at ${proxima.inicio}.`;
+          else elClase.innerHTML = "You have completed all your activities for today. 📖";
         }
       }
       cargarControlSueno();
@@ -2807,9 +2791,7 @@
       const input = document.getElementById('new-task-input');
       if (!input) return;
       const taskText = input.value.trim();
-
       if (taskText === "") return;
-
       userTasks.push({ text: taskText, completed: false });
       input.value = "";
       renderTasks();
@@ -2819,25 +2801,19 @@
       const listContainer = document.getElementById('task-list');
       if (!listContainer) return;
       listContainer.innerHTML = "";
-
       let completedCount = 0;
 
       userTasks.forEach((task, index) => {
         if (task.completed) completedCount++;
-
         const li = document.createElement('li');
         li.style.listStyle = "none";
         li.style.marginBottom = "8px";
-        li.innerHTML = `
-          <input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">
-          <label for="task-${index}" style="${task.completed ? 'text-decoration: line-through; opacity: 0.7;' : ''} font-weight: 500;"> ${task.text}</label>
-        `;
+        li.innerHTML = `<input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})"><label for="task-${index}" style="${task.completed ? 'text-decoration: line-through; opacity: 0.7;' : ''} font-weight: 500;"> ${task.text}</label>`;
         listContainer.appendChild(li);
       });
 
       const total = userTasks.length;
       const percentage = total === 0 ? 0 : Math.round((completedCount / total) * 100);
-
       const pb = document.getElementById('goals-progress');
       const gt = document.getElementById('goals-text');
       if (pb) pb.style.width = percentage + '%';
@@ -2852,7 +2828,7 @@
     }
 
     function logSleep() {
-      const hours = prompt(idiomaGlobal === 'es' ? "¿Cuántas horas descansaste anoche?:" : idiomaGlobal === 'pt' ? "Quantas horas você descansou ontem à noite?:" : "How many hours did you rest last night?:");
+      const hours = prompt("How many hours did you rest last night?:");
       if (hours) {
         const infoSueno = document.getElementById("info-sueno");
         if(infoSueno) infoSueno.innerText = `💤 Rest: ${hours} hours.`;
@@ -2861,14 +2837,11 @@
 
     function guardarNombreDesdeAjustes() {
       const nuevoNombre = document.getElementById("ajustes-input-nombre").value.trim();
-      if (!nuevoNombre) {
-        alert(idiomaGlobal === 'es' ? "Escribe un nombre válido." : idiomaGlobal === 'pt' ? "Digite um nome válido." : "Type a valid name.");
-        return;
-      }
+      if (!nuevoNombre) return;
       const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
       perfilActual.nombre = nuevoNombre;
       localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
-      alert(idiomaGlobal === 'es' ? "¡Nombre actualizado con éxito!" : idiomaGlobal === 'pt' ? "Nome atualizado com sucesso!" : "Name successfully updated!");
+      alert("Name successfully updated!");
       location.reload();
     }
 
@@ -2877,18 +2850,17 @@
       const perfilActual = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
       perfilActual.rol = nuevoRol;
       localStorage.setItem("perfilUsuario", JSON.stringify(perfilActual));
-      alert(idiomaGlobal === 'es' ? "¡Rol actualizado con éxito!" : idiomaGlobal === 'pt' ? "Função atualizada com sucesso!" : "Role successfully updated!");
+      alert("Role successfully updated!");
       location.reload();
     }
 
     function guardarIdiomaDesdeAjustes() {
       const nuevoIdioma = document.getElementById("ajustes-select-idioma").value;
       cambiarIdiomaDesdeTop(nuevoIdioma);
-      alert(idiomaGlobal === 'es' ? "¡Idioma actualizado con éxito!" : idiomaGlobal === 'pt' ? "Idioma atualizado com sucesso!" : "Language successfully updated!");
+      alert("Language successfully updated!");
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      cargarColorGuardado();
       cargarModoOscuroGuardado();
       cargarHobbies();
       cargarObjetivos();
@@ -2897,82 +2869,15 @@
 
       const perfilGuardado = JSON.parse(localStorage.getItem("perfilUsuario"));
       if (perfilGuardado) {
-        if (perfilGuardado.idioma) {
-          idiomaGlobal = perfilGuardado.idioma;
-        }
+        if (perfilGuardado.idioma) idiomaGlobal = perfilGuardado.idioma;
         cargarInterfazSegunRol();
         aplicarTraduccionesUI(idiomaGlobal);
       } else {
         aplicarTraduccionesUI("en");
-        const pantalla = document.getElementById("pantalla-bienvenida");
-        const app = document.getElementById("app-principal");
-        if (pantalla) pantalla.style.display = "flex";
-        if (app) app.style.display = "none";
+        document.getElementById("pantalla-bienvenida").style.display = "flex";
+        document.getElementById("app-principal").style.display = "none";
       }
     });
-
-    function toggleStudyMenu() {
-  const menu = document.getElementById("study-menu-dropdown");
-  if (!menu) return;
-  const isOpen = menu.style.display === "block";
-  menu.style.display = isOpen ? "none" : "block";
-}
-
-// Cierra el menú si haces clic fuera de él
-window.addEventListener("click", function(e) {
-  if (!e.target.closest('.floating-study-menu')) {
-    const menu = document.getElementById("study-menu-dropdown");
-    if (menu) menu.style.display = "none";
-  }
-});
-
-let blurtingTimeLeft = 180; // 3 minutos por defecto en segundos
-let blurtingTimerId = null;
-let blurtingDuracionSeleccionada = 180;
-
-function ajustarBlurtingTime(minutos) {
-  pausarBlurtingTimer();
-  blurtingDuracionSeleccionada = minutos * 60;
-  blurtingTimeLeft = blurtingDuracionSeleccionada;
-  actualizarDisplayBlurting();
-}
-
-function actualizarDisplayBlurting() {
-  const minutos = Math.floor(blurtingTimeLeft / 60);
-  const segundos = blurtingTimeLeft % 60;
-  const display = document.getElementById("blurting-timer-display");
-  if (display) {
-    display.innerText = `${minutos < 10 ? '0' : ''}${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
-  }
-}
-
-function iniciarBlurtingTimer() {
-  if (blurtingTimerId !== null) return; // Evita múltiples intervalos
-  
-  blurtingTimerId = setInterval(() => {
-    if (blurtingTimeLeft > 0) {
-      blurtingTimeLeft--;
-      actualizarDisplayBlurting();
-    } else {
-      clearInterval(blurtingTimerId);
-      blurtingTimerId = null;
-      alert("¡Tiempo terminado! Revisa tus apuntes y comprueba qué tanto recordaste.");
-    }
-  }, 1000);
-}
-
-function pausarBlurtingTimer() {
-  if (blurtingTimerId !== null) {
-    clearInterval(blurtingTimerId);
-    blurtingTimerId = null;
-  }
-}
-
-function reiniciarBlurtingTimer() {
-  pausarBlurtingTimer();
-  blurtingTimeLeft = blurtingDuracionSeleccionada;
-  actualizarDisplayBlurting();
-}
   </script>
 </body>
 </html>
