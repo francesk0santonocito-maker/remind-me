@@ -86,7 +86,7 @@
     tr:last-child td { border-bottom: none; }
     th { background: var(--primary); color: white; font-weight: 600; }
     
-    .col-hoy { background-color: var(--neon-today) !important; border-left: 2px solid var(--accent); border-right: 2px solid var(--accent); font-weight: 600; }
+    .col-hoy { background-color: transparent !important; border: 2px solid #2196f3 !important; border-radius: 6px; font-weight: 600; color: inherit !important; }
 
     .btn-action, .btn { padding: 10px 20px; font-size: 0.95rem; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
     .btn-action:hover, .btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
@@ -469,7 +469,7 @@
       <div class="card" id="card-gestion-materias">
         <h2 id="titulo-materia-gestor" data-i18n="gestor_asignaturas_proyectos">📚 Projects and Areas Manager</h2>
         <div class="form-group">
-          <input type="text" id="nueva-asignatura-nombre" class="input-form" data-i18n-placeholder="placeholder_nombre_asig" placeholder="Name (e.g. Project X / History)" style="flex:1;" />
+          <input type="text" id="nueva-asignatura-nombre" class="input-form" data-i18n-placeholder="placeholder_nombre_asig" placeholder="Name (e.g. Project X)" style="flex:1;" />
           <button onclick="agregarNuevaAsignatura()" class="btn-action" data-i18n="anadir">Add</button>
         </div>
         <div id="lista-gestion-asignaturas" style="margin-top:10px;"></div>
@@ -480,6 +480,7 @@
         <div class="form-group">
           <select id="examen-materia-select" class="input-form"></select>
           <input type="datetime-local" id="examen-fecha" class="input-form" />
+          <select id="examen-tipo" class="input-form"><option value="examen">📝 Exam</option><option value="presentacion">🎤 Presentation</option></select>
           <button onclick="agregarExamen()" class="btn-action" data-i18n="guardar">Save</button>
         </div>
         <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;" data-i18n="eventos_programados">Scheduled Events</h3>
@@ -635,6 +636,23 @@
             <button onclick="guardarConfigAgua()" class="btn-action btn-small" data-i18n="btn_save">Save</button>
           </div>
           <p id="status-agua-msg" style="font-size: 0.85rem; color: var(--success); margin-top: 6px; font-weight: 600;"></p>
+        </div>
+
+        <!-- NUEVO BLOQUE: RECORDATORIOS PARA DORMIR -->
+        <div style="background: var(--item-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-top: 15px;">
+          <h3 style="font-size: 1.05rem; color: var(--primary); margin-top: 0;">🌙 Recordatorios para Dormir</h3>
+          <p style="font-size: 0.85rem; color: #64748b; margin-top: -4px;">Configura un aviso previo para prepararte antes de ir a dormir:</p>
+          <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+            <label style="font-size: 0.9rem; font-weight: 500;">Hora de dormir:</label>
+            <input type="time" id="input-dormir-hora" class="input-form" value="23:00" style="width: 120px;" />
+            <label style="font-size: 0.9rem; font-weight: 500;">Minutos antes:</label>
+            <input type="number" id="input-dormir-minutos" class="input-form" value="30" style="width: 70px;" min="5" max="120" />
+            <label style="font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+              <input type="checkbox" id="chk-dormir-activo" /> Activar
+            </label>
+            <button onclick="guardarConfigDormir()" class="btn-action btn-small">Guardar</button>
+          </div>
+          <p id="status-dormir-msg" style="font-size: 0.85rem; color: var(--success); margin-top: 6px; font-weight: 600;"></p>
         </div>
 
         <div style="background: var(--item-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-top: 15px;">
@@ -832,7 +850,7 @@
         eventos_programados: "Scheduled Events",
         registro_notas_calificaciones: "📊 Grades & Ratings Record",
         registra_calificaciones_desc: "Record your grades or progress to automatically calculate averages and chart your progress.",
-        grafico_evolucion_academica: "📈 Academic Evolution Chart",
+        grafico_evolucion_academica: "📈 Evolution",
         mis_hobbies_actividades: "🎨 My Hobbies & Free Activities",
         dias_repeticion: "Repeat days:",
         anadir_hobby: "Add Hobby",
@@ -887,7 +905,7 @@
         placeholder_your_name: "Type your name",
         placeholder_nuevo_objetivo: "New work goal...",
         placeholder_lugar_aula: "Location / Room",
-        placeholder_nombre_asig: "Name (e.g., Project X / History)",
+        placeholder_nombre_asig: "Name (e.g., Project X)",
         placeholder_hobby: "Hobby or Sport...",
         placeholder_nuevo_objetivo_gral: "New goal...",
         placeholder_titulo_nota: "Title...",
@@ -1199,6 +1217,7 @@
     let offsetMesActual = 0;
     let aguaTimerId = null;
     let notifFreqTimerId = null;
+    let cicloNotiIndex = 0; // Controla el ciclo: 0 = General, 1+ = Objetivos diarios
 
     function obtenerTutorialesConfig() {
       const perfil = JSON.parse(localStorage.getItem("perfilUsuario"));
@@ -1460,6 +1479,64 @@
       renderizarGraficoNotas();
     }
 
+    function agregarNota(asig) {
+      const input = document.getElementById(`input-nota-${asig}`);
+      if (!input) return;
+      const valor = Number(input.value);
+      const escala = obtenerConfigEscala();
+      if (!Number.isFinite(valor) || valor < escala.min || valor > escala.max) {
+        alert(`Please enter a valid grade between ${escala.min} and ${escala.max}.`);
+        input.focus();
+        return;
+      }
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const datosActuales = notasGuardadas[asig];
+      const lista = Array.isArray(datosActuales) ? datosActuales.slice() : ((datosActuales && Array.isArray(datosActuales.lista)) ? datosActuales.lista.slice() : []);
+      lista.push(valor);
+      const meta = !Array.isArray(datosActuales) && datosActuales && datosActuales.metaFinal !== undefined ? datosActuales.metaFinal : ((JSON.parse(localStorage.getItem("metasAsignaturas")) || {})[asig] || "");
+      notasGuardadas[asig] = { lista, metaFinal: meta };
+      localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
+      input.value = "";
+      cargarAsignaturasYNotas();
+      if (typeof evaluarTrofeos === "function") evaluarTrofeos();
+    }
+
+    function quitarNotaAsignatura(asig, index) {
+      const notasGuardadas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const datos = notasGuardadas[asig];
+      const lista = Array.isArray(datos) ? datos.slice() : ((datos && Array.isArray(datos.lista)) ? datos.lista.slice() : []);
+      if (index < 0 || index >= lista.length) return;
+      lista.splice(index, 1);
+      const meta = !Array.isArray(datos) && datos && datos.metaFinal !== undefined ? datos.metaFinal : ((JSON.parse(localStorage.getItem("metasAsignaturas")) || {})[asig] || "");
+      notasGuardadas[asig] = { lista, metaFinal: meta };
+      localStorage.setItem("notasAsignaturas", JSON.stringify(notasGuardadas));
+      cargarAsignaturasYNotas();
+    }
+
+    function guardarMetaAsignatura(asig) {
+      const input = document.getElementById(`input-meta-${asig}`);
+      if (!input) return;
+      const valor = input.value.trim();
+      const escala = obtenerConfigEscala();
+      if (valor !== "") {
+        const numero = Number(valor);
+        if (!Number.isFinite(numero) || numero < escala.min || numero > escala.max) {
+          alert(`Please enter a valid target between ${escala.min} and ${escala.max}.`);
+          input.focus();
+          return;
+        }
+      }
+      const metas = JSON.parse(localStorage.getItem("metasAsignaturas")) || {};
+      if (valor === "") delete metas[asig]; else metas[asig] = Number(valor);
+      localStorage.setItem("metasAsignaturas", JSON.stringify(metas));
+      const notas = JSON.parse(localStorage.getItem("notasAsignaturas")) || {};
+      const datos = notas[asig];
+      const lista = Array.isArray(datos) ? datos : ((datos && Array.isArray(datos.lista)) ? datos.lista : []);
+      notas[asig] = { lista, metaFinal: valor === "" ? "" : Number(valor) };
+      localStorage.setItem("notasAsignaturas", JSON.stringify(notas));
+      cargarAsignaturasYNotas();
+    }
+
     function renderizarGraficoNotas() {
       const ctx = document.getElementById("chart-notas");
       if (!ctx || typeof Chart === "undefined") return;
@@ -1611,6 +1688,16 @@
       });
     }
 
+    function actualizarPlaceholderAsignaturaPorRol() {
+      const input = document.getElementById("nueva-asignatura-nombre");
+      if (!input) return;
+      const perfil = JSON.parse(localStorage.getItem("perfilUsuario")) || {};
+      const lang = idiomaGlobal || "en";
+      input.placeholder = perfil.rol === "trabajador"
+        ? (lang === "es" ? "Nombre (ej. Proyecto X)" : lang === "pt" ? "Nome (ex. Projeto X)" : "Name (e.g. Project X)")
+        : (lang === "es" ? "Nombre (ej. Historia)" : lang === "pt" ? "Nome (ex. História)" : "Name (e.g. History)");
+    }
+
     function inicializarExamenesYNotas() {
       const select = document.getElementById("examen-materia-select");
       const notaSel = document.getElementById("nota-asig-select");
@@ -1633,6 +1720,7 @@
       cargarExamenes();
       cargarAsignaturasYNotas();
       cargarApuntes();
+      actualizarPlaceholderAsignaturaPorRol();
       renderizarHorarioTabla();
       renderizarGestionHorariosAjustes();
       cargarConfiguracionAjustesExtra();
@@ -1717,10 +1805,11 @@
       const checkboxes = document.querySelectorAll(".chk-dia-laboral:checked");
       const hInicio = document.getElementById("horario-inicio-time").value;
       const hFin = document.getElementById("horario-fin-time").value;
-      const materia = document.getElementById("horario-materia-select").value;
+      const materiaSelect = document.getElementById("horario-materia-select");
+      const materia = materiaSelect ? materiaSelect.value : "";
       const aula = document.getElementById("horario-aula-input").value.trim();
 
-      if (hInicio && hFin && materia && checkboxes.length > 0) {
+      if (hInicio && hFin && materia && checkboxes.length > 0 && hFin > hInicio) {
         const horaTexto = `${hInicio}-${hFin}`;
         const horario = JSON.parse(localStorage.getItem("horarioPersonalizado")) || { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: [] };
 
@@ -1739,6 +1828,11 @@
         });
 
         localStorage.setItem("horarioPersonalizado", JSON.stringify(horario));
+        const horarioGuardado = JSON.parse(localStorage.getItem("horarioPersonalizado") || "{}");
+        if (!horarioGuardado || Object.keys(horarioGuardado).length === 0) {
+          alert("Could not save the schedule block. Please try again.");
+          return;
+        }
         document.getElementById("horario-aula-input").value = "";
         checkboxes.forEach(chk => chk.checked = false);
         actualizarTextoDias();
@@ -2263,9 +2357,10 @@
     function agregarExamen() {
       const materia = document.getElementById("examen-materia-select").value;
       const fecha = document.getElementById("examen-fecha").value;
+      const tipo = document.getElementById("examen-tipo") ? document.getElementById("examen-tipo").value : "examen";
       if (materia !== "" && fecha !== "") {
         const guardados = JSON.parse(localStorage.getItem("misExamenes")) || [];
-        guardados.push({ asignatura: materia, fecha: fecha });
+        guardados.push({ asignatura: materia, fecha: fecha, tipo: tipo });
         localStorage.setItem("misExamenes", JSON.stringify(guardados));
         document.getElementById("examen-fecha").value = "";
         cargarExamenes();
@@ -2551,7 +2646,7 @@
     function reiniciarTimer() { pausarTimer(); modoEstudio = true; indiceBloqueActual = 0; tiempoRestante = bloquesConfig[0].estudio * 60; actualizarDisplayTimer(); }
 
     /* ========================================================
-       SISTEMA DE NOTIFICACIONES REALES INTEGRADO
+       SISTEMA DE NOTIFICACIONES REALES Y WIDGET INTEGRADO
        ======================================================== */
     function solicitarPermisoNotificacionesReal() {
       if (!("Notification" in window)) {
@@ -2563,7 +2658,15 @@
       }
     }
 
+    function actualizarWidgetEnPantalla(texto) {
+      const widgetMsg = document.getElementById("widget-estado-mensaje");
+      if (widgetMsg) {
+        widgetMsg.innerText = texto;
+      }
+    }
+
     function dispararNotificacionReal(titulo, cuerpo) {
+      actualizarWidgetEnPantalla(cuerpo);
       if (!("Notification" in window)) return;
       if (Notification.permission === "granted") {
         try {
@@ -2585,25 +2688,25 @@
 
       const descripcionesPorIdioma = {
         en: {
-          desactivadas: "Notifications are completely turned off. You will not receive automatic alerts.",
+          desactivadas: "Notifications are completely turned off.",
           relajado: "Relaxed level: A reminder every 3-4 hours.",
-          moderado: "Moderated level: Alerts every 1-2 hours to review tasks and breaks.",
-          intenso: "Intense level: Notices every 30-45 minutes to maintain maximum concentration.",
-          extremo: "Extreme level: Continuous alerts and strict time reminders."
+          moderado: "Moderated level: Alerts every 1-2 hours.",
+          intenso: "Intense level: Notices every 30-45 minutes.",
+          extremo: "Extreme level: Continuous alerts and strict time reminders (Every 15 minutes)."
         },
         es: {
-          desactivadas: "Las notificaciones están completamente apagadas. No recibirás alertas automáticas.",
+          desactivadas: "Las notificaciones están completamente apagadas.",
           relajado: "Nivel relajado: Un recordatorio cada 3-4 horas.",
-          moderado: "Nivel moderado: Alertas cada 1 o 2 horas para revisar tareas y pausas.",
-          intenso: "Nivel intenso: Avisos cada 30-45 minutos para mantener máxima concentración.",
-          extremo: "Nivel extremo: Alertas continuas y recordatorios estrictos de tiempo."
+          moderado: "Nivel moderado: Alertas cada 1 o 2 horas.",
+          intenso: "Nivel intenso: Avisos cada 30-45 minutos.",
+          extremo: "Nivel extremo: Alertas continuas y recordatorios estrictos de tiempo cada 15 minutos."
         },
         pt: {
-          desactivadas: "As notificações estão completamente desligadas. Não receberá alertas automáticos.",
+          desactivadas: "As notificações estão completamente desligadas.",
           relajado: "Nível relaxado: Um lembrete a cada 3-4 horas.",
-          moderado: "Nível moderado: Alertas a cada 1-2 horas para rever tarefas e pausas.",
-          intenso: "Nível intenso: Avisos a cada 30-45 minutos para manter máxima concentração.",
-          extremo: "Nível extremo: Alertas contínuos e lembretes rigorosos de tempo."
+          moderado: "Nível moderado: Alertas a cada 1-2 horas.",
+          intenso: "Nível intenso: Avisos a cada 30-45 minutos.",
+          extremo: "Nível extremo: Alertas contínuos e lembretes rigorosos de tempo a cada 15 minutos."
         }
       };
 
@@ -2628,7 +2731,28 @@
 
       if (msIntervalo > 0) {
         notifFreqTimerId = setInterval(() => {
-          dispararNotificacionReal("RemindEd ⚡ [Alerta Activa]", "Es momento de revisar tus objetivos y pendientes pendientes del día.");
+          const objetivos = JSON.parse(localStorage.getItem("misObjetivos")) || [];
+          let tituloNoti = "RemindEd ⚡ [Alerta Activa]";
+          let cuerpoNoti = "";
+
+          if (objetivos.length === 0) {
+            cuerpoNoti = "Es momento de revisar tus objetivos y pendientes pendientes del día";
+          } else {
+            // Ciclo: 0 = General, 1...n = Objetivos diarios
+            if (cicloNotiIndex === 0) {
+              cuerpoNoti = "Es momento de revisar tus objetivos y pendientes pendientes del día";
+              cicloNotiIndex = 1;
+            } else {
+              const objIndex = (cicloNotiIndex - 1) % objetivos.length;
+              const objTexto = objetivos[objIndex];
+              cuerpoNoti = `¿"${objTexto}"?`;
+              cicloNotiIndex++;
+              if (cicloNotiIndex > objetivos.length) {
+                cicloNotiIndex = 0; // Reinicia el ciclo
+              }
+            }
+          }
+          dispararNotificacionReal(tituloNoti, cuerpoNoti);
         }, msIntervalo);
       }
     }
@@ -2640,12 +2764,40 @@
       const horaSeleccionada = inputHora ? inputHora.value : "10:00";
       
       if (!horaSeleccionada) {
-        alert(idiomaGlobal === 'es' ? "Introduce una hora válida." : idiomaGlobal === 'pt' ? "Introduza uma hora válida." : "Please enter a valid time.");
+        alert("Introduce una hora válida.");
         return;
       }
       localStorage.setItem("horaAgua", horaSeleccionada);
+      
+      // Configurar aviso específico de agua según lo solicitado
+      const cuerpoAguaNoti = "¿Ya has tomado agua hoy? 🥤";
+      const cuerpoAguaWidget = "¿Es hora de hidratarse? ¿No lo crees?";
+      actualizarWidgetEnPantalla(cuerpoAguaWidget);
+      dispararNotificacionReal("RemindEd 💧 [Hidratación]", cuerpoAguaNoti);
+
       if (msg) {
-        msg.innerText = idiomaGlobal === 'es' ? `✅ ¡Guardado! Recordatorio programado a las ${horaSeleccionada}.` : idiomaGlobal === 'pt' ? `✅ Salvo! Lembrete agendado para as ${horaSeleccionada}.` : `✅ Saved! Reminder set for ${horaSeleccionada}.`;
+        msg.innerText = `✅ ¡Guardado! Recordatorio programado a las ${horaSeleccionada}.`;
+        setTimeout(() => { msg.innerText = ""; }, 4000);
+      }
+    }
+
+    function guardarConfigDormir() {
+      solicitarPermisoNotificacionesReal();
+      const horaDormir = document.getElementById("input-dormir-hora").value;
+      const minutosAntes = parseInt(document.getElementById("input-dormir-minutos").value) || 30;
+      const activo = document.getElementById("chk-dormir-activo").checked;
+      const msg = document.getElementById("status-dormir-msg");
+
+      localStorage.setItem("configDormir", JSON.stringify({ horaDormir, minutosAntes, activo }));
+
+      // Sincronizar automáticamente con el Sleep Tracker sin llamarlo "bedtime"
+      const sleepCfg = JSON.parse(localStorage.getItem("configSueno")) || { horas: 8, acostar: "23:00", despertar: "07:00" };
+      sleepCfg.acostar = horaDormir;
+      localStorage.setItem("configSueno", JSON.stringify(sleepCfg));
+      cargarControlSueno();
+
+      if (msg) {
+        msg.innerText = activo ? `✅ Guardado. Te avisaremos ${minutosAntes} min antes de las ${horaDormir}.` : `✅ Configuración guardada (Desactivado).`;
         setTimeout(() => { msg.innerText = ""; }, 4000);
       }
     }
@@ -2671,6 +2823,16 @@
       const horaAguaGuardada = localStorage.getItem("horaAgua") || "10:00";
       const inputAguaHora = document.getElementById("input-agua-hora");
       if (inputAguaHora) inputAguaHora.value = horaAguaGuardada;
+
+      const configDormirGuardada = JSON.parse(localStorage.getItem("configDormir"));
+      if (configDormirGuardada) {
+        const inputDormirHora = document.getElementById("input-dormir-hora");
+        const inputDormirMin = document.getElementById("input-dormir-minutos");
+        const chkDormirActivo = document.getElementById("chk-dormir-activo");
+        if (inputDormirHora) inputDormirHora.value = configDormirGuardada.horaDormir;
+        if (inputDormirMin) inputDormirMin.value = configDormirGuardada.minutosAntes;
+        if (chkDormirActivo) chkDormirActivo.checked = configDormirGuardada.activo;
+      }
 
       const widgetActivo = localStorage.getItem("widgetActivo");
       const statusText = document.getElementById("widget-status-text");
